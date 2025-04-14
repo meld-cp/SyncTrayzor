@@ -8,7 +8,6 @@
         xmlns:settings="clr-namespace:SyncTrayzor.Pages.Settings"
         xmlns:xaml="clr-namespace:SyncTrayzor.Xaml"
         xmlns:l="clr-namespace:SyncTrayzor.Localization"
-        xmlns:lvlm="clr-namespace:Itenso.Windows.Controls.ListViewLayout;assembly=Itenso.Windows.Controls.ListViewLayout"
         mc:Ignorable="d" 
         d:DataContext="{d:DesignInstance settings:SettingsViewModel}"
         Title="{l:Loc SettingsView_Title}"
@@ -201,10 +200,10 @@
                     <ListView Visibility="{Binding FolderSettings, Converter={x:Static s:BoolToVisibilityConverter.Instance}}"  
                                 ItemsSource="{Binding FolderSettings}"
                                 Style="{StaticResource PassiveListViewStyle}"
-                                lvlm:ListViewLayoutManager.Enabled="True">
+                               >
                         <ListView.View>
                             <GridView AllowsColumnReorder="False">
-                                <GridViewColumn Header="{l:Loc SettingsView_WatchedFolders_Header_Folder}" DisplayMemberBinding="{Binding FolderLabel}" lvlm:RangeColumn.IsFillColumn="True"/>
+                                <GridViewColumn Header="{l:Loc SettingsView_WatchedFolders_Header_Folder}" DisplayMemberBinding="{Binding FolderLabel}"/>
                                 <GridViewColumn>
                                     <GridViewColumn.Header>
                                         <CheckBox IsChecked="{Binding AreAllFoldersWatched}" Content="{l:Loc SettingsView_WatchedFolders_Header_Watched}" Margin="4,0,5,0"/>

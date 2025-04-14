@@ -129,7 +129,7 @@ namespace SyncTrayzor.Pages.ConflictResolution
                     try
                     {
                         await this.conflictFileManager.FindConflicts(folder.Path)
-                            .ObserveOnDispatcher(DispatcherPriority.Background)
+                            .ObserveOn(SynchronizationContext.Current!)
                             .ForEachAsync(conflict => this.Conflicts.Add(new ConflictViewModel(conflict, folder.Label)), ct);
                     }
                     catch (OperationCanceledException) { }

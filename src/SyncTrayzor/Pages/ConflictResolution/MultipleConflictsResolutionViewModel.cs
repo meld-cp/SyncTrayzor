@@ -1,6 +1,6 @@
 ﻿using Stylet;
-using SyncTrayzor.Utils;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace SyncTrayzor.Pages.ConflictResolution
 {

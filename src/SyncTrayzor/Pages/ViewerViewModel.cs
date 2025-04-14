@@ -93,7 +93,7 @@ namespace SyncTrayzor.Pages
 
         protected override void OnInitialActivate()
         {
-            if (!Cef.IsInitialized)
+            if (!(Cef.IsInitialized ?? false))
             {
                 var configuration = this.configurationProvider.Load();
 
@@ -135,7 +135,7 @@ namespace SyncTrayzor.Pages
             webBrowser.LifeSpanHandler = this;
             webBrowser.MenuHandler = this;
             webBrowser.JavascriptObjectRepository.Settings.LegacyBindingEnabled = true;
-            webBrowser.JavascriptObjectRepository.Register("callbackObject", this.callback, isAsync: true);
+            webBrowser.JavascriptObjectRepository.Register("callbackObject", this.callback);
 
             // So. Fun story. From https://github.com/cefsharp/CefSharp/issues/738#issuecomment-91099199, we need to set the zoom level
             // in the FrameLoadStart event. However, the IWpfWebBrowser's ZoomLevel is a DependencyProperty, and it wraps

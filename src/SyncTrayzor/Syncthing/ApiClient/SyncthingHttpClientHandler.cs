@@ -5,14 +5,14 @@ using System.Threading.Tasks;
 
 namespace SyncTrayzor.Syncthing.ApiClient
 {
-    public class SyncthingHttpClientHandler : WebRequestHandler
+    public class SyncthingHttpClientHandler : HttpClientHandler
     {
         private static readonly Logger logger = LogManager.GetCurrentClassLogger();
 
         public SyncthingHttpClientHandler()
         {
             // We expect Syncthing to return invalid certs
-            this.ServerCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true;
+            this.ServerCertificateCustomValidationCallback = (sender, certificate, chain, sslPolicyErrors) => true;
         }
 
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)

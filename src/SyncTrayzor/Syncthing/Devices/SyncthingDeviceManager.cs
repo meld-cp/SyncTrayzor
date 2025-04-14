@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 using SyncTrayzor.Syncthing.EventWatcher;
 using SyncTrayzor.Syncthing.ApiClient;
 using System.Collections.Concurrent;
-using SyncTrayzor.Utils;
 using NLog;
 using System.Threading;
+using SyncTrayzor.Utils;
 
 namespace SyncTrayzor.Syncthing.Devices
 {
@@ -108,7 +108,7 @@ namespace SyncTrayzor.Syncthing.Devices
         {
             var connections = await this.apiClient.Value.FetchConnectionsAsync(cancellationToken);
             // We can potentially see duplicate devices (if the user set their config file that way). Ignore them.
-            var devices = config.Devices.DistinctBy(x => x.DeviceID).Select(device =>
+            var devices = Enumerable.DistinctBy(config.Devices, x => x.DeviceID).Select(device =>
             {
                 var deviceObj = new Device(device.DeviceID, device.Name);
                 if (connections.DeviceConnections.TryGetValue(device.DeviceID, out var connectionData))
