@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 namespace SyncTrayzor.Utils
 {
+    // TODO: This is outdated, and only works for .NET Framework
     public static class DotNetVersionFinder
     {
         // See https://msdn.microsoft.com/en-us/library/hh925568.aspx#net_d
