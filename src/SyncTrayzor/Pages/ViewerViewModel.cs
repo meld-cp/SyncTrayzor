@@ -7,6 +7,7 @@ using CefSharp;
 using CefSharp.Wpf;
 using SyncTrayzor.Services.Config;
 using System.Threading;
+using System.Windows;
 using SyncTrayzor.Services;
 using SyncTrayzor.Properties;
 
@@ -216,6 +217,8 @@ namespace SyncTrayzor.Pages
                 }
                 e.Handled = true;
             };
+
+            webBrowser.SizeChanged += OnSizeChanged;
         }
 
         public void RefreshBrowserNukeCache()
@@ -360,6 +363,16 @@ namespace SyncTrayzor.Pages
             request.Headers = headers;
 
             return CefReturnValue.Continue;
+        }
+
+        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (syncthingState == SyncthingState.Running)
+            {
+                // Workaround for https://github.com/cefsharp/CefSharp/issues/4953
+                this.WebBrowser?.GetBrowserHost()?.Invalidate(PaintElementType.View);
+                this.WebBrowser?.InvalidateVisual();
+            }
         }
 
         void ILifeSpanHandler.OnBeforeClose(IWebBrowser browserControl, IBrowser browser)
