@@ -8,7 +8,7 @@ namespace SyncTrayzor.Pages.Settings
     public class SyncthingCommandLineFlagsValidator : AbstractValidator<SettingItem<string>>
     {
         // This dups stuff from SyncthingProcessRunner
-        private static readonly string[] forbiddenArgs = new[] { "-no-browser", "-no-restart", "-gui-apikey", "-gui-address", "-home" };
+        private static readonly string[] forbiddenArgs = new[] { "--no-browser", "--no-restart", "--gui-apikey", "--gui-address", "--home", "--data", "--config" };
 
         public SyncthingCommandLineFlagsValidator()
         {

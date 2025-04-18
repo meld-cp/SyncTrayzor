@@ -56,7 +56,7 @@ namespace SyncTrayzor.Syncthing
     {
         private static readonly Logger logger = LogManager.GetCurrentClassLogger();
         private static readonly Logger syncthingLogger = LogManager.GetLogger("Syncthing");
-        private static readonly string[] defaultArguments = new[] { "-no-browser", "-no-restart" };
+        private static readonly string[] defaultArguments = new[] { "--no-browser", "--no-restart" };
         // Leave just the first set of digits, removing everything after it
         private static readonly Regex deviceIdHideRegex = new Regex(@"-[0-9A-Z]{7}-[0-9A-Z]{7}-[0-9A-Z]{7}-[0-9A-Z]{7}-[0-9A-Z]{7}-[0-9A-Z]{7}-[0-9A-Z]{7}");
 
@@ -202,11 +202,11 @@ namespace SyncTrayzor.Syncthing
         {
             var args = new List<string>(defaultArguments)
             {
-                $"-gui-address=\"{this.HostAddress}\""
+                $"--gui-address=\"{this.HostAddress}\""
             };
 
             if (!String.IsNullOrWhiteSpace(this.CustomHomeDir))
-                args.Add($"-home=\"{this.CustomHomeDir}\"");
+                args.Add($"--home=\"{this.CustomHomeDir}\"");
 
             args.AddRange(this.CommandLineFlags);
 
