@@ -37,26 +37,26 @@ namespace SyncTrayzor.Services.Metering
         private bool _isEnabled;
         public bool IsEnabled
         {
-            get => this._isEnabled;
+            get => _isEnabled;
             set
             {
-                if (this._isEnabled == value)
+                if (_isEnabled == value)
                     return;
-                this._isEnabled = value;
+                _isEnabled = value;
                 if (value)
-                    this.Enable();
+                    Enable();
                 else
-                    this.Disable();
+                    Disable();
             }
         }
 
-        public bool IsSupportedByWindows => this.costManager.IsSupported;
+        public bool IsSupportedByWindows => costManager.IsSupported;
 
-        private readonly object syncRoot = new object();
+        private readonly object syncRoot = new();
 
         public IReadOnlyList<Device> PausedDevices { get; private set; } = new List<Device>().AsReadOnly();
 
-        private readonly Dictionary<Device, DeviceState> deviceStates = new Dictionary<Device, DeviceState>();
+        private readonly Dictionary<Device, DeviceState> deviceStates = new();
 
         public MeteredNetworkManager(ISyncthingManager syncthingManager, INetworkCostManager costManager)
         {
@@ -66,56 +66,56 @@ namespace SyncTrayzor.Services.Metering
             // We won't know whether or not Syncthing supports this until it loads
             if (this.costManager.IsSupported)
             {
-                this.syncthingManager.StateChanged += this.SyncthingStateChanged;
-                this.syncthingManager.DataLoaded += this.DataLoaded;
-                this.syncthingManager.Devices.DevicePaused += this.DevicePaused;
-                this.syncthingManager.Devices.DeviceResumed += this.DeviceResumed;
-                this.syncthingManager.Devices.DeviceConnected += this.DeviceConnected;
-                this.syncthingManager.Devices.DeviceDisconnected += this.DeviceDisconnected;
-                this.costManager.NetworkCostsChanged += this.NetworkCostsChanged;
-                this.costManager.NetworksChanged += this.NetworksChanged;
+                this.syncthingManager.StateChanged += SyncthingStateChanged;
+                this.syncthingManager.DataLoaded += DataLoaded;
+                this.syncthingManager.Devices.DevicePaused += DevicePaused;
+                this.syncthingManager.Devices.DeviceResumed += DeviceResumed;
+                this.syncthingManager.Devices.DeviceConnected += DeviceConnected;
+                this.syncthingManager.Devices.DeviceDisconnected += DeviceDisconnected;
+                this.costManager.NetworkCostsChanged += NetworkCostsChanged;
+                this.costManager.NetworksChanged += NetworksChanged;
             }
         }
 
         private void SyncthingStateChanged(object sender, SyncthingStateChangedEventArgs e)
         {
             if (e.NewState != SyncthingState.Running)
-                this.ClearAllDevices();
+                ClearAllDevices();
             // Else, we'll get DataLoaded shortly
         }
 
         private void DataLoaded(object sender, EventArgs e)
         {
-            if (!this.IsEnabled)
+            if (!IsEnabled)
                 return;
 
-            this.ClearAllDevices();
+            ClearAllDevices();
 
-            this.Update();
+            Update();
         }
 
         private void ClearAllDevices()
         {
             bool changed;
-            lock (this.syncRoot)
+            lock (syncRoot)
             {
-                changed = this.deviceStates.Values.Any(x => x == DeviceState.Paused);
-                this.deviceStates.Clear();
+                changed = deviceStates.Values.Any(x => x == DeviceState.Paused);
+                deviceStates.Clear();
             }
 
             if (changed)
-                this.UpdatePausedDeviceIds();
+                UpdatePausedDeviceIds();
         }
 
         private void DevicePaused(object sender, DevicePausedEventArgs e)
         {
-            if (!this.IsEnabled)
+            if (!IsEnabled)
                 return;
 
             bool changed = false;
-            lock (this.syncRoot)
+            lock (syncRoot)
             {
-                if (!this.deviceStates.TryGetValue(e.Device, out var deviceState))
+                if (!deviceStates.TryGetValue(e.Device, out var deviceState))
                 {
                     logger.Warn($"Unable to pause device {e.Device.DeviceId} as we don't have a record of its state. This should not happen");
                     return;
@@ -123,30 +123,30 @@ namespace SyncTrayzor.Services.Metering
 
                 if (deviceState == DeviceState.Unpaused)
                 {
-                    this.deviceStates[e.Device] = DeviceState.PausedRenegade;
+                    deviceStates[e.Device] = DeviceState.PausedRenegade;
                     logger.Debug($"Device {e.Device.DeviceId} has been paused, and has gone renegade");
                 }
                 else if (deviceState == DeviceState.UnpausedRenegade)
                 {
-                    this.deviceStates[e.Device] = DeviceState.Paused;
+                    deviceStates[e.Device] = DeviceState.Paused;
                     logger.Debug($"Device {e.Device.DeviceId} has been paused, and has stopped being renegade");
                     changed = true;
                 }
             }
 
             if (changed)
-                this.UpdatePausedDeviceIds();
+                UpdatePausedDeviceIds();
         }
 
         private void DeviceResumed(object sender, DeviceResumedEventArgs e)
         {
-            if (!this.IsEnabled)
+            if (!IsEnabled)
                 return;
 
             bool changed = false;
-            lock (this.syncRoot)
+            lock (syncRoot)
             {
-                if (!this.deviceStates.TryGetValue(e.Device, out var deviceState))
+                if (!deviceStates.TryGetValue(e.Device, out var deviceState))
                 {
                     logger.Warn($"Unable to resume device {e.Device.DeviceId} as we don't have a record of its state. This should not happen");
                     return;
@@ -154,29 +154,29 @@ namespace SyncTrayzor.Services.Metering
 
                 if (deviceState == DeviceState.Paused)
                 {
-                    this.deviceStates[e.Device] = DeviceState.UnpausedRenegade;
+                    deviceStates[e.Device] = DeviceState.UnpausedRenegade;
                     logger.Debug($"Device {e.Device.DeviceId} has been resumed, and has gone renegade");
                     changed = true;
                 }
                 else if (deviceState == DeviceState.PausedRenegade)
                 {
-                    this.deviceStates[e.Device] = DeviceState.Unpaused;
+                    deviceStates[e.Device] = DeviceState.Unpaused;
                     logger.Debug($"Device {e.Device.DeviceId} has been resumed, and has stopped being renegade");
                 }
             }
 
             if (changed)
-                this.UpdatePausedDeviceIds();
+                UpdatePausedDeviceIds();
         }
 
         private async void DeviceConnected(object sender, DeviceConnectedEventArgs e)
         {
-            if (!this.IsEnabled)
+            if (!IsEnabled)
                 return;
 
-            var changed = await this.UpdateDeviceAsync(e.Device);
+            var changed = await UpdateDeviceAsync(e.Device);
             if (changed)
-                this.UpdatePausedDeviceIds();
+                UpdatePausedDeviceIds();
         }
 
         private void DeviceDisconnected(object sender, DeviceDisconnectedEventArgs e)
@@ -187,92 +187,92 @@ namespace SyncTrayzor.Services.Metering
 
         private void NetworkCostsChanged(object sender, EventArgs e)
         {
-            if (!this.IsEnabled)
+            if (!IsEnabled)
                 return;
 
             logger.Debug("Network costs changed. Updating devices");
-            this.ResetRenegades();
-            this.Update();
+            ResetRenegades();
+            Update();
         }
 
         private void NetworksChanged(object sender, EventArgs e)
         {
-            if (!this.IsEnabled)
+            if (!IsEnabled)
                 return;
 
             logger.Debug("Networks changed. Updating devices");
-            this.ResetRenegades();
-            this.Update();
+            ResetRenegades();
+            Update();
         }
 
         private void ResetRenegades()
         {
-            lock (this.syncRoot)
+            lock (syncRoot)
             {
-                foreach (var kvp in this.deviceStates.ToArray())
+                foreach (var kvp in deviceStates.ToArray())
                 {
                     if (kvp.Value == DeviceState.PausedRenegade)
-                        this.deviceStates[kvp.Key] = DeviceState.Paused;
+                        deviceStates[kvp.Key] = DeviceState.Paused;
                     else if (kvp.Value == DeviceState.UnpausedRenegade)
-                        this.deviceStates[kvp.Key] = DeviceState.Unpaused;
+                        deviceStates[kvp.Key] = DeviceState.Unpaused;
                 }
             }
         }
 
         private void UpdatePausedDeviceIds()
         {
-            lock (this.syncRoot)
+            lock (syncRoot)
             {
-                this.PausedDevices = this.deviceStates.Where(x => x.Value == DeviceState.Paused).Select(x => x.Key).ToList().AsReadOnly();
+                PausedDevices = deviceStates.Where(x => x.Value == DeviceState.Paused).Select(x => x.Key).ToList().AsReadOnly();
             }
 
-            this.PausedDevicesChanged?.Invoke(this, EventArgs.Empty);
+            PausedDevicesChanged?.Invoke(this, EventArgs.Empty);
         }
 
         private void Enable()
         {
-            this.Update();
+            Update();
         }
 
         private async void Disable()
         {
             List<Device> devicesToUnpause;
-            lock (this.syncRoot)
+            lock (syncRoot)
             {
-                devicesToUnpause = this.deviceStates.Where(x => x.Value == DeviceState.Paused).Select(x => x.Key).ToList();
+                devicesToUnpause = deviceStates.Where(x => x.Value == DeviceState.Paused).Select(x => x.Key).ToList();
             }
 
-            this.ClearAllDevices();
+            ClearAllDevices();
 
-            if (this.syncthingManager.State == SyncthingState.Running)
-                await Task.WhenAll(devicesToUnpause.Select(x => this.syncthingManager.Devices.ResumeDeviceAsync(x)).ToList());
+            if (syncthingManager.State == SyncthingState.Running)
+                await Task.WhenAll(devicesToUnpause.Select(x => syncthingManager.Devices.ResumeDeviceAsync(x)).ToList());
         }
 
         private async void Update()
         {
-            var devices = this.syncthingManager.Devices.FetchDevices();
+            var devices = syncthingManager.Devices.FetchDevices();
 
             // Keep device states in sync with devices
-            lock (this.syncRoot)
+            lock (syncRoot)
             {
                 foreach (var device in devices)
                 {
-                    if (!this.deviceStates.ContainsKey(device))
-                        this.deviceStates[device] = device.Paused ? DeviceState.Paused : DeviceState.Unpaused;
+                    if (!deviceStates.ContainsKey(device))
+                        deviceStates[device] = device.Paused ? DeviceState.Paused : DeviceState.Unpaused;
                 }
                 var deviceIds = new HashSet<string>(devices.Select(x => x.DeviceId));
-                foreach (var deviceState in this.deviceStates.Keys.ToList())
+                foreach (var deviceState in deviceStates.Keys.ToList())
                 {
                     if (!deviceIds.Contains(deviceState.DeviceId))
-                        this.deviceStates.Remove(deviceState);
+                        deviceStates.Remove(deviceState);
                 }
             }
 
-            var updateTasks = devices.Select(device => this.UpdateDeviceAsync(device));
+            var updateTasks = devices.Select(device => UpdateDeviceAsync(device));
             var results = await Task.WhenAll(updateTasks);
 
             if (results.Any())
-                this.UpdatePausedDeviceIds();
+                UpdatePausedDeviceIds();
         }
 
         private async Task<bool> UpdateDeviceAsync(Device device)
@@ -280,13 +280,13 @@ namespace SyncTrayzor.Services.Metering
             // This is called when the list of devices changes, when the network cost changes, or when a device connects
             // If the list of devices has changed, then the device won't be renegade
 
-            if (!this.IsEnabled || this.syncthingManager.State != SyncthingState.Running || !this.syncthingManager.Capabilities.SupportsDevicePauseResume)
+            if (!IsEnabled || syncthingManager.State != SyncthingState.Running || !syncthingManager.Capabilities.SupportsDevicePauseResume)
                 return false;
 
             DeviceState deviceState;
-            lock (this.syncRoot)
+            lock (syncRoot)
             {
-                if (!this.deviceStates.TryGetValue(device, out deviceState))
+                if (!deviceStates.TryGetValue(device, out deviceState))
                 {
                     logger.Warn($"Unable to fetch device state for device ID {device.DeviceId}. This should not happen.");
                     return false;
@@ -301,7 +301,7 @@ namespace SyncTrayzor.Services.Metering
 
             // The device can become disconnected at any point....
             var deviceAddress = device.Address;
-            var shouldBePaused = device.IsConnected && deviceAddress != null && this.costManager.IsConnectionMetered(deviceAddress.Address);
+            var shouldBePaused = device.IsConnected && deviceAddress != null && await costManager.IsConnectionMetered(deviceAddress.Address);
 
             bool changed = false;
 
@@ -310,11 +310,11 @@ namespace SyncTrayzor.Services.Metering
                 logger.Debug($"Pausing device {device.DeviceId}");
                 try
                 {
-                    await this.syncthingManager.Devices.PauseDeviceAsync(device);
+                    await syncthingManager.Devices.PauseDeviceAsync(device);
 
-                    lock (this.syncRoot)
+                    lock (syncRoot)
                     {
-                        this.deviceStates[device] = DeviceState.Paused;
+                        deviceStates[device] = DeviceState.Paused;
                     }
                     changed = true;
                 }
@@ -329,11 +329,11 @@ namespace SyncTrayzor.Services.Metering
                 logger.Debug($"Resuming device {device.DeviceId}");
                 try
                 {
-                    await this.syncthingManager.Devices.ResumeDeviceAsync(device);
+                    await syncthingManager.Devices.ResumeDeviceAsync(device);
 
-                    lock (this.syncRoot)
+                    lock (syncRoot)
                     {
-                        this.deviceStates[device] = DeviceState.Unpaused;
+                        deviceStates[device] = DeviceState.Unpaused;
                     }
                     changed = true;
                 }
@@ -349,14 +349,14 @@ namespace SyncTrayzor.Services.Metering
 
         public void Dispose()
         {
-            this.syncthingManager.StateChanged -= this.SyncthingStateChanged;
-            this.syncthingManager.DataLoaded -= this.DataLoaded;
-            this.syncthingManager.Devices.DevicePaused -= this.DevicePaused;
-            this.syncthingManager.Devices.DeviceResumed -= this.DeviceResumed;
-            this.syncthingManager.Devices.DeviceConnected -= this.DeviceConnected;
-            this.syncthingManager.Devices.DeviceDisconnected -= this.DeviceDisconnected;
-            this.costManager.NetworkCostsChanged -= this.NetworkCostsChanged;
-            this.costManager.NetworksChanged -= this.NetworksChanged;
+            syncthingManager.StateChanged -= SyncthingStateChanged;
+            syncthingManager.DataLoaded -= DataLoaded;
+            syncthingManager.Devices.DevicePaused -= DevicePaused;
+            syncthingManager.Devices.DeviceResumed -= DeviceResumed;
+            syncthingManager.Devices.DeviceConnected -= DeviceConnected;
+            syncthingManager.Devices.DeviceDisconnected -= DeviceDisconnected;
+            costManager.NetworkCostsChanged -= NetworkCostsChanged;
+            costManager.NetworksChanged -= NetworksChanged;
         }
 
         private enum DeviceState
