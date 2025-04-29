@@ -15,8 +15,8 @@ namespace SyncTrayzor.Syncthing.ApiClient
 
         public override string ToString()
         {
-            var facilities = String.Join(",", this.Facilities?.Select(kvp => $"{kvp.Key}={kvp.Value}"));
-            var enabled = (this.Enabled == null) ? String.Empty : String.Join(",", this.Enabled);
+            var facilities = String.Join(",", Facilities?.Select(kvp => $"{kvp.Key}={kvp.Value}"));
+            var enabled = (Enabled == null) ? String.Empty : String.Join(",", Enabled);
             return $"<DebugFacilities Enabled={enabled} Facilities={facilities}>";
         }
     }

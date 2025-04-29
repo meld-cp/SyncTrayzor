@@ -42,66 +42,66 @@ namespace SyncTrayzor.Pages
             this.updateManager = updateManager;
             this.thirdPartyComponentsViewModelFactory = thirdPartyComponentsViewModelFactory;
             this.processStartProvider = processStartProvider;
-            this.DonationManager = donationManager;
+            DonationManager = donationManager;
 
-            this.Version = Assembly.GetExecutingAssembly().GetName().Version.ToString(3);
-            this.HomepageUrl = AppSettings.Instance.HomepageUrl;
+            Version = Assembly.GetExecutingAssembly().GetName().Version.ToString(3);
+            HomepageUrl = AppSettings.Instance.HomepageUrl;
 
-            this.syncthingManager.DataLoaded += this.SyncthingDataLoaded;
-            this.LoadSyncthingVersion();
+            this.syncthingManager.DataLoaded += SyncthingDataLoaded;
+            LoadSyncthingVersion();
 
-            this.CheckForNewerVersionAsync();
+            CheckForNewerVersionAsync();
         }
 
         private void SyncthingDataLoaded(object sender, EventArgs e)
         {
-            this.LoadSyncthingVersion();
+            LoadSyncthingVersion();
         }
 
         private void LoadSyncthingVersion()
         {
-            this.SyncthingVersion = this.syncthingManager.Version == null ? Resources.AboutView_UnknownVersion : this.syncthingManager.Version.ShortVersion;
+            SyncthingVersion = syncthingManager.Version == null ? Resources.AboutView_UnknownVersion : syncthingManager.Version.ShortVersion;
         }
 
         private async void CheckForNewerVersionAsync()
         {
-            var results = await this.updateManager.CheckForAcceptableUpdateAsync();
+            var results = await updateManager.CheckForAcceptableUpdateAsync();
 
             if (results == null)
                 return;
 
-            this.NewerVersion = results.NewVersion.ToString(3);
-            this.newerVersionDownloadUrl = results.ReleasePageUrl;
+            NewerVersion = results.NewVersion.ToString(3);
+            newerVersionDownloadUrl = results.ReleasePageUrl;
         }
 
         public void ShowHomepage()
         {
-            this.processStartProvider.StartDetached(this.HomepageUrl);
+            processStartProvider.StartDetached(HomepageUrl);
         }
 
         public void DownloadNewerVersion()
         {
-            if (this.newerVersionDownloadUrl == null)
+            if (newerVersionDownloadUrl == null)
                 return;
 
-            this.processStartProvider.StartDetached(this.newerVersionDownloadUrl);
+            processStartProvider.StartDetached(newerVersionDownloadUrl);
         }
 
         public void ShowLicenses()
         {
-            var vm = this.thirdPartyComponentsViewModelFactory();
-            this.windowManager.ShowDialog(vm);
-            this.RequestClose(true);
+            var vm = thirdPartyComponentsViewModelFactory();
+            windowManager.ShowDialog(vm);
+            RequestClose(true);
         }
 
         public void Close()
         {
-            this.RequestClose(true);
+            RequestClose(true);
         }
 
         protected override void OnClose()
         {
-            this.syncthingManager.DataLoaded -= this.SyncthingDataLoaded;
+            syncthingManager.DataLoaded -= SyncthingDataLoaded;
         }
     }
 }

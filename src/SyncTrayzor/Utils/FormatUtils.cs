@@ -35,10 +35,7 @@ namespace SyncTrayzor.Utils
             if (timeSpan.TotalHours > 1.0)
                 return Localizer.F(Resources.TimeAgo_Hours, (int)timeSpan.TotalHours);
 
-            if (timeSpan.TotalMinutes > 1.0)
-                return Localizer.F(Resources.TimeAgo_Minutes, (int)timeSpan.TotalMinutes);
-
-            return Resources.TimeAgo_JustNow;
+            return timeSpan.TotalMinutes > 1.0 ? Localizer.F(Resources.TimeAgo_Minutes, (int)timeSpan.TotalMinutes) : Resources.TimeAgo_JustNow;
         }
     }
 }

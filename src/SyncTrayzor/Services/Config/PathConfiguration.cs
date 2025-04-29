@@ -14,12 +14,12 @@ namespace SyncTrayzor.Services.Config
 
         public PathConfiguration()
         {
-            this.LogFilePath = @"logs";
-            this.ConfigurationFilePath = @"data\config.xml";
-            this.ConfigurationFileBackupPath = @"data\config-backups";
-            this.CefCachePath = @"data\cef\cache";
-            this.SyncthingPath = @"data\syncthing.exe";
-            this.SyncthingHomePath = @"data\syncthing";
+            LogFilePath = @"logs";
+            ConfigurationFilePath = @"data\config.xml";
+            ConfigurationFileBackupPath = @"data\config-backups";
+            CefCachePath = @"data\cef\cache";
+            SyncthingPath = @"data\syncthing.exe";
+            SyncthingHomePath = @"data\syncthing";
         }
     }
 }

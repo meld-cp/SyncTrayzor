@@ -2,6 +2,6 @@
 {
     public class ViewModelLocator
     {
-        public DummyFileTransfersTrayViewModel FileTransfersTrayViewModel => new DummyFileTransfersTrayViewModel();
+        public DummyFileTransfersTrayViewModel FileTransfersTrayViewModel => new();
     }
 }

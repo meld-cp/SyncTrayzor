@@ -26,23 +26,23 @@ namespace SyncTrayzor.Pages
 
         private readonly CustomResourceRequestHandler customResourceRequestHandler;
 
-        private readonly object cultureLock = new object(); // This can be read from many threads
+        private readonly object cultureLock = new(); // This can be read from many threads
         private CultureInfo culture;
         private double zoomLevel;
 
         public string Location
         {
-            get => this.WebBrowser?.Address;
+            get => WebBrowser?.Address;
             private set
             {
-                if (this.WebBrowser != null)
-                    this.WebBrowser.Address = value;
+                if (WebBrowser != null)
+                    WebBrowser.Address = value;
             }
         }
         
         private SyncthingState syncthingState { get; set; }
-        public bool ShowSyncthingStarting => this.syncthingState == SyncthingState.Starting;
-        public bool ShowSyncthingStopped => this.syncthingState == SyncthingState.Stopped;
+        public bool ShowSyncthingStarting => syncthingState == SyncthingState.Starting;
+        public bool ShowSyncthingStopped => syncthingState == SyncthingState.Stopped;
 
         public ChromiumWebBrowser WebBrowser { get; set; }
 
@@ -62,33 +62,33 @@ namespace SyncTrayzor.Pages
             this.pathsProvider = pathsProvider;
 
             var configuration = this.configurationProvider.Load();
-            this.zoomLevel = configuration.SyncthingWebBrowserZoomLevel;
+            zoomLevel = configuration.SyncthingWebBrowserZoomLevel;
 
-            this.syncthingManager.StateChanged += this.SyncthingStateChanged;
+            this.syncthingManager.StateChanged += SyncthingStateChanged;
             
-            this.customResourceRequestHandler = new CustomResourceRequestHandler(this);
-            this.callback = new JavascriptCallbackObject(this);
+            customResourceRequestHandler = new CustomResourceRequestHandler(this);
+            callback = new JavascriptCallbackObject(this);
 
-            this.SetCulture(configuration);
-            configurationProvider.ConfigurationChanged += this.ConfigurationChanged;
+            SetCulture(configuration);
+            configurationProvider.ConfigurationChanged += ConfigurationChanged;
         }
 
         private void SyncthingStateChanged(object sender, SyncthingStateChangedEventArgs e)
         {
-            this.syncthingState = e.NewState;
-            this.RefreshBrowser();
+            syncthingState = e.NewState;
+            RefreshBrowser();
         }
 
         private void ConfigurationChanged(object sender, ConfigurationChangedEventArgs e)
         {
-            this.SetCulture(e.NewConfiguration);
+            SetCulture(e.NewConfiguration);
         }
 
         private void SetCulture(Configuration configuration)
         {
-            lock (this.cultureLock)
+            lock (cultureLock)
             {
-                this.culture = configuration.UseComputerCulture ? Thread.CurrentThread.CurrentUICulture : null;
+                culture = configuration.UseComputerCulture ? Thread.CurrentThread.CurrentUICulture : null;
             }
         }
 
@@ -96,13 +96,13 @@ namespace SyncTrayzor.Pages
         {
             if (!(Cef.IsInitialized ?? false))
             {
-                var configuration = this.configurationProvider.Load();
+                var configuration = configurationProvider.Load();
 
                 var settings = new CefSettings()
                 {
                     RemoteDebuggingPort = AppSettings.Instance.CefRemoteDebuggingPort,
                     // We really only want to set the LocalStorage path, but we don't have that level of control....
-                    CachePath = this.pathsProvider.CefCachePath,
+                    CachePath = pathsProvider.CefCachePath,
                     IgnoreCertificateErrors = true,
                     LogSeverity = LogSeverity.Disable,
                 };
@@ -124,9 +124,9 @@ namespace SyncTrayzor.Pages
             }
 
             var webBrowser = new ChromiumWebBrowser();
-            this.InitializeBrowser(webBrowser);
-            this.WebBrowser = webBrowser;
-            this.RefreshBrowser();
+            InitializeBrowser(webBrowser);
+            WebBrowser = webBrowser;
+            RefreshBrowser();
         }
 
         private void InitializeBrowser(ChromiumWebBrowser webBrowser)
@@ -136,7 +136,7 @@ namespace SyncTrayzor.Pages
             webBrowser.LifeSpanHandler = this;
             webBrowser.MenuHandler = this;
             webBrowser.JavascriptObjectRepository.Settings.LegacyBindingEnabled = true;
-            webBrowser.JavascriptObjectRepository.Register("callbackObject", this.callback);
+            webBrowser.JavascriptObjectRepository.Register("callbackObject", callback);
 
             // So. Fun story. From https://github.com/cefsharp/CefSharp/issues/738#issuecomment-91099199, we need to set the zoom level
             // in the FrameLoadStart event. However, the IWpfWebBrowser's ZoomLevel is a DependencyProperty, and it wraps
@@ -150,7 +150,7 @@ namespace SyncTrayzor.Pages
             // However, this means that the DP value isn't updated... Which means we can't use the DP at all. We have to call SetZoomLevel
             // *everywhere*, and that means keeping a local field zoomLevel to track the current zoom level. Such is life
 
-            webBrowser.FrameLoadStart += (o, e) => webBrowser.SetZoomLevel(this.zoomLevel);
+            webBrowser.FrameLoadStart += (o, e) => webBrowser.SetZoomLevel(zoomLevel);
             webBrowser.FrameLoadEnd += (o, e) =>
             {
                 if (e.Frame.IsMain && e.Url != "about:blank")
@@ -223,56 +223,56 @@ namespace SyncTrayzor.Pages
 
         public void RefreshBrowserNukeCache()
         {
-            if (this.Location == this.GetSyncthingAddress().ToString())
+            if (Location == GetSyncthingAddress().ToString())
             {
-                this.WebBrowser?.Reload(ignoreCache: true);
+                WebBrowser?.Reload(ignoreCache: true);
             }
-            else if (this.syncthingManager.State == SyncthingState.Running)
+            else if (syncthingManager.State == SyncthingState.Running)
             {
-                this.Location = this.GetSyncthingAddress().ToString();
+                Location = GetSyncthingAddress().ToString();
             }
         }
 
         public void RefreshBrowser()
         {
-            this.Location = "about:blank";
-            if (this.syncthingManager.State == SyncthingState.Running)
+            Location = "about:blank";
+            if (syncthingManager.State == SyncthingState.Running)
             {
-                this.Location = this.GetSyncthingAddress().ToString();
+                Location = GetSyncthingAddress().ToString();
             }
         }
 
         public void ZoomIn()
         {
-            this.ZoomTo(this.zoomLevel + 0.2);
+            ZoomTo(zoomLevel + 0.2);
         }
 
         public void ZoomOut()
         {
-            this.ZoomTo(this.zoomLevel - 0.2);
+            ZoomTo(zoomLevel - 0.2);
         }
 
         public void ZoomReset()
         {
-            this.ZoomTo(0.0);
+            ZoomTo(0.0);
         }
 
         private void ZoomTo(double zoomLevel)
         {
-            if (this.WebBrowser == null || this.syncthingState != SyncthingState.Running)
+            if (WebBrowser == null || syncthingState != SyncthingState.Running)
                 return;
 
             this.zoomLevel = zoomLevel;
-            this.WebBrowser.SetZoomLevel(zoomLevel);
-            this.configurationProvider.AtomicLoadAndSave(c => c.SyncthingWebBrowserZoomLevel = zoomLevel);
+            WebBrowser.SetZoomLevel(zoomLevel);
+            configurationProvider.AtomicLoadAndSave(c => c.SyncthingWebBrowserZoomLevel = zoomLevel);
         }
 
         private void OpenFolder(string folderId)
         {
-            if (!this.syncthingManager.Folders.TryFetchById(folderId, out var folder))
+            if (!syncthingManager.Folders.TryFetchById(folderId, out var folder))
                 return;
 
-            this.processStartProvider.ShowFolderInExplorer(folder.Path);
+            processStartProvider.ShowFolderInExplorer(folder.Path);
         }
 
         private void BrowseFolderPath()
@@ -289,15 +289,15 @@ namespace SyncTrayzor.Pages
                     var script =
                     @"$('#folderPath').val('" + dialog.FileName.Replace("\\", "\\\\").Replace("'", "\\'") + "');" +
                     @"$('#folderPath').change();";
-                    this.WebBrowser.ExecuteScriptAsync(script);
+                    WebBrowser.ExecuteScriptAsync(script);
                 }
             });
         }
 
         protected override void OnClose()
         {
-            this.WebBrowser?.Dispose();
-            this.WebBrowser = null;
+            WebBrowser?.Dispose();
+            WebBrowser = null;
 
             // This is such a dirty, horrible, hacky thing to do...
             // So it turns out that doesn't like being shut down, then re-initialized, see http://www.magpcss.org/ceforum/viewtopic.php?f=6&t=10807&start=10
@@ -312,14 +312,14 @@ namespace SyncTrayzor.Pages
 
         public async void Start()
         {
-            await this.syncthingManager.StartWithErrorDialogAsync(this.windowManager);
+            await syncthingManager.StartWithErrorDialogAsync(windowManager);
         }
 
         private Uri GetSyncthingAddress()
         {
             // SyncthingManager will always request over HTTPS, whether Syncthing enforces this or not.
             // However in an attempt to avoid #201 we'll use HTTP if available, and if not Syncthing will redirect us.
-            var uriBuilder = new UriBuilder(this.syncthingManager.Address.NormalizeZeroHost())
+            var uriBuilder = new UriBuilder(syncthingManager.Address.NormalizeZeroHost())
             {
                 Scheme = "http"
             };
@@ -330,7 +330,7 @@ namespace SyncTrayzor.Pages
 
         IResourceRequestHandler IResourceRequestHandlerFactory.GetResourceRequestHandler(IWebBrowser chromiumWebBrowser, IBrowser browser, IFrame frame, IRequest request, bool isNavigation, bool isDownload, string requestInitiator, ref bool disableDefaultHandling)
         {
-            return this.customResourceRequestHandler;
+            return customResourceRequestHandler;
         }
 
         private CefReturnValue OnBeforeResourceLoad(IWebBrowser browserControl, IBrowser browser, IFrame frame, IRequest request, IRequestCallback callback)
@@ -339,26 +339,26 @@ namespace SyncTrayzor.Pages
             // We can get http requests just after changing Syncthing's address: after we've navigated to about:blank but before navigating to
             // the new address (Which we do when Syncthing hits the 'running' State).
             // Therefore only open external browsers if Syncthing is actually running
-            if (this.syncthingManager.State == SyncthingState.Running && (uri.Scheme == "http" || uri.Scheme == "https") && uri.Host != this.GetSyncthingAddress().Host)
+            if (syncthingManager.State == SyncthingState.Running && (uri.Scheme == "http" || uri.Scheme == "https") && uri.Host != GetSyncthingAddress().Host)
             {
-                this.processStartProvider.StartDetached(request.Url);
+                processStartProvider.StartDetached(request.Url);
                 return CefReturnValue.Cancel;
             }
 
             // See https://github.com/canton7/SyncTrayzor/issues/13
             // and https://github.com/cefsharp/CefSharp/issues/534#issuecomment-60694502
             var headers = request.Headers;
-            headers["X-API-Key"] = this.syncthingManager.ApiKey;
+            headers["X-API-Key"] = syncthingManager.ApiKey;
 
             // I don't know why it adds these, even when we explicitly disable caching.
             headers.Remove("Cache-Control");
             headers.Remove("If-None-Match");
             headers.Remove("If-Modified-Since");
 
-            lock (this.cultureLock)
+            lock (cultureLock)
             {
-                if (this.culture != null)
-                    headers["Accept-Language"] = $"{this.culture.Name};q=0.8,en;q=0.6";
+                if (culture != null)
+                    headers["Accept-Language"] = $"{culture.Name};q=0.8,en;q=0.6";
             }
             request.Headers = headers;
 
@@ -370,8 +370,8 @@ namespace SyncTrayzor.Pages
             if (syncthingState == SyncthingState.Running)
             {
                 // Workaround for https://github.com/cefsharp/CefSharp/issues/4953
-                this.WebBrowser?.GetBrowserHost()?.Invalidate(PaintElementType.View);
-                this.WebBrowser?.InvalidateVisual();
+                WebBrowser?.GetBrowserHost()?.Invalidate(PaintElementType.View);
+                WebBrowser?.InvalidateVisual();
             }
         }
 
@@ -381,7 +381,7 @@ namespace SyncTrayzor.Pages
 
         bool ILifeSpanHandler.OnBeforePopup(IWebBrowser browserControl, IBrowser browser, IFrame frame, string targetUrl, string targetFrameName, WindowOpenDisposition targetDisposition, bool userGesture, IPopupFeatures popupFeatures, IWindowInfo windowInfo, IBrowserSettings browserSettings, ref bool noJavascriptAccess, out IWebBrowser newBrowser)
         {
-            this.processStartProvider.StartDetached(targetUrl);
+            processStartProvider.StartDetached(targetUrl);
             newBrowser = null;
             return true;
         }
@@ -417,8 +417,8 @@ namespace SyncTrayzor.Pages
 
         public void Dispose()
         {
-            this.syncthingManager.StateChanged -= this.SyncthingStateChanged;
-            this.configurationProvider.ConfigurationChanged -= this.ConfigurationChanged;
+            syncthingManager.StateChanged -= SyncthingStateChanged;
+            configurationProvider.ConfigurationChanged -= ConfigurationChanged;
         }
 
         private class CustomRequestHandler : RequestHandler
@@ -442,7 +442,7 @@ namespace SyncTrayzor.Pages
 
             protected override CefReturnValue OnBeforeResourceLoad(IWebBrowser chromiumWebBrowser, IBrowser browser, IFrame frame, IRequest request, IRequestCallback callback)
             {
-                return this.parent.OnBeforeResourceLoad(chromiumWebBrowser, browser, frame, request, callback);
+                return parent.OnBeforeResourceLoad(chromiumWebBrowser, browser, frame, request, callback);
             }
         }
 
@@ -457,12 +457,12 @@ namespace SyncTrayzor.Pages
 
             public void OpenFolder(string folderId)
             {
-                this.parent.OpenFolder(folderId);
+                parent.OpenFolder(folderId);
             }
 
             public void BrowseFolderPath()
             {
-                this.parent.BrowseFolderPath();
+                parent.BrowseFolderPath();
             }
         }
     }

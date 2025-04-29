@@ -18,7 +18,7 @@
 
         public IUpdateChecker CreateUpdateChecker(string baseUrl, string variant)
         {
-            return new UpdateChecker(this.assemblyProvider.Version, this.assemblyProvider.ProcessorArchitecture, variant, this.updateNotificationClientFactory.CreateUpdateNotificationClient(baseUrl));
+            return new UpdateChecker(assemblyProvider.Version, assemblyProvider.ProcessorArchitecture, variant, updateNotificationClientFactory.CreateUpdateNotificationClient(baseUrl));
         }
     }
 }

@@ -11,8 +11,8 @@ namespace SyncTrayzor.Syncthing.EventWatcher
 
         public FolderStatusChangedEventArgs(string folderId, FolderStatus folderStatus)
         {
-            this.FolderId = folderId;
-            this.FolderStatus = folderStatus;
+            FolderId = folderId;
+            FolderStatus = folderStatus;
         }
     }
 }

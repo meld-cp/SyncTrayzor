@@ -11,7 +11,7 @@ namespace SyncTrayzor.Localization
     public static class Localizer
     {
         private static readonly SmartFormatter formatter;
-        private static readonly CultureInfo baseCulture = new CultureInfo("en-US", false);
+        private static readonly CultureInfo baseCulture = new("en-US", false);
 
         public static FlowDirection FlowDirection => Thread.CurrentThread.CurrentUICulture.TextInfo.IsRightToLeft ? FlowDirection.RightToLeft : FlowDirection.LeftToRight;
         

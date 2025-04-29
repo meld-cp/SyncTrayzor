@@ -31,17 +31,17 @@ namespace SyncTrayzor.Services.UpdateManagement
         {
             if (!String.IsNullOrWhiteSpace(checkResult.DownloadUrl) && !String.IsNullOrWhiteSpace(checkResult.Sha512sumDownloadUrl))
             {
-                this.installerPath = await this.updateDownloader.DownloadUpdateAsync(checkResult.DownloadUrl, checkResult.Sha512sumDownloadUrl, checkResult.NewVersion, updateDownloadFileName);
-                this.CanAutoInstall = true;
+                installerPath = await updateDownloader.DownloadUpdateAsync(checkResult.DownloadUrl, checkResult.Sha512sumDownloadUrl, checkResult.NewVersion, updateDownloadFileName);
+                CanAutoInstall = true;
 
                 // If we return false, the upgrade will be aborted
-                return this.installerPath != null;
+                return installerPath != null;
             }
             else
             {
                 logger.Info($"Can't auto-install, as DownloadUrl is {checkResult.DownloadUrl} and sha512sumDownloadUrl is {checkResult.Sha512sumDownloadUrl}");
                 // Can continue, but not auto-install
-                this.CanAutoInstall = false;
+                CanAutoInstall = false;
 
                 return true;
             }
@@ -49,12 +49,12 @@ namespace SyncTrayzor.Services.UpdateManagement
 
         public void AutoInstall(string pathToRestartApplication)
         {
-            if (!this.CanAutoInstall)
+            if (!CanAutoInstall)
                 throw new InvalidOperationException("Auto-install not available");
-            if (this.installerPath == null)
+            if (installerPath == null)
                 throw new InvalidOperationException("TryHandleUpdateAvailableAsync returned false: cannot call AutoInstall");
 
-            this.processStartProvider.StartElevatedDetached(this.installerPath, "/SILENT", pathToRestartApplication);
+            processStartProvider.StartElevatedDetached(installerPath, "/SILENT", pathToRestartApplication);
         }
     }
 }

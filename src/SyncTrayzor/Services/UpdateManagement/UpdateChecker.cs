@@ -1,7 +1,7 @@
 ﻿using NLog;
 using System;
 using System.Collections.Generic;
-using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
 namespace SyncTrayzor.Services.UpdateManagement
@@ -21,17 +21,17 @@ namespace SyncTrayzor.Services.UpdateManagement
             string releaseNotes,
             string releasePageUrl)
         {
-            this.NewVersion = newVersion;
-            this.DownloadUrl = downloadUrl;
-            this.Sha512sumDownloadUrl = sha512sumDownloadUrl;
-            this.ReleaseNotes = releaseNotes;
-            this.ReleasePageUrl = releasePageUrl;
+            NewVersion = newVersion;
+            DownloadUrl = downloadUrl;
+            Sha512sumDownloadUrl = sha512sumDownloadUrl;
+            ReleaseNotes = releaseNotes;
+            ReleasePageUrl = releasePageUrl;
         }
 
         public override string ToString()
         {
-            return $"<VersionCheckResults NewVersion={this.NewVersion} DownloadUrl={this.DownloadUrl} Sha512sumDownloadUrl={this.Sha512sumDownloadUrl} " +
-                $"ReleaseNotes={this.ReleaseNotes} ReleasePageUrl={this.ReleasePageUrl}>";
+            return $"<VersionCheckResults NewVersion={NewVersion} DownloadUrl={DownloadUrl} Sha512sumDownloadUrl={Sha512sumDownloadUrl} " +
+                $"ReleaseNotes={ReleaseNotes} ReleasePageUrl={ReleasePageUrl}>";
         }
     }
 
@@ -44,24 +44,23 @@ namespace SyncTrayzor.Services.UpdateManagement
     public class UpdateChecker : IUpdateChecker
     {
         private static readonly Logger logger = LogManager.GetCurrentClassLogger();
-        private static readonly Dictionary<ProcessorArchitecture, string> processorArchitectureToStringMap = new Dictionary<ProcessorArchitecture, string>()
+        private static readonly Dictionary<Architecture, string> processorArchitectureToStringMap = new()
         {
-            { ProcessorArchitecture.Amd64, "x64" },
-            { ProcessorArchitecture.Arm, "arm" },
-            { ProcessorArchitecture.IA64, "x64" },
-            { ProcessorArchitecture.MSIL, "msil" },
-            { ProcessorArchitecture.None, "none" },
-            { ProcessorArchitecture.X86, "x86" }
+            { Architecture.X64, "x64" },
+            { Architecture.X86, "x86" },
+            { Architecture.Arm, "arm" },
+            { Architecture.Armv6, "arm" },
+            { Architecture.Arm64, "arm64" },
         };
 
         private readonly Version applicationVersion;
-        private readonly ProcessorArchitecture processorArchitecture;
+        private readonly Architecture processorArchitecture;
         private readonly string variant;
         private readonly IUpdateNotificationClient updateNotificationClient;
 
         public UpdateChecker(
             Version applicationVersion,
-            ProcessorArchitecture processorArchitecture,
+            Architecture processorArchitecture,
             string variant,
             IUpdateNotificationClient updateNotificationClient)
         {
@@ -76,10 +75,10 @@ namespace SyncTrayzor.Services.UpdateManagement
             // We don't care if we fail
             try
             {
-                var update = await this.updateNotificationClient.FetchUpdateAsync(
-                    this.applicationVersion.ToString(3),
-                    processorArchitectureToStringMap[this.processorArchitecture],
-                    this.variant);
+                var update = await updateNotificationClient.FetchUpdateAsync(
+                    applicationVersion.ToString(3),
+                    processorArchitectureToStringMap[processorArchitecture],
+                    variant);
 
                 if (update == null)
                 {
@@ -113,14 +112,14 @@ namespace SyncTrayzor.Services.UpdateManagement
         
         public async Task<VersionCheckResults> CheckForAcceptableUpdateAsync(Version latestIgnoredVersion)
         {
-            var results = await this.FetchUpdateAsync();
+            var results = await FetchUpdateAsync();
 
             if (results == null)
                 return null;
 
-            if (results.NewVersion <= this.applicationVersion)
+            if (results.NewVersion <= applicationVersion)
             {
-                logger.Warn($"Found update, but it's <= the current application version ({this.applicationVersion}), so ignoring");
+                logger.Warn($"Found update, but it's <= the current application version ({applicationVersion}), so ignoring");
                 return null;
             }
 

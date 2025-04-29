@@ -6,7 +6,6 @@
         xmlns:local="clr-namespace:SyncTrayzor.Pages.ConflictResolution"
         xmlns:s="https://github.com/canton7/Stylet"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-        xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
         xmlns:xaml="clr-namespace:SyncTrayzor.Xaml"
         xmlns:l="clr-namespace:SyncTrayzor.Localization"
         mc:Ignorable="d"

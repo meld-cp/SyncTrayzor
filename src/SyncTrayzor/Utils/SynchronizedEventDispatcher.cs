@@ -24,25 +24,25 @@ namespace SyncTrayzor.Utils
         public void Raise(EventHandler eventHandler)
         {
             if (eventHandler != null)
-                this.Post(_ => eventHandler(this.sender, EventArgs.Empty), null);
+                Post(_ => eventHandler(sender, EventArgs.Empty), null);
         }
 
         public void Raise<T>(EventHandler<T> eventHandler, T eventArgs)
         {
             if (eventHandler != null)
-                this.Post(_ => eventHandler(this.sender, eventArgs), null);
+                Post(_ => eventHandler(sender, eventArgs), null);
         }
 
         public void Raise<T>(EventHandler<T> eventHandler, Func<T> eventArgs)
         {
             if (eventHandler != null)
-                this.Post(_ => eventHandler(this.sender, eventArgs()), null);
+                Post(_ => eventHandler(sender, eventArgs()), null);
         }
 
         private void Post(SendOrPostCallback callback, object state)
         {
-            if (this.synchronizationContext != null)
-                this.synchronizationContext.Post(callback, state);
+            if (synchronizationContext != null)
+                synchronizationContext.Post(callback, state);
             else
                 callback(state);
         }

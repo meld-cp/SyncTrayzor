@@ -24,7 +24,7 @@ namespace SyncTrayzor.Pages.Settings
         {
             public IndividualFlagsValidator()
             {
-                this.RuleFor(x => x).Custom((str, ctx) =>
+                RuleFor(x => x).Custom((str, ctx) =>
                 {
                     KeyValueStringParser.TryParse(str, out var result, mustHaveValue: false);
 

@@ -8,13 +8,13 @@ namespace SyncTrayzor.Xaml
     {
         public CultureAwareBinding()
         {
-            this.ConverterCulture = Thread.CurrentThread.CurrentCulture;
+            ConverterCulture = Thread.CurrentThread.CurrentCulture;
         }
 
         public CultureAwareBinding(string path)
             : base(path)
         {
-            this.ConverterCulture = Thread.CurrentThread.CurrentCulture;
+            ConverterCulture = Thread.CurrentThread.CurrentCulture;
         }
     }
 }

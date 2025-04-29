@@ -7,11 +7,11 @@ namespace SyncTrayzor.Pages.BarAlerts
     {
         public AlertSeverity Severity => AlertSeverity.Warning;
 
-        public BindableCollection<string> FailingFolders { get; } = new BindableCollection<string>();
+        public BindableCollection<string> FailingFolders { get; } = new();
 
         public FailedTransfersAlertViewModel(IEnumerable<string> failingFolders)
         {
-            this.FailingFolders.AddRange(failingFolders);
+            FailingFolders.AddRange(failingFolders);
         }
     }
 }

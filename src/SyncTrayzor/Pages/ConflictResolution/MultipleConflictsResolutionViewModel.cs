@@ -12,30 +12,30 @@ namespace SyncTrayzor.Pages.ConflictResolution
 
         public void ChooseOriginal()
         {
-            foreach (var conflict in this.Conflicts)
+            foreach (var conflict in Conflicts)
             {
-                this.Delegate.ChooseOriginal(conflict);
+                Delegate.ChooseOriginal(conflict);
             }
         }
 
         public void ChooseNewest()
         {
-            foreach(var conflict in this.Conflicts)
+            foreach(var conflict in Conflicts)
             {
                 var newestOption = conflict.ConflictOptions.MaxBy(x => x.DateCreated);
                 if (newestOption.DateCreated > conflict.LastModified)
-                    this.Delegate.ChooseConflictFile(conflict, newestOption);
+                    Delegate.ChooseConflictFile(conflict, newestOption);
                 else
-                    this.Delegate.ChooseOriginal(conflict);
+                    Delegate.ChooseOriginal(conflict);
             }
         }
 
         public void ChooseNewestConflict()
         {
-            foreach (var conflict in this.Conflicts)
+            foreach (var conflict in Conflicts)
             {
                 var newestOption = conflict.ConflictOptions.MaxBy(x => x.DateCreated);
-                this.Delegate.ChooseConflictFile(conflict, newestOption);
+                Delegate.ChooseConflictFile(conflict, newestOption);
             }
         }
     }

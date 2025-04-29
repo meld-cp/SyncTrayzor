@@ -12,35 +12,31 @@ namespace SyncTrayzor.Pages
         public bool DontRemindMe { get; private set; }
         public bool ShowMoreDetails { get; private set; }
 
-        public NewVersionAlertToastViewModel()
-        {
-        }
-
         public void Download()
         {
-            this.RequestClose(true);
+            RequestClose(true);
         }
 
         public void Install()
         {
-            this.RequestClose(true);
+            RequestClose(true);
         }
 
         public void RemindLater()
         {
-            this.RequestClose(false);
+            RequestClose(false);
         }
 
         public void DontRemind()
         {
-            this.DontRemindMe = true;
-            this.RequestClose(false);
+            DontRemindMe = true;
+            RequestClose(false);
         }
 
         public void DisplayMoreDetails()
         {
-            this.ShowMoreDetails = true;
-            this.RequestClose(false);
+            ShowMoreDetails = true;
+            RequestClose(false);
         }
     }
 }

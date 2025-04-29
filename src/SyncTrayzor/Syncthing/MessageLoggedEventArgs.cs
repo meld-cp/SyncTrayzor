@@ -8,7 +8,7 @@ namespace SyncTrayzor.Syncthing
 
         public MessageLoggedEventArgs(string logMessage)
         {
-            this.LogMessage = logMessage;
+            LogMessage = logMessage;
         }
     }
 }

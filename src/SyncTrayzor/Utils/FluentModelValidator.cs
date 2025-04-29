@@ -25,7 +25,7 @@ namespace SyncTrayzor.Utils
         {
             // If someone's calling us synchronously, and ValidationAsync does not complete synchronously,
             // we'll deadlock unless we continue on another thread.
-            var result = await this.validator.ValidateAsync(this.subject, options => options.IncludeProperties(propertyName))
+            var result = await validator.ValidateAsync(subject, options => options.IncludeProperties(propertyName))
                 .ConfigureAwait(false);
             return result.Errors.Select(x => x.ErrorMessage);
         }
@@ -34,7 +34,7 @@ namespace SyncTrayzor.Utils
         {
             // If someone's calling us synchronously, and ValidationAsync does not complete synchronously,
             // we'll deadlock unless we continue on another thread.
-            return (await this.validator.ValidateAsync(this.subject).ConfigureAwait(false))
+            return (await validator.ValidateAsync(subject).ConfigureAwait(false))
                 .Errors.GroupBy(x => x.PropertyName)
                 .ToDictionary(x => x.Key, x => x.Select(failure => failure.ErrorMessage));
         }

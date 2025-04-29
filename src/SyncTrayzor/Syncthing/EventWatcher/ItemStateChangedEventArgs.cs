@@ -9,8 +9,8 @@ namespace SyncTrayzor.Syncthing.EventWatcher
 
         public ItemStateChangedEventArgs(string folder, string item)
         {
-            this.Folder = folder;
-            this.Item = item;
+            Folder = folder;
+            Item = item;
         }
     }
 }

@@ -21,12 +21,12 @@ namespace SyncTrayzor.Syncthing.ApiClient
         {
             get
             {
-                if (this.ErrorRaw == null)
+                if (ErrorRaw == null)
                     return null;
-                if (this.ErrorRaw.Type == JTokenType.String)
-                    return (string)this.ErrorRaw;
-                if (this.ErrorRaw.Type == JTokenType.Object)
-                    return (string)((JObject)this.ErrorRaw)["Err"];
+                if (ErrorRaw.Type == JTokenType.String)
+                    return (string)ErrorRaw;
+                if (ErrorRaw.Type == JTokenType.Object)
+                    return (string)((JObject)ErrorRaw)["Err"];
                 return null;
             }
         }
@@ -43,11 +43,11 @@ namespace SyncTrayzor.Syncthing.ApiClient
         [JsonProperty("data")]
         public ItemFinishedEventData Data { get; set; }
 
-        public override bool IsValid => this.Data != null &&
-            !string.IsNullOrWhiteSpace(this.Data.Item) &&
-            !string.IsNullOrWhiteSpace(this.Data.Folder) &&
-            this.Data.Type != ItemChangedItemType.Unknown &&
-            this.Data.Action != ItemChangedActionType.Unknown;
+        public override bool IsValid => Data != null &&
+            !string.IsNullOrWhiteSpace(Data.Item) &&
+            !string.IsNullOrWhiteSpace(Data.Folder) &&
+            Data.Type != ItemChangedItemType.Unknown &&
+            Data.Action != ItemChangedActionType.Unknown;
 
         public override void Visit(IEventVisitor visitor)
         {
@@ -56,7 +56,7 @@ namespace SyncTrayzor.Syncthing.ApiClient
 
         public override string ToString()
         {
-            return $"<ItemFinished ID={this.Id} Time={this.Time} Item={this.Data.Item} Folder={this.Data.Folder} Error={this.Data.Error}>";
+            return $"<ItemFinished ID={Id} Time={Time} Item={Data.Item} Folder={Data.Folder} Error={Data.Error}>";
         }
     }
 }

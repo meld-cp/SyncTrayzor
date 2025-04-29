@@ -51,11 +51,11 @@ namespace SyncTrayzor.NotifyIcon
         private bool _showOnlyOnClose;
         public bool ShowOnlyOnClose
         {
-            get => this._showOnlyOnClose;
+            get => _showOnlyOnClose;
             set
             {
-                this._showOnlyOnClose = value;
-                this.viewModel.Visible = !this._showOnlyOnClose || this.applicationWindowState.ScreenState == ScreenState.Closed;
+                _showOnlyOnClose = value;
+                viewModel.Visible = !_showOnlyOnClose || applicationWindowState.ScreenState == ScreenState.Closed;
             }
         }
 
@@ -64,8 +64,8 @@ namespace SyncTrayzor.NotifyIcon
         private bool _closeToTray;
         public bool CloseToTray
         {
-            get => this._closeToTray;
-            set { this._closeToTray = value; this.SetShutdownMode(); }
+            get => _closeToTray;
+            set { _closeToTray = value; SetShutdownMode(); }
         }
 
         // FolderId -> is enabled
@@ -89,18 +89,18 @@ namespace SyncTrayzor.NotifyIcon
             this.syncthingManager = syncthingManager;
             this.connectedEventDebouncer = connectedEventDebouncer;
 
-            this.taskbarIcon = (TaskbarIcon)this.application.FindResource("TaskbarIcon");
-            this.taskbarIcon.TrayBalloonTipClicked += (o, e) =>
+            taskbarIcon = (TaskbarIcon)this.application.FindResource("TaskbarIcon");
+            taskbarIcon.TrayBalloonTipClicked += (o, e) =>
             {
                 this.applicationWindowState.EnsureInForeground();
             };
 
             // Need to hold off until after the application is started, otherwise the ViewManager won't be set
-            this.application.Startup += this.ApplicationStartup;
+            this.application.Startup += ApplicationStartup;
 
-            this.applicationWindowState.RootWindowActivated += this.RootViewModelActivated;
-            this.applicationWindowState.RootWindowDeactivated += this.RootViewModelDeactivated;
-            this.applicationWindowState.RootWindowClosed += this.RootViewModelClosed;
+            this.applicationWindowState.RootWindowActivated += RootViewModelActivated;
+            this.applicationWindowState.RootWindowDeactivated += RootViewModelDeactivated;
+            this.applicationWindowState.RootWindowClosed += RootViewModelClosed;
 
             this.viewModel.WindowOpenRequested += (o, e) =>
             {
@@ -114,63 +114,63 @@ namespace SyncTrayzor.NotifyIcon
             };
             this.viewModel.ExitRequested += (o, e) => this.application.Shutdown();
 
-            this.syncthingManager.TransferHistory.FolderSynchronizationFinished += this.FolderSynchronizationFinished;
-            this.syncthingManager.Devices.DeviceConnected += this.DeviceConnected;
-            this.syncthingManager.Devices.DeviceDisconnected += this.DeviceDisconnected;
-            this.syncthingManager.DeviceRejected += this.DeviceRejected;
-            this.syncthingManager.FolderRejected += this.FolderRejected;
+            this.syncthingManager.TransferHistory.FolderSynchronizationFinished += FolderSynchronizationFinished;
+            this.syncthingManager.Devices.DeviceConnected += DeviceConnected;
+            this.syncthingManager.Devices.DeviceDisconnected += DeviceDisconnected;
+            this.syncthingManager.DeviceRejected += DeviceRejected;
+            this.syncthingManager.FolderRejected += FolderRejected;
 
-            this.connectedEventDebouncer.DeviceConnected += this.DebouncedDeviceConnected;
+            this.connectedEventDebouncer.DeviceConnected += DebouncedDeviceConnected;
         }
 
         private void ApplicationStartup(object sender, EventArgs e)
         {
-            this.viewManager.BindViewToModel(this.taskbarIcon, this.viewModel);
+            viewManager.BindViewToModel(taskbarIcon, viewModel);
         }
 
         private void DeviceConnected(object sender, DeviceConnectedEventArgs e)
         {
-            if (this.ShowDeviceConnectivityBalloons &&
-                    DateTime.UtcNow - this.syncthingManager.StartedTime > syncedDeadTime)
+            if (ShowDeviceConnectivityBalloons &&
+                    DateTime.UtcNow - syncthingManager.StartedTime > syncedDeadTime)
             {
-                this.connectedEventDebouncer.Connect(e.Device);
+                connectedEventDebouncer.Connect(e.Device);
             }
         }
 
         private void DebouncedDeviceConnected(object sender, DeviceConnectedEventArgs e)
         {
-            this.taskbarIcon.HideBalloonTip();
-            this.taskbarIcon.ShowBalloonTip(Resources.TrayIcon_Balloon_DeviceConnected_Title, Localizer.F(Resources.TrayIcon_Balloon_DeviceConnected_Message, e.Device.Name), BalloonIcon.Info);
+            taskbarIcon.HideBalloonTip();
+            taskbarIcon.ShowBalloonTip(Resources.TrayIcon_Balloon_DeviceConnected_Title, Localizer.F(Resources.TrayIcon_Balloon_DeviceConnected_Message, e.Device.Name), BalloonIcon.Info);
         }
 
         private void DeviceDisconnected(object sender, DeviceDisconnectedEventArgs e)
         {
-            if (this.ShowDeviceConnectivityBalloons &&
-                    DateTime.UtcNow - this.syncthingManager.StartedTime > syncedDeadTime)
+            if (ShowDeviceConnectivityBalloons &&
+                    DateTime.UtcNow - syncthingManager.StartedTime > syncedDeadTime)
             {
-                if (this.connectedEventDebouncer.Disconnect(e.Device))
+                if (connectedEventDebouncer.Disconnect(e.Device))
                 {
-                    this.taskbarIcon.HideBalloonTip();
-                    this.taskbarIcon.ShowBalloonTip(Resources.TrayIcon_Balloon_DeviceDisconnected_Title, Localizer.F(Resources.TrayIcon_Balloon_DeviceDisconnected_Message, e.Device.Name), BalloonIcon.Info);
+                    taskbarIcon.HideBalloonTip();
+                    taskbarIcon.ShowBalloonTip(Resources.TrayIcon_Balloon_DeviceDisconnected_Title, Localizer.F(Resources.TrayIcon_Balloon_DeviceDisconnected_Message, e.Device.Name), BalloonIcon.Info);
                 }
             }
         }
 
         private void DeviceRejected(object sender, DeviceRejectedEventArgs e)
         {
-            if (this.ShowDeviceOrFolderRejectedBalloons)
+            if (ShowDeviceOrFolderRejectedBalloons)
             {
-                this.taskbarIcon.HideBalloonTip();
-                this.taskbarIcon.ShowBalloonTip(Resources.TrayIcon_Balloon_DeviceRejected_Title, Localizer.F(Resources.TrayIcon_Balloon_DeviceRejected_Message, e.DeviceId, e.Address), BalloonIcon.Info);
+                taskbarIcon.HideBalloonTip();
+                taskbarIcon.ShowBalloonTip(Resources.TrayIcon_Balloon_DeviceRejected_Title, Localizer.F(Resources.TrayIcon_Balloon_DeviceRejected_Message, e.DeviceId, e.Address), BalloonIcon.Info);
             }
         }
 
         private void FolderRejected(object sender, FolderRejectedEventArgs e)
         {
-            if (this.ShowDeviceOrFolderRejectedBalloons)
+            if (ShowDeviceOrFolderRejectedBalloons)
             {
-                this.taskbarIcon.HideBalloonTip();
-                this.taskbarIcon.ShowBalloonTip(Resources.TrayIcon_Balloon_FolderRejected_Title, Localizer.F(Resources.TrayIcon_Balloon_FolderRejected_Message, e.Device.Name, e.Folder.Label), BalloonIcon.Info);
+                taskbarIcon.HideBalloonTip();
+                taskbarIcon.ShowBalloonTip(Resources.TrayIcon_Balloon_FolderRejected_Title, Localizer.F(Resources.TrayIcon_Balloon_FolderRejected_Message, e.Device.Name, e.Folder.Label), BalloonIcon.Info);
             }
         }
 
@@ -182,16 +182,16 @@ namespace SyncTrayzor.NotifyIcon
             if (e.FileTransfers.All(x => x.Error != null && !x.IsNewError))
                 return;
 
-            if (this.FolderNotificationsEnabled != null && this.FolderNotificationsEnabled.TryGetValue(e.Folder.FolderId, out bool notificationsEnabled) && notificationsEnabled)
+            if (FolderNotificationsEnabled != null && FolderNotificationsEnabled.TryGetValue(e.Folder.FolderId, out bool notificationsEnabled) && notificationsEnabled)
             {
                 if (e.FileTransfers.Count == 0)
                 {
-                    if (this.ShowSynchronizedBalloonEvenIfNothingDownloaded &&
-                        DateTime.UtcNow - this.syncthingManager.LastConnectivityEventTime > syncedDeadTime &&
-                        DateTime.UtcNow - this.syncthingManager.StartedTime > syncedDeadTime)
+                    if (ShowSynchronizedBalloonEvenIfNothingDownloaded &&
+                        DateTime.UtcNow - syncthingManager.LastConnectivityEventTime > syncedDeadTime &&
+                        DateTime.UtcNow - syncthingManager.StartedTime > syncedDeadTime)
                     {
-                        this.taskbarIcon.HideBalloonTip();
-                        this.taskbarIcon.ShowBalloonTip(Resources.TrayIcon_Balloon_FinishedSyncing_Title, String.Format(Resources.TrayIcon_Balloon_FinishedSyncing_Message, e.Folder.Label), BalloonIcon.Info);
+                        taskbarIcon.HideBalloonTip();
+                        taskbarIcon.ShowBalloonTip(Resources.TrayIcon_Balloon_FinishedSyncing_Title, String.Format(Resources.TrayIcon_Balloon_FinishedSyncing_Message, e.Folder.Label), BalloonIcon.Info);
                     }
                 }
                 else if (e.FileTransfers.Count == 1)
@@ -215,8 +215,8 @@ namespace SyncTrayzor.NotifyIcon
 
                     if (msg != null)
                     {
-                        this.taskbarIcon.HideBalloonTip();
-                        this.taskbarIcon.ShowBalloonTip(Resources.TrayIcon_Balloon_FinishedSyncing_Title, msg, BalloonIcon.Info);
+                        taskbarIcon.HideBalloonTip();
+                        taskbarIcon.ShowBalloonTip(Resources.TrayIcon_Balloon_FinishedSyncing_Title, msg, BalloonIcon.Info);
                     }
                 }
                 else
@@ -247,108 +247,108 @@ namespace SyncTrayzor.NotifyIcon
 
                     var text = Localizer.F(Resources.TrayIcon_Balloon_FinishedSyncing_Multiple, e.Folder.Label, messageParts);
 
-                    this.taskbarIcon.HideBalloonTip();
-                    this.taskbarIcon.ShowBalloonTip(Resources.TrayIcon_Balloon_FinishedSyncing_Title, text, BalloonIcon.Info);
+                    taskbarIcon.HideBalloonTip();
+                    taskbarIcon.ShowBalloonTip(Resources.TrayIcon_Balloon_FinishedSyncing_Title, text, BalloonIcon.Info);
                 }
             }
         }
 
         private void SetShutdownMode()
         {
-            this.application.ShutdownMode = this._closeToTray ? ShutdownMode.OnExplicitShutdown : ShutdownMode.OnMainWindowClose;
+            application.ShutdownMode = _closeToTray ? ShutdownMode.OnExplicitShutdown : ShutdownMode.OnMainWindowClose;
         }
 
         public async Task<bool?> ShowBalloonAsync(object viewModel, int? timeout = null, CancellationToken? cancellationToken = null)
         {
             var token = cancellationToken ?? CancellationToken.None;
 
-            this.CloseCurrentlyOpenBalloon(cancel: false);
+            CloseCurrentlyOpenBalloon(cancel: false);
 
-            var view = this.viewManager.CreateViewForModel(viewModel);
-            this.taskbarIcon.ShowCustomBalloon(view, System.Windows.Controls.Primitives.PopupAnimation.Slide, timeout);
-            this.taskbarIcon.CustomBalloon.StaysOpen = false;
-            this.viewManager.BindViewToModel(view, viewModel); // Re-assign DataContext, after NotifyIcon overwrote it ><
+            var view = viewManager.CreateViewForModel(viewModel);
+            taskbarIcon.ShowCustomBalloon(view, System.Windows.Controls.Primitives.PopupAnimation.Slide, timeout);
+            taskbarIcon.CustomBalloon.StaysOpen = false;
+            viewManager.BindViewToModel(view, viewModel); // Re-assign DataContext, after NotifyIcon overwrote it ><
 
-            this.balloonTcs = new TaskCompletionSource<bool?>();
-            new BalloonConductor(this.taskbarIcon, viewModel, view, this.balloonTcs);
+            balloonTcs = new TaskCompletionSource<bool?>();
+            new BalloonConductor(taskbarIcon, viewModel, view, balloonTcs);
 
             using (token.Register(() =>
             {
-                if (this.taskbarIcon.CustomBalloon.Child == view)
-                    this.CloseCurrentlyOpenBalloon(cancel: true);
+                if (taskbarIcon.CustomBalloon.Child == view)
+                    CloseCurrentlyOpenBalloon(cancel: true);
             }))
             {
-                return await this.balloonTcs.Task;
+                return await balloonTcs.Task;
             }
         }
 
         private void CloseCurrentlyOpenBalloon(bool cancel)
         {
-            if (this.balloonTcs == null)
+            if (balloonTcs == null)
                 return;
 
-            this.taskbarIcon.CloseBalloon();
+            taskbarIcon.CloseBalloon();
 
             if (cancel)
-                this.balloonTcs.TrySetCanceled();
+                balloonTcs.TrySetCanceled();
             else
-                this.balloonTcs.TrySetResult(null);
+                balloonTcs.TrySetResult(null);
 
-            this.balloonTcs = null;
+            balloonTcs = null;
         }
 
         public void EnsureIconVisible()
         {
-            this.viewModel.Visible = true;
+            viewModel.Visible = true;
         }
 
         private void RootViewModelActivated(object sender, ActivationEventArgs e)
         {
             // If it's minimize to tray, not close to tray, then we'll have set the shutdown mode to OnExplicitShutdown just before closing
             // In this case, re-set Shutdownmode
-            this.SetShutdownMode();
+            SetShutdownMode();
 
-            this.viewModel.MainWindowVisible = true;
-            if (this.ShowOnlyOnClose)
-                this.viewModel.Visible = false;
+            viewModel.MainWindowVisible = true;
+            if (ShowOnlyOnClose)
+                viewModel.Visible = false;
         }
 
         private void RootViewModelDeactivated(object sender, DeactivationEventArgs e)
         {
-            if (this.MinimizeToTray)
+            if (MinimizeToTray)
             {
                 // Don't do this if it's shutting down
-                if (this.application.HasMainWindow)
-                    this.application.ShutdownMode = ShutdownMode.OnExplicitShutdown;
+                if (application.HasMainWindow)
+                    application.ShutdownMode = ShutdownMode.OnExplicitShutdown;
 
-                this.applicationWindowState.CloseToTray();
+                applicationWindowState.CloseToTray();
 
-                this.viewModel.MainWindowVisible = false;
-                if (this.ShowOnlyOnClose)
-                    this.viewModel.Visible = true;
+                viewModel.MainWindowVisible = false;
+                if (ShowOnlyOnClose)
+                    viewModel.Visible = true;
             }
         }
 
         private void RootViewModelClosed(object sender, CloseEventArgs e)
         {
-            this.viewModel.MainWindowVisible = false;
-            if (this.ShowOnlyOnClose)
-                this.viewModel.Visible = true;
+            viewModel.MainWindowVisible = false;
+            if (ShowOnlyOnClose)
+                viewModel.Visible = true;
         }
 
         public void Dispose()
         {
-            this.application.Startup -= this.ApplicationStartup;
+            application.Startup -= ApplicationStartup;
 
-            this.applicationWindowState.RootWindowActivated -= this.RootViewModelActivated;
-            this.applicationWindowState.RootWindowDeactivated -= this.RootViewModelDeactivated;
-            this.applicationWindowState.RootWindowClosed -= this.RootViewModelClosed;
+            applicationWindowState.RootWindowActivated -= RootViewModelActivated;
+            applicationWindowState.RootWindowDeactivated -= RootViewModelDeactivated;
+            applicationWindowState.RootWindowClosed -= RootViewModelClosed;
 
-            this.syncthingManager.TransferHistory.FolderSynchronizationFinished -= this.FolderSynchronizationFinished;
-            this.syncthingManager.Devices.DeviceConnected -= this.DeviceConnected;
-            this.syncthingManager.Devices.DeviceDisconnected -= this.DeviceDisconnected;
-            this.syncthingManager.DeviceRejected -= this.DeviceRejected;
-            this.syncthingManager.FolderRejected -= this.FolderRejected;
+            syncthingManager.TransferHistory.FolderSynchronizationFinished -= FolderSynchronizationFinished;
+            syncthingManager.Devices.DeviceConnected -= DeviceConnected;
+            syncthingManager.Devices.DeviceDisconnected -= DeviceDisconnected;
+            syncthingManager.DeviceRejected -= DeviceRejected;
+            syncthingManager.FolderRejected -= FolderRejected;
         }
     }
 }

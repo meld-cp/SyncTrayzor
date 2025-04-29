@@ -42,7 +42,7 @@ namespace SyncTrayzor.Services
 
         public FileStream Open(string path, FileMode mode) => Pri.LongPath.File.Open(path, mode);
 
-        public FileStream Open(string path, FileMode fileMode, FileAccess fileAccess, FileShare fileShare) => new FileStream(path, fileMode, fileAccess, fileShare);
+        public FileStream Open(string path, FileMode fileMode, FileAccess fileAccess, FileShare fileShare) => new(path, fileMode, fileAccess, fileShare);
 
         public FileStream CreateAtomic(string path) => new AtomicFileStream(path);
 

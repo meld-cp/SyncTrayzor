@@ -11,38 +11,38 @@ namespace SyncTrayzor.Xaml
         protected override void OnAttached()
         {
             base.OnAttached();
-            this.AssociatedObject.Initialized += this.AssociatedObjectInitialized;
-            this.AssociatedObject.Unloaded += this.AssociatedObjectUnloaded;
+            AssociatedObject.Initialized += AssociatedObjectInitialized;
+            AssociatedObject.Unloaded += AssociatedObjectUnloaded;
         }
 
         protected override void OnDetaching()
         {
             base.OnDetaching();
-            this.Cleanup();
+            Cleanup();
         }
 
         private bool isCleanedUp;
         private void Cleanup()
         {
-            if (!this.isCleanedUp)
+            if (!isCleanedUp)
             {
-                this.isCleanedUp = true;
+                isCleanedUp = true;
 
-                this.AssociatedObject.Initialized -= AssociatedObjectInitialized;
-                this.AssociatedObject.Unloaded -= AssociatedObjectUnloaded;
+                AssociatedObject.Initialized -= AssociatedObjectInitialized;
+                AssociatedObject.Unloaded -= AssociatedObjectUnloaded;
                 BindingOperations.ClearAllBindings(this); // This was a surprise...
-                this.DetachHandlers();
+                DetachHandlers();
             }
         }
 
         private void AssociatedObjectInitialized(object sender, EventArgs e)
         {
-            this.AttachHandlers();
+            AttachHandlers();
         }
 
         private void AssociatedObjectUnloaded(object sender, RoutedEventArgs e)
         {
-            this.Cleanup();
+            Cleanup();
         }
 
         protected virtual void AttachHandlers() { }

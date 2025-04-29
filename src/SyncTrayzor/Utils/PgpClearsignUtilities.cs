@@ -40,7 +40,7 @@ namespace SyncTrayzor.Utils
             foreach (string userId in secretKey.PublicKey.GetUserIds())
             {
                 var signatureSubpacketGenerator = new PgpSignatureSubpacketGenerator();
-                signatureSubpacketGenerator.SetSignerUserId(isCritical: false, userId: userId);
+                signatureSubpacketGenerator.AddSignerUserId(isCritical: false, userId: userId);
                 signatureGenerator.SetHashedSubpackets(signatureSubpacketGenerator.Generate());
                 // Just the first one!
                 break;
@@ -48,24 +48,22 @@ namespace SyncTrayzor.Utils
 
             // Closing armouredOutputStream does not close the underlying stream
             var armouredOutputStream = new ArmoredOutputStream(outputStream);
-            using (var bcpgOutputStream = new BcpgOutputStream(armouredOutputStream))
+            using var bcpgOutputStream = new BcpgOutputStream(armouredOutputStream);
+            armouredOutputStream.BeginClearText(hashAlgorithm);
+
+            int chr;
+            while ((chr = input.ReadByte()) > 0)
             {
-                armouredOutputStream.BeginClearText(hashAlgorithm);
-
-                int chr;
-                while ((chr = input.ReadByte()) > 0)
-                {
-                    signatureGenerator.Update((byte)chr);
-                    bcpgOutputStream.Write((byte)chr);
-                }
-
-                // For some reason we need to add a trailing newline
-                bcpgOutputStream.Write((byte)'\n'); 
-
-                armouredOutputStream.EndClearText();
-
-                signatureGenerator.Generate().Encode(bcpgOutputStream);
+                signatureGenerator.Update((byte)chr);
+                bcpgOutputStream.Write((byte)chr);
             }
+
+            // For some reason we need to add a trailing newline
+            bcpgOutputStream.Write((byte)'\n');
+
+            armouredOutputStream.EndClearText();
+
+            signatureGenerator.Generate().Encode(bcpgOutputStream);
         }
 
         public static bool ReadAndVerifyFile(Stream inputStream, Stream keyIn, out Stream cleartextOut)

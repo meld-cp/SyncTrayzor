@@ -24,16 +24,16 @@ namespace SyncTrayzor.Pages.Settings
         public T OriginalValue { get; private set; }
         public T Value { get; set; }
 
-        public override bool HasChanged => !this.comparer(this.OriginalValue, this.Value);
+        public override bool HasChanged => !comparer(OriginalValue, Value);
 
         public SettingItem(Expression<Func<Configuration, T>> accessExpression, IModelValidator validator = null, Func<T, T, bool> comparer = null)
         {
             var propertyName = accessExpression.NameForProperty();
             var propertyInfo = typeof(Configuration).GetProperty(propertyName);
-            this.getter = c => (T)propertyInfo.GetValue(c);
-            this.setter = (c, v) => propertyInfo.SetValue(c, v);
+            getter = c => (T)propertyInfo.GetValue(c);
+            setter = (c, v) => propertyInfo.SetValue(c, v);
             this.comparer = comparer ?? new Func<T, T, bool>((x, y) => EqualityComparer<T>.Default.Equals(x, y));
-            this.Validator = validator;
+            Validator = validator;
         }
 
         public SettingItem(Func<Configuration, T> getter, Action<Configuration, T> setter, IModelValidator validator = null, Func<T, T, bool> comparer = null)
@@ -41,19 +41,19 @@ namespace SyncTrayzor.Pages.Settings
             this.getter = getter;
             this.setter = setter;
             this.comparer = comparer ?? new Func<T, T, bool>((x, y) => EqualityComparer<T>.Default.Equals(x, y));
-            this.Validator = validator;
+            Validator = validator;
         }
 
         public override void LoadValue(Configuration configuration)
         {
-            T value = this.getter(configuration);
-            this.OriginalValue = value;
-            this.Value = value;
+            T value = getter(configuration);
+            OriginalValue = value;
+            Value = value;
         }
 
         public override void SaveValue(Configuration configuration)
         {
-            this.setter(configuration, this.Value);
+            setter(configuration, Value);
         }
     }
 }

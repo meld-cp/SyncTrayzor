@@ -7,7 +7,7 @@ namespace SyncTrayzor.Xaml
 {
     public class LogMessageListToStringConverter : IValueConverter
     {
-        private readonly StringBuilder sb = new StringBuilder();
+        private readonly StringBuilder sb = new();
 
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
@@ -17,11 +17,11 @@ namespace SyncTrayzor.Xaml
 
             foreach (var elem in list)
             {
-                this.sb.AppendLine(elem);
+                sb.AppendLine(elem);
             }
 
-            var str = this.sb.ToString();
-            this.sb.Clear();
+            var str = sb.ToString();
+            sb.Clear();
             return str;
         }
 

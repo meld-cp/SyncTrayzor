@@ -12,7 +12,7 @@ namespace SyncTrayzor.Utils
             var hashFormatter = new StringBuilder(hash.Length * 2);
             foreach (var b in hash)
             {
-                hashFormatter.AppendFormat("{0:x2}", b);
+                hashFormatter.Append($"{b:x2}");
             }
 
             return hashFormatter.ToString();
@@ -23,13 +23,11 @@ namespace SyncTrayzor.Utils
             byte[] hash = hashAlgorithm.ComputeHash(fileToChecksum);
             var formattedHash = FormatHash(hash);
 
-            using (var streamWriter = new StreamWriter(checksumFile, Encoding.ASCII, 256, true))
-            {
-                streamWriter.Write(formattedHash);
-                streamWriter.Write("  ");
-                streamWriter.Write(filenameToChecksum.Trim());
-                streamWriter.WriteLine();
-            }
+            using var streamWriter = new StreamWriter(checksumFile, Encoding.ASCII, 256, true);
+            streamWriter.Write(formattedHash);
+            streamWriter.Write("  ");
+            streamWriter.Write(filenameToChecksum.Trim());
+            streamWriter.WriteLine();
         }
 
         public static bool ValidateChecksum(HashAlgorithm hashAlgorithm, Stream checksumFile, string filenameToCheck, Stream fileToCheck)

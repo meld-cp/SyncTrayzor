@@ -19,10 +19,10 @@ namespace SyncTrayzor.Syncthing.ApiClient
         [JsonProperty("data")]
         public RemoteIndexUpdatedEventData Data { get; set; }
 
-        public override bool IsValid => this.Data != null &&
-            !string.IsNullOrWhiteSpace(this.Data.Device) &&
-            !string.IsNullOrWhiteSpace(this.Data.Folder) &&
-            this.Data.Items >= 0;
+        public override bool IsValid => Data != null &&
+            !string.IsNullOrWhiteSpace(Data.Device) &&
+            !string.IsNullOrWhiteSpace(Data.Folder) &&
+            Data.Items >= 0;
 
         public override void Visit(IEventVisitor visitor)
         {
@@ -31,7 +31,7 @@ namespace SyncTrayzor.Syncthing.ApiClient
 
         public override string ToString()
         {
-            return $"<RemoteIndexUpdatedEvent ID={this.Id} Time={this.Time} Device={this.Data.Device} Folder={this.Data.Folder} Items={this.Data.Items}>";
+            return $"<RemoteIndexUpdatedEvent ID={Id} Time={Time} Device={Data.Device} Folder={Data.Folder} Items={Data.Items}>";
         }
     }
 }

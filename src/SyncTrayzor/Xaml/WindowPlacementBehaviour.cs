@@ -24,61 +24,60 @@ namespace SyncTrayzor.Xaml
 
         protected override void AttachHandlers()
         {
-            this.AssociatedObject.SourceInitialized += this.SourceInitialized;
-            this.AssociatedObject.Closing += this.Closing;
+            AssociatedObject.SourceInitialized += SourceInitialized;
+            AssociatedObject.Closing += Closing;
 
-            this.SetDefaultSize();
+            SetDefaultSize();
         }
 
         protected override void DetachHandlers()
         {
-            this.AssociatedObject.SourceInitialized -= this.SourceInitialized;
-            this.AssociatedObject.Closing -= this.Closing;
+            AssociatedObject.SourceInitialized -= SourceInitialized;
+            AssociatedObject.Closing -= Closing;
         }
 
         private void SetDefaultSize()
         {
             // Beware, we may be duplicating functionality in NoSizeBelowScreenBehaviour
 
-            this.AssociatedObject.Height = Math.Min(this.AssociatedObject.Height, SystemParameters.VirtualScreenHeight - taskbarHeight);
-            this.AssociatedObject.Width = Math.Min(this.AssociatedObject.Width, SystemParameters.VirtualScreenWidth - taskbarHeight);
+            AssociatedObject.Height = Math.Min(AssociatedObject.Height, SystemParameters.VirtualScreenHeight - taskbarHeight);
+            AssociatedObject.Width = Math.Min(AssociatedObject.Width, SystemParameters.VirtualScreenWidth - taskbarHeight);
         }
 
         private void SourceInitialized(object sender, EventArgs e)
         {
-            if (this.Placement == null)
+            if (Placement == null)
                 return;
 
             var nativePlacement = new WINDOWPLACEMENT()
             {
                 length = Marshal.SizeOf(typeof(WINDOWPLACEMENT)),
                 flags = 0,
-                showCmd = this.Placement.IsMaximised ? SW_SHOWMAXIMIZED : SW_SHOWNORMAL,
-                maxPosition = new POINT(this.Placement.MaxPosition.X, this.Placement.MaxPosition.Y),
-                minPosition = new POINT(this.Placement.MinPosition.X, this.Placement.MinPosition.Y),
+                showCmd = Placement.IsMaximised ? SW_SHOWMAXIMIZED : SW_SHOWNORMAL,
+                maxPosition = new POINT(Placement.MaxPosition.X, Placement.MaxPosition.Y),
+                minPosition = new POINT(Placement.MinPosition.X, Placement.MinPosition.Y),
                 normalPosition = new RECT(
-                    this.Placement.NormalPosition.Left,
-                    this.Placement.NormalPosition.Top,
-                    this.Placement.NormalPosition.Right,
-                    this.Placement.NormalPosition.Bottom),
+                    Placement.NormalPosition.Left,
+                    Placement.NormalPosition.Top,
+                    Placement.NormalPosition.Right,
+                    Placement.NormalPosition.Bottom),
             };
 
-            if (!NativeMethods.SetWindowPlacement(new WindowInteropHelper(this.AssociatedObject).Handle, ref nativePlacement))
+            if (!NativeMethods.SetWindowPlacement(new WindowInteropHelper(AssociatedObject).Handle, ref nativePlacement))
             {
                 logger.Warn("Call to SetWindowPlacement failed", new Win32Exception(Marshal.GetLastWin32Error()));
             }
 
             // Not 100% sure why this is needed, but if the window is minimzed before being closed to tray,
             // then is restored, we can end up in a state where we aren't active
-            this.AssociatedObject.Activate();
+            AssociatedObject.Activate();
         }
 
         private void Closing(object sender, CancelEventArgs e)
         {
-            var nativePlacement = new WINDOWPLACEMENT();
             WindowPlacement placement = null;
 
-            if (NativeMethods.GetWindowPlacement(new WindowInteropHelper(this.AssociatedObject).Handle, out nativePlacement))
+            if (NativeMethods.GetWindowPlacement(new WindowInteropHelper(AssociatedObject).Handle, out var nativePlacement))
             {
                 placement = new WindowPlacement()
                 {
@@ -98,8 +97,8 @@ namespace SyncTrayzor.Xaml
                 logger.Warn("Call to SetWindowPlacement failed", new Win32Exception(Marshal.GetLastWin32Error()));
             }
 
-            if (placement != null && !placement.Equals(this.Placement))
-                this.Placement = placement;
+            if (placement != null && !placement.Equals(Placement))
+                Placement = placement;
         }
 
         private const int SW_SHOWNORMAL = 1;
@@ -116,10 +115,10 @@ namespace SyncTrayzor.Xaml
 
             public RECT(int left, int top, int right, int bottom)
             {
-                this.Left = left;
-                this.Top = top;
-                this.Right = right;
-                this.Bottom = bottom;
+                Left = left;
+                Top = top;
+                Right = right;
+                Bottom = bottom;
             }
         }
 
@@ -132,8 +131,8 @@ namespace SyncTrayzor.Xaml
 
             public POINT(int x, int y)
             {
-                this.X = x;
-                this.Y = y;
+                X = x;
+                Y = y;
             }
         }
 

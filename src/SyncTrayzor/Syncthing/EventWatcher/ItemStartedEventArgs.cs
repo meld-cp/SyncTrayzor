@@ -10,8 +10,8 @@ namespace SyncTrayzor.Syncthing.EventWatcher
         public ItemStartedEventArgs(string folder, string item, ItemChangedActionType action, ItemChangedItemType itemType)
             : base(folder, item)
         {
-            this.Action = action;
-            this.ItemType = itemType;
+            Action = action;
+            ItemType = itemType;
         }
     }
 }

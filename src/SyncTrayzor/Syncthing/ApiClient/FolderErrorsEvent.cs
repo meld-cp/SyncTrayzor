@@ -14,7 +14,7 @@ namespace SyncTrayzor.Syncthing.ApiClient
 
         public override string ToString()
         {
-            return $"<FolderError Error={this.Error} Path={this.Path}>";
+            return $"<FolderError Error={Error} Path={Path}>";
         }
     }
 
@@ -32,9 +32,9 @@ namespace SyncTrayzor.Syncthing.ApiClient
         [JsonProperty("data")]
         public FolderErrorsEventData Data { get; set; }
 
-        public override bool IsValid => this.Data != null &&
-            !string.IsNullOrWhiteSpace(this.Data.Folder) &&
-            this.Data.Errors != null;
+        public override bool IsValid => Data != null &&
+            !string.IsNullOrWhiteSpace(Data.Folder) &&
+            Data.Errors != null;
 
         public override void Visit(IEventVisitor visitor)
         {
@@ -43,7 +43,7 @@ namespace SyncTrayzor.Syncthing.ApiClient
 
         public override string ToString()
         {
-            return $"<FolderErrors ID={this.Id} Time={this.Time} Folder={this.Data.Folder} Errors=[{String.Join(", ", this.Data.Errors.ToString())}]>";
+            return $"<FolderErrors ID={Id} Time={Time} Folder={Data.Folder} Errors=[{String.Join(", ", Data.Errors.ToString())}]>";
         }
     }
 }

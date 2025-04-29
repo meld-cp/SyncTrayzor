@@ -16,7 +16,7 @@ namespace SyncTrayzor.Pages.BarAlerts
 
         public void Dismiss()
         {
-            this.configurationProvider.AtomicLoadAndSave(config => config.HideIntelXeWarningMessage = true);
+            configurationProvider.AtomicLoadAndSave(config => config.HideIntelXeWarningMessage = true);
         }
     }
 }

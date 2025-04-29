@@ -30,44 +30,44 @@ namespace SyncTrayzor.Services
             SystemEvents.PowerModeChanged += (o, e) =>
             {
                 if (e.Mode == PowerModes.Resume)
-                    this.OnResumeFromSleep();
+                    OnResumeFromSleep();
             };
         }
 
         public ShutdownMode ShutdownMode
         {
-            get => this.application.ShutdownMode;
+            get => application.ShutdownMode;
             set
             {
                 // This will fail if we're shutting down
                 try
                 {
-                    this.application.ShutdownMode = value;
+                    application.ShutdownMode = value;
                 }
                 catch (InvalidOperationException) { }
             }
         }
 
-        public bool HasMainWindow => this.application.MainWindow != null;
+        public bool HasMainWindow => application.MainWindow != null;
 
         public object FindResource(object resourceKey)
         {
-            return this.application.FindResource(resourceKey);
+            return application.FindResource(resourceKey);
         }
 
         public void Shutdown()
         {
-            this.application.Shutdown();
+            application.Shutdown();
         }
 
         public void ApplicationStarted()
         {
-            this.Startup?.Invoke(this, EventArgs.Empty);
+            Startup?.Invoke(this, EventArgs.Empty);
         }
 
         private void OnResumeFromSleep()
         {
-            this.ResumeFromSleep?.Invoke(this, EventArgs.Empty);
+            ResumeFromSleep?.Invoke(this, EventArgs.Empty);
         }
     }
 }

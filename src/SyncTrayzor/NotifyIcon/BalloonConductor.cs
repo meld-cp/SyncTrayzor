@@ -24,14 +24,14 @@ namespace SyncTrayzor.NotifyIcon
 
         public void CloseItem(object item, bool? dialogResult = null)
         {
-            if (item != this.child)
+            if (item != child)
                 return;
 
-            if (this.taskbarIcon.CustomBalloon.Child != this.view)
+            if (taskbarIcon.CustomBalloon.Child != view)
                 return;
 
-            this.tcs.TrySetResult(dialogResult);
-            this.taskbarIcon.CloseBalloon();
+            tcs.TrySetResult(dialogResult);
+            taskbarIcon.CloseBalloon();
         }
     }
 }

@@ -16,7 +16,7 @@ namespace SyncTrayzor.Utils
 
             public void Dispose()
             {
-                this.semaphore.Release();
+                semaphore.Release();
             }
         }
 

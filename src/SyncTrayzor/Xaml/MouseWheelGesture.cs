@@ -7,9 +7,9 @@ namespace SyncTrayzor.Xaml
     {
         private readonly WheelDirection direction;
 
-        public static MouseWheelGesture CtrlDown => new MouseWheelGesture(ModifierKeys.Control, WheelDirection.Down);
+        public static MouseWheelGesture CtrlDown => new(ModifierKeys.Control, WheelDirection.Down);
 
-        public static MouseWheelGesture CtrlUp =>  new MouseWheelGesture(ModifierKeys.Control, WheelDirection.Up);
+        public static MouseWheelGesture CtrlUp =>  new(ModifierKeys.Control, WheelDirection.Up);
 
         public MouseWheelGesture(ModifierKeys modifiers, WheelDirection direction)
             : base(MouseAction.WheelClick, modifiers)
@@ -27,7 +27,7 @@ namespace SyncTrayzor.Xaml
 
             var args = (MouseWheelEventArgs)inputEventArgs;
 
-            switch (this.direction)
+            switch (direction)
             {
                 case WheelDirection.None:
                     return args.Delta == 0;

@@ -17,7 +17,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
-using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Markup;
@@ -27,9 +26,11 @@ using System.Reflection;
 using SyncTrayzor.Localization;
 using SyncTrayzor.Services.Ipc;
 using System.Net;
+using System.Runtime.Versioning;
 using System.Windows.Media;
 using System.Windows.Interop;
 
+[assembly:SupportedOSPlatform("windows")]
 namespace SyncTrayzor
 {
     public class Bootstrapper : Bootstrapper<ShellViewModel>
@@ -39,9 +40,9 @@ namespace SyncTrayzor
 
         protected override void ConfigureIoC(IStyletIoCBuilder builder)
         {
-            builder.Bind<IApplicationState>().ToInstance(new ApplicationState(this.Application));
+            builder.Bind<IApplicationState>().ToInstance(new ApplicationState(Application));
             builder.Bind<IApplicationWindowState>().To<ApplicationWindowState>().InSingletonScope();
-            builder.Bind<IFocusWindowProvider>().ToInstance(new FocusWindowProvider(this.Application));
+            builder.Bind<IFocusWindowProvider>().ToInstance(new FocusWindowProvider(Application));
             builder.Bind<IUserActivityMonitor>().To<UserActivityMonitor>().InSingletonScope();
             builder.Bind<IConfigurationProvider>().To<ConfigurationProvider>().InSingletonScope();
             builder.Bind<IApplicationPathsProvider>().To<ApplicationPathsProvider>().InSingletonScope();
@@ -95,11 +96,11 @@ namespace SyncTrayzor
             // .NET version, we have to enable this ourselves.
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
 
-            this.options = this.Container.Get<CommandLineOptionsParser>();
-            if (!this.options.Parse(this.Args))
+            options = Container.Get<CommandLineOptionsParser>();
+            if (!options.Parse(Args))
                 Environment.Exit(0);
 
-            var pathTransformer = this.Container.Get<IPathTransformer>();
+            var pathTransformer = Container.Get<IPathTransformer>();
 
             // Have to set the log path before anything else
             var pathConfiguration = AppSettings.Instance.PathConfiguration;
@@ -108,25 +109,25 @@ namespace SyncTrayzor
             AppDomain.CurrentDomain.UnhandledException += (o, e) => OnAppDomainUnhandledException(e);
 
             var logger = LogManager.GetCurrentClassLogger();
-            var assembly = this.Container.Get<IAssemblyProvider>();
-            logger.Info("SyncTrazor version {0} ({1}) started at {2} (.NET version: {3})", assembly.FullVersion, assembly.ProcessorArchitecture, assembly.Location, DotNetVersionFinder.FindDotNetVersion());
+            var assembly = Container.Get<IAssemblyProvider>();
+            logger.Info("SyncTrazor version {0} ({1}) started at {2} (.NET version: {3})", assembly.FullVersion, assembly.ProcessorArchitecture, assembly.Location, assembly.FrameworkDescription);
 
             // This needs to happen before anything which might cause the unhandled exception stuff to be shown, as that wants to know
             // where to find the log file.
-            this.Container.Get<IApplicationPathsProvider>().Initialize(pathConfiguration);
+            Container.Get<IApplicationPathsProvider>().Initialize(pathConfiguration);
 
-            var client = this.Container.Get<IIpcCommsClientFactory>().TryCreateClient();
+            var client = Container.Get<IIpcCommsClientFactory>().TryCreateClient();
             if (client != null)
             {
                 try
                 {
-                    if (this.options.Shutdown)
+                    if (options.Shutdown)
                     {
                         client.Shutdown();
                         // Give it some time to shut down
                         var elapsed = Stopwatch.StartNew();
                         while (elapsed.Elapsed < TimeSpan.FromSeconds(10) &&
-                            this.Container.Get<IIpcCommsClientFactory>().TryCreateClient() != null)
+                            Container.Get<IIpcCommsClientFactory>().TryCreateClient() != null)
                         {
                             Thread.Sleep(100);
                         }
@@ -135,20 +136,20 @@ namespace SyncTrayzor
                         Environment.Exit(0);
                     }
 
-                    if (this.options.StartSyncthing || this.options.StopSyncthing)
+                    if (options.StartSyncthing || options.StopSyncthing)
                     {
-                        if (this.options.StartSyncthing)
+                        if (options.StartSyncthing)
                             client.StartSyncthing();
-                        else if (this.options.StopSyncthing)
+                        else if (options.StopSyncthing)
                             client.StopSyncthing();
-                        if (!this.options.StartMinimized)
+                        if (!options.StartMinimized)
                             client.ShowMainWindow();
                         Environment.Exit(0);
                     }
 
                     if (AppSettings.Instance.EnforceSingleProcessPerUser)
                     {
-                        if (!this.options.StartMinimized)
+                        if (!options.StartMinimized)
                             client.ShowMainWindow();
                         Environment.Exit(0);
                     }
@@ -158,32 +159,32 @@ namespace SyncTrayzor
                     logger.Error(e, $"Failed to talk to {client}: {e.Message}. Pretending that it doesn't exist...");
                 }
             }
-            
+
             // If we got this far, there probably isn't another instance running, and we should just shut down
-            if (this.options.Shutdown)
+            if (options.Shutdown)
             {
                 Environment.Exit(0);
             }
 
-            var configurationProvider = this.Container.Get<IConfigurationProvider>();
+            var configurationProvider = Container.Get<IConfigurationProvider>();
             configurationProvider.Initialize(AppSettings.Instance.DefaultUserConfiguration);
-            var configuration = this.Container.Get<IConfigurationProvider>().Load();
+            var configuration = Container.Get<IConfigurationProvider>().Load();
 
             if (AppSettings.Instance.EnforceSingleProcessPerUser)
             {
-                this.Container.Get<IIpcCommsServer>().StartServer();
+                Container.Get<IIpcCommsServer>().StartServer();
             }
 
             // Has to be done before the VMs are fetched from the container
-            if (this.options.Culture != null)
-                Thread.CurrentThread.CurrentUICulture = new CultureInfo(this.options.Culture);
+            if (options.Culture != null)
+                Thread.CurrentThread.CurrentUICulture = new CultureInfo(options.Culture);
             else if (!configuration.UseComputerCulture)
                 Thread.CurrentThread.CurrentUICulture = new CultureInfo("en-US");
 
             // WPF ignores the current culture by default - so we have to force it
             FrameworkElement.LanguageProperty.OverrideMetadata(typeof(FrameworkElement), new FrameworkPropertyMetadata(XmlLanguage.GetLanguage(Thread.CurrentThread.CurrentCulture.IetfLanguageTag)));
 
-            var autostartProvider = this.Container.Get<IAutostartProvider>();
+            var autostartProvider = Container.Get<IAutostartProvider>();
 #if DEBUG
             autostartProvider.IsEnabled = false;
 #endif
@@ -193,17 +194,17 @@ namespace SyncTrayzor
                 autostartProvider.SetAutoStart(new AutostartConfiguration() { AutoStart = true, StartMinimized = true });
 
             // Needs to be done before ConfigurationApplicator is run
-            this.Container.Get<IApplicationWindowState>().Setup(this.RootViewModel);
+            Container.Get<IApplicationWindowState>().Setup(RootViewModel);
 
-            this.Container.Get<ConfigurationApplicator>().ApplyConfiguration();
+            Container.Get<ConfigurationApplicator>().ApplyConfiguration();
 
-            this.Container.Get<MemoryUsageLogger>().Enabled = true;
+            Container.Get<MemoryUsageLogger>().Enabled = true;
 
             // Handles Restart Manager requests - sent by the installer. We need to shutdown syncthing in this case
-            this.Application.SessionEnding += (o, e) =>
+            Application.SessionEnding += (o, e) =>
             {
                 LogManager.GetCurrentClassLogger().Info("Shutting down: {0}", e.ReasonSessionEnding);
-                var manager = this.Container.Get<ISyncthingManager>();
+                var manager = Container.Get<ISyncthingManager>();
                 manager.StopAndWaitAsync().Wait(2000);
                 manager.Kill();
             };
@@ -230,33 +231,33 @@ namespace SyncTrayzor
 
         protected override void Launch()
         {
-            if (this.options.StartMinimized)
-                this.Container.Get<INotifyIconManager>().EnsureIconVisible();
+            if (options.StartMinimized)
+                Container.Get<INotifyIconManager>().EnsureIconVisible();
             else
                 base.Launch();
         }
 
         protected override void OnLaunch()
         {
-            this.Container.Get<IApplicationState>().ApplicationStarted();
+            Container.Get<IApplicationState>().ApplicationStarted();
 
-            var config = this.Container.Get<IConfigurationProvider>().Load();
-            if (this.options.StartSyncthing || (config.StartSyncthingAutomatically && !this.options.StopSyncthing))
-                this.RootViewModel.Start();
+            var config = Container.Get<IConfigurationProvider>().Load();
+            if (options.StartSyncthing || (config.StartSyncthingAutomatically && !options.StopSyncthing))
+                RootViewModel.Start();
 
             // If we've just been upgraded, and we're minimized, show a bit of toast explaining the fact
-            if (this.options.StartMinimized && this.Container.Get<IConfigurationProvider>().WasUpgraded)
+            if (options.StartMinimized && Container.Get<IConfigurationProvider>().WasUpgraded)
             {
-                var updatedVm = this.Container.Get<NewVersionInstalledToastViewModel>();
-                updatedVm.Version = this.Container.Get<IAssemblyProvider>().Version;
-                this.Container.Get<INotifyIconManager>().ShowBalloonAsync(updatedVm, timeout: 5000); 
+                var updatedVm = Container.Get<NewVersionInstalledToastViewModel>();
+                updatedVm.Version = Container.Get<IAssemblyProvider>().Version;
+                Container.Get<INotifyIconManager>().ShowBalloonAsync(updatedVm, timeout: 5000);
             }
 
             var logger = LogManager.GetCurrentClassLogger();
             logger.Debug("Cleaning up config folder path");
-            this.Container.Get<ConfigFolderCleaner>().Clean();
+            Container.Get<ConfigFolderCleaner>().Clean();
 
-            this.Container.Get<IConflictFileWatcher>();
+            Container.Get<IConflictFileWatcher>();
         }
 
         private void OnAppDomainUnhandledException(UnhandledExceptionEventArgs e)
@@ -279,11 +280,11 @@ namespace SyncTrayzor
                 }
             }
 
-            if (this.Container == null)
+            if (Container == null)
             {
                 // This happened very early on... Not much we can do.
                 MessageBox.Show(
-                    $"An unexpected exception occurred during startup:\n\n{e.Exception.ToString()}",
+                    $"An unexpected exception occurred during startup:\n\n{e.Exception}",
                     "An unexpected exception occurred",
                     MessageBoxButton.OK,
                     MessageBoxImage.Error);
@@ -293,18 +294,21 @@ namespace SyncTrayzor
             // It's nicer if we try stopping the syncthing process, but if we can't, carry on
             try
             {
-                this.Container.Get<ISyncthingManager>().StopAsync();
+                Container.Get<ISyncthingManager>().StopAsync();
             }
-            catch { }
+            catch
+            {
+                // ignored
+            }
 
             // If we're shutting down, we're not going to be able to display an error dialog....
             // We've logged it. Nothing else we can do.
-            if (this.exiting)
+            if (exiting)
                 return;
 
             try
             {
-                var windowManager = this.Container.Get<IWindowManager>();
+                var windowManager = Container.Get<IWindowManager>();
 
                 if (e.Exception is CouldNotFindSyncthingException couldNotFindSyncthingException)
                 {
@@ -315,7 +319,7 @@ namespace SyncTrayzor
 
                     // Don't "crash"
                     e.Handled = true;
-                    this.Application.Shutdown();
+                    Application.Shutdown();
                     return;
                 }
 
@@ -333,7 +337,7 @@ namespace SyncTrayzor
 
                     // Don't "crash"
                     e.Handled = true;
-                    this.Application.Shutdown();
+                    Application.Shutdown();
                     return;
                 }
 
@@ -347,11 +351,11 @@ namespace SyncTrayzor
 
                     // Don't "crash"
                     e.Handled = true;
-                    this.Application.Shutdown();
+                    Application.Shutdown();
                     return;
                 }
 
-                var vm = this.Container.Get<UnhandledExceptionViewModel>();
+                var vm = Container.Get<UnhandledExceptionViewModel>();
                 vm.Exception = e.Exception;
                 windowManager.ShowDialog(vm);
             }
@@ -365,16 +369,16 @@ namespace SyncTrayzor
 
         protected override void OnExit(ExitEventArgs e)
         {
-            this.exiting = true;
+            exiting = true;
 
             // Try and be nice and close SyncTrayzor gracefully, before the Dispose call on SyncthingProcessRunning kills it dead
-            this.Container.Get<ISyncthingManager>().StopAndWaitAsync().Wait(2000);
+            Container.Get<ISyncthingManager>().StopAndWaitAsync().Wait(2000);
         }
 
         public override void Dispose()
         {
             // Probably need to make Stylet to this...
-            ScreenExtensions.TryDispose(this.RootViewModel);
+            ScreenExtensions.TryDispose(RootViewModel);
             base.Dispose();
         }
     }

@@ -36,17 +36,17 @@ namespace SyncTrayzor.Services.Ipc
 
         public void StartServer()
         {
-            if (this.cts != null)
+            if (cts != null)
                 return;
 
-            this.cts = new CancellationTokenSource();
-            this.StartInternal(cts.Token);
+            cts = new CancellationTokenSource();
+            StartInternal(cts.Token);
         }
 
         public void StopServer()
         {
-            if (this.cts != null)
-                this.cts.Cancel();
+            if (cts != null)
+                cts.Cancel();
         }
 
         private async void StartInternal(CancellationToken cancellationToken)
@@ -56,7 +56,7 @@ namespace SyncTrayzor.Services.Ipc
 
             try
             {
-                var serverStream = new NamedPipeServerStream(this.PipeName, PipeDirection.InOut, NamedPipeServerStream.MaxAllowedServerInstances, PipeTransmissionMode.Message, PipeOptions.Asynchronous, 0, 0);
+                var serverStream = new NamedPipeServerStream(PipeName, PipeDirection.InOut, NamedPipeServerStream.MaxAllowedServerInstances, PipeTransmissionMode.Message, PipeOptions.Asynchronous, 0, 0);
 
                 using (cancellationToken.Register(() => serverStream.Close()))
                 {
@@ -73,7 +73,7 @@ namespace SyncTrayzor.Services.Ipc
                             commandBuilder.Append(Encoding.ASCII.GetString(buffer, 0, read));
                         }
 
-                        var response = this.HandleReceivedCommand(commandBuilder.ToString());
+                        var response = HandleReceivedCommand(commandBuilder.ToString());
                         var responseBytes = Encoding.ASCII.GetBytes(response);
 
                         try
@@ -104,19 +104,19 @@ namespace SyncTrayzor.Services.Ipc
             switch (command)
             {
                 case "Shutdown":
-                    this.Shutdown();
+                    Shutdown();
                     return "OK";
 
                 case "ShowMainWindow":
-                    this.ShowMainWindow();
+                    ShowMainWindow();
                     return "OK";
 
                 case "StartSyncthing":
-                    this.StartSyncthing();
+                    StartSyncthing();
                     return "OK";
 
                 case "StopSyncthing":
-                    this.StopSyncthing();
+                    StopSyncthing();
                     return "OK";
 
                 default:
@@ -126,23 +126,23 @@ namespace SyncTrayzor.Services.Ipc
 
         private void Shutdown()
         {
-            this.applicationState.Shutdown();
+            applicationState.Shutdown();
         }
 
         private void ShowMainWindow()
         {
-            this.windowState.EnsureInForeground();
+            windowState.EnsureInForeground();
         }
 
         private async void StartSyncthing()
         {
-            if (this.syncthingManager.State == SyncthingState.Stopped)
+            if (syncthingManager.State == SyncthingState.Stopped)
             {
                 logger.Debug("IPC client requested Syncthing start, so starting");
 
                 try
                 {
-                    await this.syncthingManager.StartAsync();
+                    await syncthingManager.StartAsync();
                 }
                 catch (Exception e)
                 {
@@ -151,19 +151,19 @@ namespace SyncTrayzor.Services.Ipc
             }
             else
             {
-                logger.Debug($"IPC client requested Syncthing start, but its state is {this.syncthingManager.State}, so not starting");
+                logger.Debug($"IPC client requested Syncthing start, but its state is {syncthingManager.State}, so not starting");
             }
         }
 
         private async void StopSyncthing()
         {
-            if (this.syncthingManager.State == SyncthingState.Running)
+            if (syncthingManager.State == SyncthingState.Running)
             {
                 logger.Debug("IPC client requested Syncthing stop, so stopping");
 
                 try
                 {
-                    await this.syncthingManager.StopAsync();
+                    await syncthingManager.StopAsync();
                 }
                 catch (Exception e)
                 {
@@ -172,13 +172,13 @@ namespace SyncTrayzor.Services.Ipc
             }
             else
             {
-                logger.Debug($"IPC client requested Syncthing stop, but its state is {this.syncthingManager.State}, so not stopping");
+                logger.Debug($"IPC client requested Syncthing stop, but its state is {syncthingManager.State}, so not stopping");
             }
         }
 
         public void Dispose()
         {
-            this.StopServer();
+            StopServer();
         }
     }
 }

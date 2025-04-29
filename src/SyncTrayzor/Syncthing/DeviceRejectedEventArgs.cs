@@ -9,8 +9,8 @@ namespace SyncTrayzor.Syncthing
 
         public DeviceRejectedEventArgs(string deviceId, string address)
         {
-            this.DeviceId = deviceId;
-            this.Address = address;
+            DeviceId = deviceId;
+            Address = address;
         }
     }
 }

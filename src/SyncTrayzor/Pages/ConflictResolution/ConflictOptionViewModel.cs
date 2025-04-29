@@ -10,16 +10,16 @@ namespace SyncTrayzor.Pages.ConflictResolution
     {
         public ConflictOption ConflictOption { get; }
 
-        public string FileName => Path.GetFileName(this.ConflictOption.FilePath);
+        public string FileName => Path.GetFileName(ConflictOption.FilePath);
 
-        public DateTime DateCreated => this.ConflictOption.Created;
-        public DateTime LastModified => this.ConflictOption.LastModified;
-        public string Size => FormatUtils.BytesToHuman(this.ConflictOption.SizeBytes, 1);
-        public string ModifiedBy => this.ConflictOption.Device?.Name;
+        public DateTime DateCreated => ConflictOption.Created;
+        public DateTime LastModified => ConflictOption.LastModified;
+        public string Size => FormatUtils.BytesToHuman(ConflictOption.SizeBytes, 1);
+        public string ModifiedBy => ConflictOption.Device?.Name;
 
         public ConflictOptionViewModel(ConflictOption conflictOption)
         {
-            this.ConflictOption = conflictOption;
+            ConflictOption = conflictOption;
         }
     }
 }

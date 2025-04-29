@@ -23,11 +23,11 @@ namespace SyncTrayzor.Pages.Settings
         public bool IsWatchAllowed { get; set; }
         public bool VisibleIsWatched
         {
-            get => this.IsWatched && this.IsWatchAllowed;
+            get => IsWatched && IsWatchAllowed;
             set
             {
-                if (this.IsWatchAllowed)
-                    this.IsWatched = value;
+                if (IsWatchAllowed)
+                    IsWatched = value;
                 else
                     throw new InvalidOperationException();
             }
@@ -50,7 +50,7 @@ namespace SyncTrayzor.Pages.Settings
         private readonly IApplicationState applicationState;
         private readonly IApplicationPathsProvider applicationPathsProvider;
         private readonly ISyncthingManager syncthingManager;
-        private readonly List<SettingItem> settings = new List<SettingItem>();
+        private readonly List<SettingItem> settings = new();
 
         public int SelectedTabIndex { get; set; }
 
@@ -83,11 +83,11 @@ namespace SyncTrayzor.Pages.Settings
 
         public bool CanReadAutostart { get; set; }
         public bool CanWriteAutostart { get; set; }
-        public bool CanReadOrWriteAutostart => this.CanReadAutostart || this.CanWriteAutostart; 
-        public bool CanReadAndWriteAutostart => this.CanReadAutostart && this.CanWriteAutostart;
+        public bool CanReadOrWriteAutostart => CanReadAutostart || CanWriteAutostart; 
+        public bool CanReadAndWriteAutostart => CanReadAutostart && CanWriteAutostart;
         public bool StartOnLogon { get; set; }
         public bool StartMinimized { get; set; }
-        public bool StartMinimizedEnabled => this.CanReadAndWriteAutostart && this.StartOnLogon;
+        public bool StartMinimizedEnabled => CanReadAndWriteAutostart && StartOnLogon;
         public SettingItem<string> SyncthingCommandLineFlags { get; }
         public SettingItem<string> SyncthingEnvironmentalVariables { get; }
         public SettingItem<string> SyncthingCustomPath { get; }
@@ -97,7 +97,7 @@ namespace SyncTrayzor.Pages.Settings
         private bool updatingFolderSettings;
         public bool? AreAllFoldersWatched { get; set; }
         public bool? AreAllFoldersNotified { get; set; }
-        public BindableCollection<FolderSettings> FolderSettings { get; } = new BindableCollection<FolderSettings>();
+        public BindableCollection<FolderSettings> FolderSettings { get; } = new();
         public bool IsAnyFolderWatchEnabledInSyncthing { get; private set; }
 
         public BindableCollection<LabelledValue<LogLevel>> LogLevels { get; }
@@ -123,79 +123,79 @@ namespace SyncTrayzor.Pages.Settings
             this.applicationPathsProvider = applicationPathsProvider;
             this.syncthingManager = syncthingManager;
 
-            this.MinimizeToTray = this.CreateBasicSettingItem(x => x.MinimizeToTray);
-            this.NotifyOfNewVersions = this.CreateBasicSettingItem(x => x.NotifyOfNewVersions);
-            this.CloseToTray = this.CreateBasicSettingItem(x => x.CloseToTray);
-            this.ObfuscateDeviceIDs = this.CreateBasicSettingItem(x => x.ObfuscateDeviceIDs);
-            this.UseComputerCulture = this.CreateBasicSettingItem(x => x.UseComputerCulture);
-            this.UseComputerCulture.RequiresSyncTrayzorRestart = true;
-            this.DisableHardwareRendering = this.CreateBasicSettingItem(x => x.DisableHardwareRendering);
-            this.DisableHardwareRendering.RequiresSyncTrayzorRestart = true;
-            this.EnableConflictFileMonitoring = this.CreateBasicSettingItem(x => x.EnableConflictFileMonitoring);
-            this.EnableFailedTransferAlerts = this.CreateBasicSettingItem(x => x.EnableFailedTransferAlerts);
+            MinimizeToTray = CreateBasicSettingItem(x => x.MinimizeToTray);
+            NotifyOfNewVersions = CreateBasicSettingItem(x => x.NotifyOfNewVersions);
+            CloseToTray = CreateBasicSettingItem(x => x.CloseToTray);
+            ObfuscateDeviceIDs = CreateBasicSettingItem(x => x.ObfuscateDeviceIDs);
+            UseComputerCulture = CreateBasicSettingItem(x => x.UseComputerCulture);
+            UseComputerCulture.RequiresSyncTrayzorRestart = true;
+            DisableHardwareRendering = CreateBasicSettingItem(x => x.DisableHardwareRendering);
+            DisableHardwareRendering.RequiresSyncTrayzorRestart = true;
+            EnableConflictFileMonitoring = CreateBasicSettingItem(x => x.EnableConflictFileMonitoring);
+            EnableFailedTransferAlerts = CreateBasicSettingItem(x => x.EnableFailedTransferAlerts);
 
-            this.PauseDevicesOnMeteredNetworks = this.CreateBasicSettingItem(x => x.PauseDevicesOnMeteredNetworks);
-            this.PauseDevicesOnMeteredNetworksSupported = meteredNetworkManager.IsSupportedByWindows;
+            PauseDevicesOnMeteredNetworks = CreateBasicSettingItem(x => x.PauseDevicesOnMeteredNetworks);
+            PauseDevicesOnMeteredNetworksSupported = meteredNetworkManager.IsSupportedByWindows;
 
-            this.ShowTrayIconOnlyOnClose = this.CreateBasicSettingItem(x => x.ShowTrayIconOnlyOnClose);
-            this.ShowSynchronizedBalloonEvenIfNothingDownloaded = this.CreateBasicSettingItem(x => x.ShowSynchronizedBalloonEvenIfNothingDownloaded);
-            this.ShowDeviceConnectivityBalloons = this.CreateBasicSettingItem(x => x.ShowDeviceConnectivityBalloons);
-            this.ShowDeviceOrFolderRejectedBalloons = this.CreateBasicSettingItem(x => x.ShowDeviceOrFolderRejectedBalloons);
+            ShowTrayIconOnlyOnClose = CreateBasicSettingItem(x => x.ShowTrayIconOnlyOnClose);
+            ShowSynchronizedBalloonEvenIfNothingDownloaded = CreateBasicSettingItem(x => x.ShowSynchronizedBalloonEvenIfNothingDownloaded);
+            ShowDeviceConnectivityBalloons = CreateBasicSettingItem(x => x.ShowDeviceConnectivityBalloons);
+            ShowDeviceOrFolderRejectedBalloons = CreateBasicSettingItem(x => x.ShowDeviceOrFolderRejectedBalloons);
 
-            this.IconAnimationModes = new BindableCollection<LabelledValue<IconAnimationMode>>()
+            IconAnimationModes = new BindableCollection<LabelledValue<IconAnimationMode>>()
             {
                 LabelledValue.Create(Resources.SettingsView_TrayIconAnimation_DataTransferring, Services.Config.IconAnimationMode.DataTransferring),
                 LabelledValue.Create(Resources.SettingsView_TrayIconAnimation_Syncing, Services.Config.IconAnimationMode.Syncing),
                 LabelledValue.Create(Resources.SettingsView_TrayIconAnimation_Disabled, Services.Config.IconAnimationMode.Disabled),
             };
-            this.IconAnimationMode = this.CreateBasicSettingItem(x => x.IconAnimationMode);
+            IconAnimationMode = CreateBasicSettingItem(x => x.IconAnimationMode);
 
-            this.StartSyncthingAutomatically = this.CreateBasicSettingItem(x => x.StartSyncthingAutomatically);
-            this.SyncthingPriorityLevel = this.CreateBasicSettingItem(x => x.SyncthingPriorityLevel);
-            this.SyncthingPriorityLevel.RequiresSyncthingRestart = true;
-            this.SyncthingAddress = this.CreateBasicSettingItem(x => x.SyncthingAddress, new SyncthingAddressValidator());
-            this.SyncthingAddress.RequiresSyncthingRestart = true;
+            StartSyncthingAutomatically = CreateBasicSettingItem(x => x.StartSyncthingAutomatically);
+            SyncthingPriorityLevel = CreateBasicSettingItem(x => x.SyncthingPriorityLevel);
+            SyncthingPriorityLevel.RequiresSyncthingRestart = true;
+            SyncthingAddress = CreateBasicSettingItem(x => x.SyncthingAddress, new SyncthingAddressValidator());
+            SyncthingAddress.RequiresSyncthingRestart = true;
 
-            this.CanReadAutostart = this.autostartProvider.CanRead;
-            this.CanWriteAutostart = this.autostartProvider.CanWrite;
+            CanReadAutostart = this.autostartProvider.CanRead;
+            CanWriteAutostart = this.autostartProvider.CanWrite;
             if (this.autostartProvider.CanRead)
             {
                 var currentSetup = this.autostartProvider.GetCurrentSetup();
-                this.StartOnLogon = currentSetup.AutoStart;
-                this.StartMinimized = currentSetup.StartMinimized;
+                StartOnLogon = currentSetup.AutoStart;
+                StartMinimized = currentSetup.StartMinimized;
             }
 
-            this.SyncthingCommandLineFlags = this.CreateBasicSettingItem(
+            SyncthingCommandLineFlags = CreateBasicSettingItem(
                 x => String.Join(" ", x.SyncthingCommandLineFlags),
                 (x, v) =>
                 {
                     KeyValueStringParser.TryParse(v, out var envVars, mustHaveValue: false);
                     x.SyncthingCommandLineFlags = envVars.Select(item => KeyValueStringParser.FormatItem(item.Key, item.Value)).ToList();
                 }, new SyncthingCommandLineFlagsValidator());
-            this.SyncthingCommandLineFlags.RequiresSyncthingRestart = true;
+            SyncthingCommandLineFlags.RequiresSyncthingRestart = true;
 
-            this.SyncthingEnvironmentalVariables = this.CreateBasicSettingItem(
+            SyncthingEnvironmentalVariables = CreateBasicSettingItem(
                 x => KeyValueStringParser.Format(x.SyncthingEnvironmentalVariables),
                 (x, v) =>
                 {
                     KeyValueStringParser.TryParse(v, out var envVars);
                     x.SyncthingEnvironmentalVariables = new EnvironmentalVariableCollection(envVars);
                 }, new SyncthingEnvironmentalVariablesValidator());
-            this.SyncthingEnvironmentalVariables.RequiresSyncthingRestart = true;
+            SyncthingEnvironmentalVariables.RequiresSyncthingRestart = true;
 
 
-            this.SyncthingCustomPath = this.CreateBasicSettingItem(x => x.SyncthingCustomPath);
+            SyncthingCustomPath = CreateBasicSettingItem(x => x.SyncthingCustomPath);
             // This *shouldn't* be necessary, but the code to copy the syncthing.exe binary if it doesn't exist
             // is only run at startup, so require a restart...
-            this.SyncthingCustomPath.RequiresSyncTrayzorRestart = true;
+            SyncthingCustomPath.RequiresSyncTrayzorRestart = true;
 
-            this.SyncthingCustomHomePath = this.CreateBasicSettingItem(x => x.SyncthingCustomHomePath);
-            this.SyncthingCustomHomePath.RequiresSyncthingRestart = true;
+            SyncthingCustomHomePath = CreateBasicSettingItem(x => x.SyncthingCustomHomePath);
+            SyncthingCustomHomePath.RequiresSyncthingRestart = true;
 
-            this.SyncthingDenyUpgrade = this.CreateBasicSettingItem(x => x.SyncthingDenyUpgrade);
-            this.SyncthingDenyUpgrade.RequiresSyncthingRestart = true;
+            SyncthingDenyUpgrade = CreateBasicSettingItem(x => x.SyncthingDenyUpgrade);
+            SyncthingDenyUpgrade.RequiresSyncthingRestart = true;
 
-            this.PriorityLevels = new BindableCollection<LabelledValue<SyncthingPriorityLevel>>()
+            PriorityLevels = new BindableCollection<LabelledValue<SyncthingPriorityLevel>>()
             {
                 LabelledValue.Create(Resources.SettingsView_Syncthing_ProcessPriority_AboveNormal, Services.Config.SyncthingPriorityLevel.AboveNormal),
                 LabelledValue.Create(Resources.SettingsView_Syncthing_ProcessPriority_Normal, Services.Config.SyncthingPriorityLevel.Normal),
@@ -203,97 +203,97 @@ namespace SyncTrayzor.Pages.Settings
                 LabelledValue.Create(Resources.SettingsView_Syncthing_ProcessPriority_Idle, Services.Config.SyncthingPriorityLevel.Idle),
             };
 
-            this.LogLevels = new BindableCollection<LabelledValue<LogLevel>>()
+            LogLevels = new BindableCollection<LabelledValue<LogLevel>>()
             {
                 LabelledValue.Create(Resources.SettingsView_Logging_LogLevel_Info, LogLevel.Info),
                 LabelledValue.Create(Resources.SettingsView_Logging_LogLevel_Debug, LogLevel.Debug),
                 LabelledValue.Create(Resources.SettingsView_Logging_LogLevel_Trace, LogLevel.Trace),
             };
-            this.SelectedLogLevel = this.CreateBasicSettingItem(x => x.LogLevel);
+            SelectedLogLevel = CreateBasicSettingItem(x => x.LogLevel);
 
             var configuration = this.configurationProvider.Load();
 
-            foreach (var settingItem in this.settings)
+            foreach (var settingItem in settings)
             {
                 settingItem.LoadValue(configuration);
             }
 
             this.Bind(s => s.FolderSettings, (o2, e2) =>
             {
-                foreach (var folderSetting in this.FolderSettings)
+                foreach (var folderSetting in FolderSettings)
                 {
-                    folderSetting.Bind(s => s.IsWatched, (o, e) => this.UpdateAreAllFoldersWatched());
-                    folderSetting.Bind(s => s.IsNotified, (o, e) => this.UpdateAreAllFoldersNotified());
+                    folderSetting.Bind(s => s.IsWatched, (o, e) => UpdateAreAllFoldersWatched());
+                    folderSetting.Bind(s => s.IsNotified, (o, e) => UpdateAreAllFoldersNotified());
                 }
             });
 
             this.Bind(s => s.AreAllFoldersNotified, (o, e) =>
             {
-                if (this.updatingFolderSettings)
+                if (updatingFolderSettings)
                     return;
 
-                this.updatingFolderSettings = true;
+                updatingFolderSettings = true;
 
-                foreach (var folderSetting in this.FolderSettings)
+                foreach (var folderSetting in FolderSettings)
                 {
                     folderSetting.IsNotified = e.NewValue.GetValueOrDefault(false);
                 }
 
-                this.updatingFolderSettings = false;
+                updatingFolderSettings = false;
             });
 
             this.Bind(s => s.AreAllFoldersWatched, (o, e) =>
             {
-                if (this.updatingFolderSettings)
+                if (updatingFolderSettings)
                     return;
 
-                this.updatingFolderSettings = true;
+                updatingFolderSettings = true;
 
-                foreach (var folderSetting in this.FolderSettings)
+                foreach (var folderSetting in FolderSettings)
                 {
                     if (folderSetting.IsWatchAllowed)
                         folderSetting.IsWatched = e.NewValue.GetValueOrDefault(false);
                 }
 
-                this.updatingFolderSettings = false;
+                updatingFolderSettings = false;
             });
 
-            this.UpdateAreAllFoldersWatched();
-            this.UpdateAreAllFoldersNotified();
+            UpdateAreAllFoldersWatched();
+            UpdateAreAllFoldersNotified();
         }
 
         protected override void OnInitialActivate()
         {
             if (syncthingManager.State == SyncthingState.Running && syncthingManager.IsDataLoaded)
-                this.LoadFromSyncthingStartupData();
+                LoadFromSyncthingStartupData();
             else
-                this.syncthingManager.DataLoaded += this.SyncthingDataLoaded;
+                syncthingManager.DataLoaded += SyncthingDataLoaded;
         }
 
         protected override void OnClose()
         {
-            this.syncthingManager.DataLoaded -= this.SyncthingDataLoaded;
+            syncthingManager.DataLoaded -= SyncthingDataLoaded;
         }
 
         private void SyncthingDataLoaded(object sender, EventArgs e)
         {
-            this.LoadFromSyncthingStartupData();
+            LoadFromSyncthingStartupData();
         }
 
         private void LoadFromSyncthingStartupData()
         {
-            var configuration = this.configurationProvider.Load();
+            var configuration = configurationProvider.Load();
 
             // We have to merge two sources of data: the folder settings from config, and the actual folder
             // configuration from Syncthing (which we use to get the folder label). They should be in sync...
 
-            this.FolderSettings.Clear();
+            FolderSettings.Clear();
 
             var folderSettings = new List<FolderSettings>(configuration.Folders.Count);
 
             foreach (var configFolder in configuration.Folders)
             {
-                if (this.syncthingManager.Folders.TryFetchById(configFolder.ID, out var folder))
+                if (syncthingManager.Folders.TryFetchById(configFolder.ID, out var folder))
                 {
                     folderSettings.Add(new FolderSettings()
                     {
@@ -306,150 +306,150 @@ namespace SyncTrayzor.Pages.Settings
                 }
             }
 
-            this.FolderSettings.AddRange(folderSettings.OrderBy(x => x.FolderLabel));
+            FolderSettings.AddRange(folderSettings.OrderBy(x => x.FolderLabel));
 
-            this.IsAnyFolderWatchEnabledInSyncthing = this.FolderSettings.Any(x => !x.IsWatchAllowed);
+            IsAnyFolderWatchEnabledInSyncthing = FolderSettings.Any(x => !x.IsWatchAllowed);
 
-            this.UpdateAreAllFoldersWatched();
-            this.UpdateAreAllFoldersNotified();
+            UpdateAreAllFoldersWatched();
+            UpdateAreAllFoldersNotified();
 
-            this.NotifyOfPropertyChange(nameof(this.FolderSettings));
+            NotifyOfPropertyChange(nameof(FolderSettings));
         }
 
         private SettingItem<T> CreateBasicSettingItem<T>(Expression<Func<Configuration, T>> accessExpression, IValidator<SettingItem<T>> validator = null)
         {
-            return this.CreateBasicSettingItemImpl(v => new SettingItem<T>(accessExpression, v), validator);
+            return CreateBasicSettingItemImpl(v => new SettingItem<T>(accessExpression, v), validator);
         }
 
         private SettingItem<T> CreateBasicSettingItem<T>(Func<Configuration, T> getter, Action<Configuration, T> setter, IValidator<SettingItem<T>> validator = null, Func<T, T, bool> comparer = null)
         {
-            return this.CreateBasicSettingItemImpl(v => new SettingItem<T>(getter, setter, v, comparer), validator);
+            return CreateBasicSettingItemImpl(v => new SettingItem<T>(getter, setter, v, comparer), validator);
         }
 
         private SettingItem<T> CreateBasicSettingItemImpl<T>(Func<IModelValidator, SettingItem<T>> generator, IValidator<SettingItem<T>> validator)
         {
             IModelValidator modelValidator = validator == null ? null : new FluentModelValidator<SettingItem<T>>(validator);
             var settingItem = generator(modelValidator);
-            this.settings.Add(settingItem);
-            settingItem.ErrorsChanged += (o, e) => this.NotifyOfPropertyChange(() => this.CanSave);
+            settings.Add(settingItem);
+            settingItem.ErrorsChanged += (o, e) => NotifyOfPropertyChange(() => CanSave);
             return settingItem;
         }
 
         private void UpdateAreAllFoldersWatched()
         {
-            if (this.updatingFolderSettings)
+            if (updatingFolderSettings)
                 return;
 
-            this.updatingFolderSettings = true;
+            updatingFolderSettings = true;
 
-            if (this.FolderSettings.All(x => x.VisibleIsWatched))
-                this.AreAllFoldersWatched = true;
-            else if (this.FolderSettings.All(x => !x.VisibleIsWatched))
-                this.AreAllFoldersWatched = false;
+            if (FolderSettings.All(x => x.VisibleIsWatched))
+                AreAllFoldersWatched = true;
+            else if (FolderSettings.All(x => !x.VisibleIsWatched))
+                AreAllFoldersWatched = false;
             else
-                this.AreAllFoldersWatched = null;
+                AreAllFoldersWatched = null;
 
-            this.updatingFolderSettings = false;
+            updatingFolderSettings = false;
         }
 
         private void UpdateAreAllFoldersNotified()
         {
-            if (this.updatingFolderSettings)
+            if (updatingFolderSettings)
                 return;
 
-            this.updatingFolderSettings = true;
+            updatingFolderSettings = true;
 
-            if (this.FolderSettings.All(x => x.IsNotified))
-                this.AreAllFoldersNotified = true;
-            else if (this.FolderSettings.All(x => !x.IsNotified))
-                this.AreAllFoldersNotified = false;
+            if (FolderSettings.All(x => x.IsNotified))
+                AreAllFoldersNotified = true;
+            else if (FolderSettings.All(x => !x.IsNotified))
+                AreAllFoldersNotified = false;
             else
-                this.AreAllFoldersNotified = null;
+                AreAllFoldersNotified = null;
 
-            this.updatingFolderSettings = false;
+            updatingFolderSettings = false;
         }
 
-        public bool CanSave => this.settings.All(x => !x.HasErrors);
+        public bool CanSave => settings.All(x => !x.HasErrors);
         public void Save()
         {
-            this.configurationProvider.AtomicLoadAndSave(configuration =>
+            configurationProvider.AtomicLoadAndSave(configuration =>
             {
-                foreach (var settingItem in this.settings)
+                foreach (var settingItem in settings)
                 {
                     settingItem.SaveValue(configuration);
                 }
 
-                configuration.Folders = this.FolderSettings.Select(x => new FolderConfiguration(x.FolderId, x.IsWatched, x.IsNotified)).ToList();
+                configuration.Folders = FolderSettings.Select(x => new FolderConfiguration(x.FolderId, x.IsWatched, x.IsNotified)).ToList();
             });
 
-            if (this.autostartProvider.CanWrite)
+            if (autostartProvider.CanWrite)
             {
                 // I've seen this fail, even though we successfully wrote on startup
                 try
                 {
-                    var autostartConfig = new AutostartConfiguration() { AutoStart = this.StartOnLogon, StartMinimized = this.StartMinimized };
-                    this.autostartProvider.SetAutoStart(autostartConfig);
+                    var autostartConfig = new AutostartConfiguration() { AutoStart = StartOnLogon, StartMinimized = StartMinimized };
+                    autostartProvider.SetAutoStart(autostartConfig);
                 }
                 catch
                 {
-                    this.windowManager.ShowMessageBox(
+                    windowManager.ShowMessageBox(
                         Resources.SettingsView_CannotSetAutoStart_Message,
                         Resources.SettingsView_CannotSetAutoStart_Title,
                         MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
 
-            if (this.settings.Any(x => x.HasChanged && x.RequiresSyncTrayzorRestart))
+            if (settings.Any(x => x.HasChanged && x.RequiresSyncTrayzorRestart))
             {
-                var result = this.windowManager.ShowMessageBox(
+                var result = windowManager.ShowMessageBox(
                     Resources.SettingsView_RestartSyncTrayzor_Message,
                     Resources.SettingsView_RestartSyncTrayzor_Title,
                     MessageBoxButton.YesNo, MessageBoxImage.Question);
                 if (result == MessageBoxResult.Yes)
                 {
-                    this.processStartProvider.StartDetached(this.assemblyProvider.Location);
-                    this.applicationState.Shutdown();
+                    processStartProvider.StartDetached(assemblyProvider.Location);
+                    applicationState.Shutdown();
                 }
             }
-            else if ((this.settings.Any(x => x.HasChanged && x.RequiresSyncthingRestart)) &&
-                this.syncthingManager.State == SyncthingState.Running)
+            else if ((settings.Any(x => x.HasChanged && x.RequiresSyncthingRestart)) &&
+                syncthingManager.State == SyncthingState.Running)
             {
-                var result = this.windowManager.ShowMessageBox(
+                var result = windowManager.ShowMessageBox(
                     Resources.SettingsView_RestartSyncthing_Message,
                     Resources.SettingsView_RestartSyncthing_Title,
                     MessageBoxButton.YesNo, MessageBoxImage.Question);
                 if (result == MessageBoxResult.Yes)
                 {
-                    this.RestartSyncthing();
+                    RestartSyncthing();
                 }
             }
 
-            this.RequestClose(true);
+            RequestClose(true);
         }
 
         private async void RestartSyncthing()
         {
-            await this.syncthingManager.RestartAsync();
+            await syncthingManager.RestartAsync();
         }
 
         public void Cancel()
         {
-            this.RequestClose(false);
+            RequestClose(false);
         }
 
         public void ShowSyncthingLogFile()
         {
-            this.processStartProvider.ShowFileInExplorer(Path.Combine(this.applicationPathsProvider.LogFilePath, "syncthing.log"));
+            processStartProvider.ShowFileInExplorer(Path.Combine(applicationPathsProvider.LogFilePath, "syncthing.log"));
         }
 
         public void ShowSyncTrayzorLogFile()
         {
-            this.processStartProvider.ShowFileInExplorer(Path.Combine(this.applicationPathsProvider.LogFilePath, "SyncTrayzor.log"));
+            processStartProvider.ShowFileInExplorer(Path.Combine(applicationPathsProvider.LogFilePath, "SyncTrayzor.log"));
         }
 
         public void SelectLoggingTab()
         {
-            this.SelectedTabIndex = loggingTabIndex;
+            SelectedTabIndex = loggingTabIndex;
         }
     }
 }

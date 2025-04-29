@@ -106,7 +106,7 @@ namespace SyncTrayzor.Utils
                 int result = NativeMethods.SHFileOperation(ref fs);
                 if (result != 0)
                 {
-                    Logger(String.Format("Delete file operation on {0} failed with error {1}", path, result));
+                    Logger($"Delete file operation on {path} failed with error {result}");
                     return false;
                 }
                 return true;

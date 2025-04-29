@@ -9,10 +9,10 @@ namespace SyncTrayzor.Utils
     public class LimitedConcurrencyTaskScheduler : TaskScheduler
     {
         // Indicates whether the current thread is processing work items.
-        private readonly ThreadLocal<bool> currentThreadIsProcessingItems = new ThreadLocal<bool>();
+        private readonly ThreadLocal<bool> currentThreadIsProcessingItems = new();
 
         // The list of tasks to be executed  
-        private readonly LinkedList<Task> tasks = new LinkedList<Task>(); // protected by lock(_tasks) 
+        private readonly LinkedList<Task> tasks = new(); // protected by lock(_tasks) 
 
         // The maximum concurrency level allowed by this scheduler.  
         private readonly int maxDegreeOfParallelism;
@@ -33,13 +33,13 @@ namespace SyncTrayzor.Utils
         {
             // Add the task to the list of tasks to be processed.  If there aren't enough  
             // delegates currently queued or running to process tasks, schedule another.  
-            lock (this.tasks)
+            lock (tasks)
             {
-                this.tasks.AddLast(task);
-                if (this.delegatesQueuedOrRunning < this.maxDegreeOfParallelism)
+                tasks.AddLast(task);
+                if (delegatesQueuedOrRunning < maxDegreeOfParallelism)
                 {
-                    ++this.delegatesQueuedOrRunning;
-                    this.NotifyThreadPoolOfPendingWork();
+                    ++delegatesQueuedOrRunning;
+                    NotifyThreadPoolOfPendingWork();
                 }
             }
         }
@@ -51,36 +51,36 @@ namespace SyncTrayzor.Utils
             {
                 // Note that the current thread is now processing work items. 
                 // This is necessary to enable inlining of tasks into this thread.
-                this.currentThreadIsProcessingItems.Value = true;
+                currentThreadIsProcessingItems.Value = true;
                 try
                 {
                     // Process all available items in the queue. 
                     while (true)
                     {
                         Task item;
-                        lock (this.tasks)
+                        lock (tasks)
                         {
                             // When there are no more items to be processed, 
                             // note that we're done processing, and get out. 
-                            if (this.tasks.Count == 0)
+                            if (tasks.Count == 0)
                             {
-                                --this.delegatesQueuedOrRunning;
+                                --delegatesQueuedOrRunning;
                                 break;
                             }
 
                             // Get the next item from the queue
-                            item = this.tasks.First.Value;
-                            this.tasks.RemoveFirst();
+                            item = tasks.First.Value;
+                            tasks.RemoveFirst();
                         }
 
                         // Execute the task we pulled out of the queue 
-                        base.TryExecuteTask(item);
+                        TryExecuteTask(item);
                     }
                 }
                 // We're done processing items on the current thread 
                 finally
                 {
-                    this.currentThreadIsProcessingItems.Value = false;
+                    currentThreadIsProcessingItems.Value = false;
                 }
             }, null);
         }
@@ -89,35 +89,32 @@ namespace SyncTrayzor.Utils
         protected sealed override bool TryExecuteTaskInline(Task task, bool taskWasPreviouslyQueued)
         {
             // If this thread isn't already processing a task, we don't support inlining 
-            if (!this.currentThreadIsProcessingItems.Value)
+            if (!currentThreadIsProcessingItems.Value)
                 return false;
 
             // If the task was previously queued, remove it from the queue 
             if (taskWasPreviouslyQueued)
             {
-                // Try to run the task.  
-                if (this.TryDequeue(task))
-                    return base.TryExecuteTask(task);
-                else
-                    return false;
+                // Try to run the task.
+                return TryDequeue(task) && TryExecuteTask(task);
             }
             else
             {
-                return base.TryExecuteTask(task);
+                return TryExecuteTask(task);
             }
         }
 
         // Attempt to remove a previously scheduled task from the scheduler.  
         protected sealed override bool TryDequeue(Task task)
         {
-            lock (this.tasks)
+            lock (tasks)
             {
-                return this.tasks.Remove(task);
+                return tasks.Remove(task);
             }
         }
 
         // Gets the maximum concurrency level supported by this scheduler.  
-        public sealed override int MaximumConcurrencyLevel => this.maxDegreeOfParallelism;
+        public sealed override int MaximumConcurrencyLevel => maxDegreeOfParallelism;
 
         // Gets an enumerable of the tasks currently scheduled on this scheduler.  
         protected sealed override IEnumerable<Task> GetScheduledTasks()
@@ -125,16 +122,16 @@ namespace SyncTrayzor.Utils
             bool lockTaken = false;
             try
             {
-                Monitor.TryEnter(this.tasks, ref lockTaken);
+                Monitor.TryEnter(tasks, ref lockTaken);
                 if (lockTaken)
-                    return this.tasks;
+                    return tasks;
                 else
                     throw new NotSupportedException();
             }
             finally
             {
                 if (lockTaken)
-                    Monitor.Exit(this.tasks);
+                    Monitor.Exit(tasks);
             }
         }
     }

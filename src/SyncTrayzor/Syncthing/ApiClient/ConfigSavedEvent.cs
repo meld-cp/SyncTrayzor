@@ -7,7 +7,7 @@ namespace SyncTrayzor.Syncthing.ApiClient
         [JsonProperty("data")]
         public Config Data { get; set; }
 
-        public override bool IsValid => this.Data != null;
+        public override bool IsValid => Data != null;
 
         public override void Visit(IEventVisitor visitor)
         {
@@ -16,7 +16,7 @@ namespace SyncTrayzor.Syncthing.ApiClient
 
         public override string ToString()
         {
-            return $"<ConfigSaved Config={this.Data}>";
+            return $"<ConfigSaved Config={Data}>";
         }
     }
 }

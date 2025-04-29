@@ -14,7 +14,7 @@ namespace SyncTrayzor.Pages
         {
             this.processStartProvider = processStartProvider;
 
-            this.Items.AddRange(new[]
+            Items.AddRange(new[]
             {
                 // I'm in two minds as to whether to localize these or not...
                 new ThirdPartyComponent()
@@ -24,7 +24,7 @@ namespace SyncTrayzor.Pages
                     Homepage = "http://syncthing.net",
                     License = "MPLv2",
                     Notes = "SyncTrayzor hosts Syncthing",
-                    LicenseText = this.LoadLicense("Syncthing.txt"),
+                    LicenseText = LoadLicense("Syncthing.txt"),
                 },
                 new ThirdPartyComponent()
                 {
@@ -33,7 +33,7 @@ namespace SyncTrayzor.Pages
                     Homepage = "https://github.com/canton7/Stylet",
                     License = "MIT",
                     Notes = "Used to build the UI",
-                    LicenseText = this.LoadLicense("Stylet.txt"),
+                    LicenseText = LoadLicense("Stylet.txt"),
                 },
                 new ThirdPartyComponent()
                 {
@@ -42,7 +42,7 @@ namespace SyncTrayzor.Pages
                     Homepage = "https://github.com/canton7/RestEase",
                     License = "MIT",
                     Notes = "Used for making REST API request to Syncthing and Github",
-                    LicenseText = this.LoadLicense("RestEase.txt")
+                    LicenseText = LoadLicense("RestEase.txt")
                 },
                 new ThirdPartyComponent()
                 {
@@ -51,7 +51,7 @@ namespace SyncTrayzor.Pages
                     Homepage = "http://nlog-project.org/",
                     License = "BSD 3-clause",
                     Notes = "Used for logging",
-                    LicenseText = this.LoadLicense("NLog.txt")
+                    LicenseText = LoadLicense("NLog.txt")
                 },
                 new ThirdPartyComponent()
                 {
@@ -60,7 +60,7 @@ namespace SyncTrayzor.Pages
                     Homepage = "https://code.google.com/p/chromiumembedded",
                     License = "Modified BSD License",
                     Notes = "Browser component - used to display Syncthing UI",
-                    LicenseText = this.LoadLicense("CEF.txt")
+                    LicenseText = LoadLicense("CEF.txt")
                 },
                 new ThirdPartyComponent()
                 {
@@ -69,7 +69,7 @@ namespace SyncTrayzor.Pages
                     Homepage = "https://github.com/cefsharp/CefSharp",
                     License = "New BSD License",
                     Notes = "WPF adapter for CEF",
-                    LicenseText = this.LoadLicense("CefSharp.txt")
+                    LicenseText = LoadLicense("CefSharp.txt")
                 },
                 new ThirdPartyComponent()
                 {
@@ -78,7 +78,7 @@ namespace SyncTrayzor.Pages
                     Homepage = "http://www.newtonsoft.com/json",
                     License = "MIT",
                     Notes = "JSON deserializer, used in conjunction with RestEase",
-                    LicenseText = this.LoadLicense("Json.NET.txt")
+                    LicenseText = LoadLicense("Json.NET.txt")
                 },
                 new ThirdPartyComponent()
                 {
@@ -87,7 +87,7 @@ namespace SyncTrayzor.Pages
                     Homepage = "http://www.hardcodet.net/wpf-notifyicon",
                     License = "The Code Project Open License (CPOL) 1.02",
                     Notes = "Provides the tray icon",
-                    LicenseText = this.LoadLicense("NotifyIcon.txt")
+                    LicenseText = LoadLicense("NotifyIcon.txt")
                 },
                 new ThirdPartyComponent()
                 {
@@ -96,7 +96,7 @@ namespace SyncTrayzor.Pages
                     Homepage = "https://fluentvalidation.codeplex.com",
                     License = "Apache License 2.0",
                     Notes = "Provides validation for user inputs",
-                    LicenseText = this.LoadLicense("FluentValidation.txt")
+                    LicenseText = LoadLicense("FluentValidation.txt")
                 },
                 new ThirdPartyComponent()
                 {
@@ -105,7 +105,7 @@ namespace SyncTrayzor.Pages
                     Homepage = "https://github.com/peteraritchie/LongPath",
                     License = "LGPLv3",
                     Notes = "Required for long path support (since .NET sucks here)",
-                    LicenseText = this.LoadLicense("LongPath.txt")
+                    LicenseText = LoadLicense("LongPath.txt")
                 },
                 new ThirdPartyComponent()
                 {
@@ -114,7 +114,7 @@ namespace SyncTrayzor.Pages
                     Homepage = "https://github.com/scottrippey/SmartFormat.NET",
                     License = "MIT",
                     Notes = "Handles fomatting in language strings",
-                    LicenseText = this.LoadLicense("SmartFormat.txt")
+                    LicenseText = LoadLicense("SmartFormat.txt")
                 },
                 new ThirdPartyComponent()
                 {
@@ -123,7 +123,7 @@ namespace SyncTrayzor.Pages
                     Homepage = "http://www.bouncycastle.org/csharp/",
                     License = "MIT",
                     Notes = "Used to sign and verify sha1sum / sha512 files",
-                    LicenseText = this.LoadLicense("BouncyCastle.txt")
+                    LicenseText = LoadLicense("BouncyCastle.txt")
                 },
                 new ThirdPartyComponent()
                 {
@@ -132,7 +132,7 @@ namespace SyncTrayzor.Pages
                     Homepage = "http://tirania.org/blog/archive/2008/Oct-14.html",
                     License = "MIT",
                     Notes = "Used to parse command-line options",
-                    LicenseText = this.LoadLicense("Mono.Options.txt")
+                    LicenseText = LoadLicense("Mono.Options.txt")
                 },
                 new ThirdPartyComponent()
                 {
@@ -141,7 +141,7 @@ namespace SyncTrayzor.Pages
                     Homepage = "http://www.codeproject.com/Articles/25058/ListView-Layout-Manager",
                     License = "The Code Project Open License (CPOL) 1.02",
                     Notes = "Used for layout",
-                    LicenseText = this.LoadLicense("ListViewLayoutManager.txt")
+                    LicenseText = LoadLicense("ListViewLayoutManager.txt")
                 },
                 new ThirdPartyComponent()
                 {
@@ -150,7 +150,7 @@ namespace SyncTrayzor.Pages
                     Homepage = "https://github.com/Fody/PropertyChanged",
                     License = "MIT",
                     Notes = "Not distributed with SyncTrayzor, but provides awesome compile-time features",
-                    LicenseText = this.LoadLicense("Fody.txt")
+                    LicenseText = LoadLicense("Fody.txt")
                 },
                 new ThirdPartyComponent()
                 {
@@ -159,7 +159,7 @@ namespace SyncTrayzor.Pages
                     Homepage = "https://github.com/aybe/Windows-API-Code-Pack-1.1",
                     License = "Microsoft Software License",
                     Notes = "Provides the 'Open Folder' dialog",
-                    LicenseText = this.LoadLicense("WindowsAPICodePack.txt")
+                    LicenseText = LoadLicense("WindowsAPICodePack.txt")
                 },
                 new ThirdPartyComponent()
                 {
@@ -168,7 +168,7 @@ namespace SyncTrayzor.Pages
                     Homepage = "http://rx.codeplex.com/",
                     License = "Microsoft Software License",
                     Notes = "Used internally for some background operations",
-                    LicenseText = this.LoadLicense("Rx.txt")
+                    LicenseText = LoadLicense("Rx.txt")
                 },
                 new ThirdPartyComponent()
                 {
@@ -177,22 +177,20 @@ namespace SyncTrayzor.Pages
                     Homepage = "http://www.oxyplot.org",
                     License = "MIT",
                     Notes = "Use to draw the network usage graph in the tray popup",
-                    LicenseText = this.LoadLicense("OxyPlot.txt")
+                    LicenseText = LoadLicense("OxyPlot.txt")
                 }
             }.OrderBy(x => x.Name));
         }
 
         private string LoadLicense(string licenseName)
         {
-           using (var sr = new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream("SyncTrayzor.Resources.Licenses." + licenseName)))
-           {
-               return sr.ReadToEnd();
-           }
+            using var sr = new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream("SyncTrayzor.Resources.Licenses." + licenseName));
+            return sr.ReadToEnd();
         }
 
         public void ViewHomepage()
         {
-            this.processStartProvider.StartDetached(this.ActiveItem.Homepage);
+            processStartProvider.StartDetached(ActiveItem.Homepage);
         }
     }
 

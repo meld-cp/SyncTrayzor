@@ -11,8 +11,8 @@ namespace SyncTrayzor.Syncthing
 
         public FolderRejectedEventArgs(Device device, Folder folder)
         {
-            this.Device = device;
-            this.Folder = folder;
+            Device = device;
+            Folder = folder;
         }
     }
 }

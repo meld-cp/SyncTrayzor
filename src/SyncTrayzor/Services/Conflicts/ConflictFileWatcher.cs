@@ -35,30 +35,30 @@ namespace SyncTrayzor.Services.Conflicts
         private readonly IFileWatcherFactory fileWatcherFactory;
 
         // Locks both conflictedFiles and conflictFileOptions
-        private readonly object conflictFileRecordsLock = new object();
+        private readonly object conflictFileRecordsLock = new();
 
         // Contains all of the unique conflicted files, resolved from conflictFileOptions
-        private List<string> conflictedFiles = new List<string>();
+        private List<string> conflictedFiles = new();
 
         // Contains all of the .sync-conflict files found
-        private readonly HashSet<string> conflictFileOptions = new HashSet<string>();
+        private readonly HashSet<string> conflictFileOptions = new();
 
-        private readonly object fileWatchersLock = new object();
-        private readonly List<FileWatcher> fileWatchers = new List<FileWatcher>();
+        private readonly object fileWatchersLock = new();
+        private readonly List<FileWatcher> fileWatchers = new();
 
-        private readonly SemaphoreSlim scanLock = new SemaphoreSlim(1, 1);
+        private readonly SemaphoreSlim scanLock = new(1, 1);
         private CancellationTokenSource scanCts;
 
-        private readonly object backoffTimerLock = new object();
+        private readonly object backoffTimerLock = new();
         private readonly System.Timers.Timer backoffTimer;
 
         public List<string> ConflictedFiles
         {
             get
             {
-                lock (this.conflictFileRecordsLock)
+                lock (conflictFileRecordsLock)
                 {
-                    return this.conflictedFiles.ToList();
+                    return conflictedFiles.ToList();
                 }
             }
         }
@@ -66,14 +66,14 @@ namespace SyncTrayzor.Services.Conflicts
         private bool _isEnabled;
         public bool IsEnabled
         {
-            get => this._isEnabled;
+            get => _isEnabled;
             set
             {
-                if (this._isEnabled == value)
+                if (_isEnabled == value)
                     return;
 
-                this._isEnabled = value;
-                this.Reset();
+                _isEnabled = value;
+                Reset();
             }
         }
 
@@ -92,57 +92,57 @@ namespace SyncTrayzor.Services.Conflicts
             this.conflictFileManager = conflictFileManager;
             this.fileWatcherFactory = fileWatcherFactory;
 
-            this.syncthingManager.StateChanged += this.SyncthingStateChanged;
-            this.syncthingManager.Folders.FoldersChanged += this.FoldersChanged;
+            this.syncthingManager.StateChanged += SyncthingStateChanged;
+            this.syncthingManager.Folders.FoldersChanged += FoldersChanged;
 
-            this.backoffTimer = new System.Timers.Timer() // Interval will be set when it's started
+            backoffTimer = new System.Timers.Timer() // Interval will be set when it's started
             {
                 AutoReset = false,
             };
-            this.backoffTimer.Elapsed += (o, e) =>
+            backoffTimer.Elapsed += (o, e) =>
             {
-                this.RefreshConflictedFiles();
+                RefreshConflictedFiles();
             };
         }
 
         private void SyncthingStateChanged(object sender, SyncthingStateChangedEventArgs e)
         {
-            this.Reset();
+            Reset();
         }
 
         private void FoldersChanged(object sender, EventArgs e)
         {
-            this.Reset();
+            Reset();
         }
 
         private void RestartBackoffTimer()
         {
-            lock (this.backoffTimerLock)
+            lock (backoffTimerLock)
             {
-                this.backoffTimer.Stop();
-                this.backoffTimer.Interval = this.BackoffInterval.TotalMilliseconds;
-                this.backoffTimer.Start();
+                backoffTimer.Stop();
+                backoffTimer.Interval = BackoffInterval.TotalMilliseconds;
+                backoffTimer.Start();
             }
         }
 
         private async void Reset()
         {
-            this.StopWatchers();
+            StopWatchers();
 
-            if (this.IsEnabled && this.syncthingManager.State == SyncthingState.Running)
+            if (IsEnabled && syncthingManager.State == SyncthingState.Running)
             {
-                var folders = this.syncthingManager.Folders.FetchAll();
+                var folders = syncthingManager.Folders.FetchAll();
 
-                this.StartWatchers(folders);
-                await this.ScanFoldersAsync(folders);
+                StartWatchers(folders);
+                await ScanFoldersAsync(folders);
             }
             else
             {
-                lock (this.conflictFileRecordsLock)
+                lock (conflictFileRecordsLock)
                 {
-                    this.conflictFileOptions.Clear();
+                    conflictFileOptions.Clear();
                 }
-                this.RefreshConflictedFiles();
+                RefreshConflictedFiles();
             }
         }
         
@@ -150,48 +150,48 @@ namespace SyncTrayzor.Services.Conflicts
         {
             var conflictFiles = new HashSet<string>();
 
-            lock (this.conflictFileRecordsLock)
+            lock (conflictFileRecordsLock)
             {
-                foreach (var conflictedFile in this.conflictFileOptions)
+                foreach (var conflictedFile in conflictFileOptions)
                 {
-                    if (this.conflictFileManager.TryFindBaseFileForConflictFile(conflictedFile, out var parsedConflictFileInfo))
+                    if (conflictFileManager.TryFindBaseFileForConflictFile(conflictedFile, out var parsedConflictFileInfo))
                     {
                         conflictFiles.Add(parsedConflictFileInfo.OriginalPath);
                     }
                 }
 
-                this.conflictedFiles = conflictFiles.ToList();
+                conflictedFiles = conflictFiles.ToList();
 
-                logger.Debug($"Refreshing conflicted files. Found {this.conflictedFiles.Count} from {this.conflictFileOptions.Count} options");
+                logger.Debug($"Refreshing conflicted files. Found {conflictedFiles.Count} from {conflictFileOptions.Count} options");
             }
 
-            this.ConflictedFilesChanged?.Invoke(this, EventArgs.Empty);
+            ConflictedFilesChanged?.Invoke(this, EventArgs.Empty);
         }
 
         private void StopWatchers()
         {
-            lock (this.fileWatchersLock)
+            lock (fileWatchersLock)
             {
-                foreach (var watcher in this.fileWatchers)
+                foreach (var watcher in fileWatchers)
                 {
                     watcher.Dispose();
                 }
 
-                this.fileWatchers.Clear();
+                fileWatchers.Clear();
             }
         }
 
         private void StartWatchers(IReadOnlyCollection<Folder> folders)
         {
-            lock (this.fileWatchersLock)
+            lock (fileWatchersLock)
             {
                 foreach (var folder in folders)
                 {
                     logger.Debug("Starting watcher for folder: {0} ({1})", folder.FolderId, folder.Label);
 
-                    var watcher = this.fileWatcherFactory.Create(FileWatcherMode.CreatedOrDeleted, folder.Path, this.FolderExistenceCheckingInterval, this.conflictFileManager.ConflictPattern);
-                    watcher.PathChanged += this.PathChanged;
-                    this.fileWatchers.Add(watcher);
+                    var watcher = fileWatcherFactory.Create(FileWatcherMode.CreatedOrDeleted, folder.Path, FolderExistenceCheckingInterval, conflictFileManager.ConflictPattern);
+                    watcher.PathChanged += PathChanged;
+                    fileWatchers.Add(watcher);
                 }
             }
         }
@@ -200,23 +200,23 @@ namespace SyncTrayzor.Services.Conflicts
         {
             var fullPath = Path.Combine(e.Directory, e.Path);
 
-            if (this.conflictFileManager.IsPathIgnored(fullPath) || this.conflictFileManager.IsFileIgnored(fullPath))
+            if (conflictFileManager.IsPathIgnored(fullPath) || conflictFileManager.IsFileIgnored(fullPath))
                 return;
 
             logger.Debug("Conflict file changed: {0} FileExists: {1}", fullPath, e.PathExists);
 
             bool changed;
 
-            lock (this.conflictFileRecordsLock)
+            lock (conflictFileRecordsLock)
             {
                 if (e.PathExists)
-                    changed = this.conflictFileOptions.Add(fullPath);
+                    changed = conflictFileOptions.Add(fullPath);
                 else
-                    changed = this.conflictFileOptions.Remove(fullPath);
+                    changed = conflictFileOptions.Remove(fullPath);
             }
 
             if (changed)
-                this.RestartBackoffTimer();
+                RestartBackoffTimer();
         }
 
         private async Task ScanFoldersAsync(IReadOnlyCollection<Folder> folders)
@@ -226,10 +226,10 @@ namespace SyncTrayzor.Services.Conflicts
 
             // We're not re-entrant. There's a CTS which will abort the previous invocation, but we'll need to wait
             // until that happens
-            this.scanCts?.Cancel();
-            using (await this.scanLock.WaitAsyncDisposable())
+            scanCts?.Cancel();
+            using (await scanLock.WaitAsyncDisposable())
             {
-                this.scanCts = new CancellationTokenSource();
+                scanCts = new CancellationTokenSource();
                 try
                 {
                     var newConflictFileOptions = new HashSet<string>();
@@ -238,50 +238,50 @@ namespace SyncTrayzor.Services.Conflicts
                     {
                         logger.Debug("Scanning folder {0} ({1}) ({2}) for conflict files", folder.FolderId, folder.Label, folder.Path);
 
-                        var options = await this.conflictFileManager.FindConflicts(folder.Path)
+                        var options = await conflictFileManager.FindConflicts(folder.Path)
                             .SelectMany(conflict => conflict.Conflicts)
                             .Select(conflictOptions => Path.Combine(folder.Path, conflictOptions.FilePath))
                             .ToList()
-                            .ToTask(this.scanCts.Token);
+                            .ToTask(scanCts.Token);
 
                         newConflictFileOptions.UnionWith(options);
                     }
 
                     // If we get aborted, we won't refresh the conflicted files: it'll get done again in a minute anyway
                     bool conflictedFilesChanged;
-                    lock (this.conflictFileRecordsLock)
+                    lock (conflictFileRecordsLock)
                     {
-                        conflictedFilesChanged = !this.conflictFileOptions.SetEquals(newConflictFileOptions);
+                        conflictedFilesChanged = !conflictFileOptions.SetEquals(newConflictFileOptions);
                         if (conflictedFilesChanged)
                         {
-                            this.conflictFileOptions.Clear();
+                            conflictFileOptions.Clear();
                             foreach (var file in newConflictFileOptions)
                             {
-                                this.conflictFileOptions.Add(file);
+                                conflictFileOptions.Add(file);
                             }
                         }
                     }
 
                     if (conflictedFilesChanged)
-                        this.RestartBackoffTimer();
+                        RestartBackoffTimer();
 
                 }
                 catch (OperationCanceledException) { }
                 catch (AggregateException e) when (e.InnerException is OperationCanceledException) { }
                 finally
                 {
-                    this.scanCts = null;
+                    scanCts = null;
                 }
             }
         }
 
         public void Dispose()
         {
-            this.StopWatchers();
-            this.syncthingManager.StateChanged -= this.SyncthingStateChanged;
-            this.syncthingManager.Folders.FoldersChanged -= this.FoldersChanged;
-            this.backoffTimer.Stop();
-            this.backoffTimer.Dispose();
+            StopWatchers();
+            syncthingManager.StateChanged -= SyncthingStateChanged;
+            syncthingManager.Folders.FoldersChanged -= FoldersChanged;
+            backoffTimer.Stop();
+            backoffTimer.Dispose();
         }
     }
 }

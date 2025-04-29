@@ -4,14 +4,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PortableInstaller
 {
     class Program
     {
-        private static readonly List<string> logMessages = new List<string>();
+        private static readonly List<string> logMessages = new();
 
         public static int Main(string[] args)
         {
@@ -67,11 +65,9 @@ namespace PortableInstaller
                 Log("Waiting for SyncTrayzor process to exit...");
                 try
                 {
-                    using (var process = Process.GetProcessById(waitForPid))
-                    {
-                        if (!process.WaitForExit(5000))
-                            throw new Exception($"SyncTrayzor process with PID {waitForPid} did not exit after 5 seconds");
-                    }
+                    using var process = Process.GetProcessById(waitForPid);
+                    if (!process.WaitForExit(5000))
+                        throw new Exception($"SyncTrayzor process with PID {waitForPid} did not exit after 5 seconds");
                 }
                 catch (ArgumentException) // It wasn't running to start with. Coolio
                 { }

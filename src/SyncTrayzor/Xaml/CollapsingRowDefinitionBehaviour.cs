@@ -36,22 +36,22 @@ namespace SyncTrayzor.Xaml
 
         protected override void OnAttached()
         {
-            this.Refresh();
+            Refresh();
         }
 
         protected override void OnDetaching()
         {
-            BindingOperations.ClearBinding(this.AssociatedObject, RowDefinition.HeightProperty);
+            BindingOperations.ClearBinding(AssociatedObject, RowDefinition.HeightProperty);
         }
 
         private void Refresh()
         {
-            BindingOperations.ClearBinding(this.AssociatedObject, RowDefinition.HeightProperty);
+            BindingOperations.ClearBinding(AssociatedObject, RowDefinition.HeightProperty);
 
-            if (this.RowVisibility == Visibility.Collapsed)
+            if (RowVisibility == Visibility.Collapsed)
             {
-                this.AssociatedObject.Height = new GridLength(0);
-                this.AssociatedObject.MinHeight = 0;
+                AssociatedObject.Height = new GridLength(0);
+                AssociatedObject.MinHeight = 0;
             }
             else
             {
@@ -60,9 +60,9 @@ namespace SyncTrayzor.Xaml
                     Source = this,
                     Mode = BindingMode.TwoWay,
                 };
-                BindingOperations.SetBinding(this.AssociatedObject, RowDefinition.HeightProperty, heightBinding);
+                BindingOperations.SetBinding(AssociatedObject, RowDefinition.HeightProperty, heightBinding);
 
-                this.AssociatedObject.MinHeight = this.MinHeight;
+                AssociatedObject.MinHeight = MinHeight;
             }
         }
     }

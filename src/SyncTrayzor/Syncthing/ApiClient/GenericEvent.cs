@@ -17,7 +17,7 @@ namespace SyncTrayzor.Syncthing.ApiClient
 
         public override string ToString()
         {
-            return $"<GenericEvent ID={this.Id} Type={this.Type} Time={this.Time} Data={this.Data.ToString(Formatting.None)}>";
+            return $"<GenericEvent ID={Id} Type={Type} Time={Time} Data={Data.ToString(Formatting.None)}>";
         }
     }
 }

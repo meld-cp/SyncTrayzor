@@ -7,7 +7,7 @@ namespace SyncTrayzor.Syncthing.Folders
     {
         private static readonly Logger logger = LogManager.GetCurrentClassLogger();
 
-        private static readonly Dictionary<string, FolderSyncState> folderSyncStateLookup = new Dictionary<string, FolderSyncState>()
+        private static readonly Dictionary<string, FolderSyncState> folderSyncStateLookup = new()
         {
             { "syncing", FolderSyncState.Syncing },
             { "scanning", FolderSyncState.Scanning },

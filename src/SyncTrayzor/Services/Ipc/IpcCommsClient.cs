@@ -24,7 +24,7 @@ namespace SyncTrayzor.Services.Ipc
     {
         private readonly int pid;
 
-        private string PipeName => $"SyncTrayzor-{this.pid}";
+        private string PipeName => $"SyncTrayzor-{pid}";
 
         public IpcCommsClient(int pid)
         {
@@ -33,27 +33,27 @@ namespace SyncTrayzor.Services.Ipc
 
         public void Shutdown()
         {
-            this.SendCommand("Shutdown");
+            SendCommand("Shutdown");
         }
 
         public void ShowMainWindow()
         {
-            this.SendCommand("ShowMainWindow");
+            SendCommand("ShowMainWindow");
         }
 
         public void StartSyncthing()
         {
-            this.SendCommand("StartSyncthing");
+            SendCommand("StartSyncthing");
         }
 
         public void StopSyncthing()
         {
-            this.SendCommand("StopSyncthing");
+            SendCommand("StopSyncthing");
         }
 
         private void SendCommand(string command)
         {
-            var clientStream = new NamedPipeClientStream(".", this.PipeName, PipeDirection.InOut, PipeOptions.Asynchronous);
+            var clientStream = new NamedPipeClientStream(".", PipeName, PipeDirection.InOut, PipeOptions.Asynchronous);
 
             clientStream.Connect(500);
             clientStream.ReadMode = PipeTransmissionMode.Message;
@@ -72,7 +72,7 @@ namespace SyncTrayzor.Services.Ipc
                 responseBuilder.Append(Encoding.ASCII.GetString(buffer, 0, read));
             }
 
-            this.ProcessResponse(responseBuilder.ToString());
+            ProcessResponse(responseBuilder.ToString());
         }
 
         private void ProcessResponse(string response)
@@ -85,7 +85,7 @@ namespace SyncTrayzor.Services.Ipc
 
         public override string ToString()
         {
-            return $"<IpcCommsClient PID={this.pid}>";
+            return $"<IpcCommsClient PID={pid}>";
         }
     }
 }

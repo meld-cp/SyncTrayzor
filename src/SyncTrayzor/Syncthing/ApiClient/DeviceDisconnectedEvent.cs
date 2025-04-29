@@ -16,8 +16,8 @@ namespace SyncTrayzor.Syncthing.ApiClient
         [JsonProperty("data")]
         public DeviceDisconnectedEventData Data { get; set; }
 
-        public override bool IsValid => this.Data != null &&
-            !string.IsNullOrWhiteSpace(this.Data.Id);
+        public override bool IsValid => Data != null &&
+            !string.IsNullOrWhiteSpace(Data.Id);
 
         public override void Visit(IEventVisitor visitor)
         {
@@ -26,7 +26,7 @@ namespace SyncTrayzor.Syncthing.ApiClient
 
         public override string ToString()
         {
-            return $"<Disconnected ID={this.Id} Time={this.Time} Error={this.Data.Error} Id={this.Data.Id}>";
+            return $"<Disconnected ID={Id} Time={Time} Error={Data.Error} Id={Data.Id}>";
         }
     }
 }

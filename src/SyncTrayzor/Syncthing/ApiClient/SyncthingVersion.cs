@@ -18,7 +18,7 @@ namespace SyncTrayzor.Syncthing.ApiClient
 
         public override string ToString()
         {
-            return $"<Version arch={this.Arch} longVersion={this.LongVersion} os={this.OS} version={this.Version}>";
+            return $"<Version arch={Arch} longVersion={LongVersion} os={OS} version={Version}>";
         }
     }
 }

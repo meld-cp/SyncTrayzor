@@ -62,10 +62,8 @@ namespace ChecksumUtil
                 {
                     foreach (var inputFileName in inputFileNames)
                     {
-                        using (var inputFile = File.OpenRead(inputFileName))
-                        {
-                            ChecksumFileUtilities.WriteChecksumToFile(hashAlgorithm, checksumFileTemp, Path.GetFileName(inputFileName), inputFile);
-                        }
+                        using var inputFile = File.OpenRead(inputFileName);
+                        ChecksumFileUtilities.WriteChecksumToFile(hashAlgorithm, checksumFileTemp, Path.GetFileName(inputFileName), inputFile);
                     }
                 }
 
@@ -109,12 +107,10 @@ namespace ChecksumUtil
                     {
                         foreach (var inputFileName in inputFileNames)
                         {
-                            using (var inputFile = File.OpenRead(inputFileName))
-                            {
-                                var valid = ChecksumFileUtilities.ValidateChecksum(hashAlgorithm, cleartext, Path.GetFileName(inputFileName), inputFile);
-                                if (!valid)
-                                    throw new Exception($"File {inputFileName} failed checksum");
-                            }
+                            using var inputFile = File.OpenRead(inputFileName);
+                            var valid = ChecksumFileUtilities.ValidateChecksum(hashAlgorithm, cleartext, Path.GetFileName(inputFileName), inputFile);
+                            if (!valid)
+                                throw new Exception($"File {inputFileName} failed checksum");
                         }
                     }
                 }

@@ -29,8 +29,8 @@ namespace SyncTrayzor.Pages
         public WindowPlacement Placement { get; set; }
         public IDonationManager DonationManager { get; }
 
-        private readonly Subject<bool> _activateObservable = new Subject<bool>();
-        public IObservable<bool> ActivateObservable => this._activateObservable;
+        private readonly Subject<bool> _activateObservable = new();
+        public IObservable<bool> ActivateObservable => _activateObservable;
         public ConsoleViewModel Console { get; }
         public ViewerViewModel Viewer { get; }
         public BarAlertsViewModel BarAlerts { get; }
@@ -55,114 +55,114 @@ namespace SyncTrayzor.Pages
             this.syncthingManager = syncthingManager;
             this.application = application;
             this.configurationProvider = configurationProvider;
-            this.Console = console;
-            this.Viewer = viewer;
-            this.BarAlerts = barAlerts;
+            Console = console;
+            Viewer = viewer;
+            BarAlerts = barAlerts;
             this.settingsViewModelFactory = settingsViewModelFactory;
             this.aboutViewModelFactory = aboutViewModelFactory;
             this.confictResolutionViewModelFactory = confictResolutionViewModelFactory;
             this.processStartProvider = processStartProvider;
-            this.DonationManager = donationManager;
+            DonationManager = donationManager;
 
             var configuration = this.configurationProvider.Load();
 
-            this.Console.ConductWith(this);
-            this.Viewer.ConductWith(this);
-            this.BarAlerts.ConductWith(this);
+            Console.ConductWith(this);
+            Viewer.ConductWith(this);
+            BarAlerts.ConductWith(this);
 
-            this.syncthingManager.StateChanged += (o, e) => this.SyncthingState = e.NewState;
-            this.syncthingManager.ProcessExitedWithError += (o, e) => this.ShowExitedWithError();
+            this.syncthingManager.StateChanged += (o, e) => SyncthingState = e.NewState;
+            this.syncthingManager.ProcessExitedWithError += (o, e) => ShowExitedWithError();
 
-            this.ConsoleHeight = configuration.SyncthingConsoleHeight;
+            ConsoleHeight = configuration.SyncthingConsoleHeight;
             this.Bind(s => s.ConsoleHeight, (o, e) => this.configurationProvider.AtomicLoadAndSave(c => c.SyncthingConsoleHeight = e.NewValue));
 
-            this.ShowConsole = configuration.SyncthingConsoleHeight > 0;
+            ShowConsole = configuration.SyncthingConsoleHeight > 0;
             this.Bind(s => s.ShowConsole, (o, e) =>
             {
-                this.ConsoleHeight = e.NewValue ? Configuration.DefaultSyncthingConsoleHeight : 0.0;
+                ConsoleHeight = e.NewValue ? Configuration.DefaultSyncthingConsoleHeight : 0.0;
             });
 
-            this.Placement = configuration.WindowPlacement;
+            Placement = configuration.WindowPlacement;
             this.Bind(s => s.Placement, (o, e) => this.configurationProvider.AtomicLoadAndSave(c => c.WindowPlacement = e.NewValue));
         }
 
-        public bool CanStart => this.SyncthingState == SyncthingState.Stopped;
+        public bool CanStart => SyncthingState == SyncthingState.Stopped;
         public async void Start()
         {
-            await this.syncthingManager.StartWithErrorDialogAsync(this.windowManager);
+            await syncthingManager.StartWithErrorDialogAsync(windowManager);
         }
 
-        public bool CanStop => this.SyncthingState == SyncthingState.Running;
+        public bool CanStop => SyncthingState == SyncthingState.Running;
         public async void Stop()
         {
-            await this .syncthingManager.StopAsync();
+            await syncthingManager.StopAsync();
         }
 
-        public bool CanRestart => this.SyncthingState == SyncthingState.Running;
+        public bool CanRestart => SyncthingState == SyncthingState.Running;
         public async void Restart()
         {
-            await this.syncthingManager.RestartAsync();
+            await syncthingManager.RestartAsync();
         }
 
-        public bool CanRefreshBrowser => this.SyncthingState == SyncthingState.Running;
+        public bool CanRefreshBrowser => SyncthingState == SyncthingState.Running;
         public void RefreshBrowser()
         {
-            this.Viewer.RefreshBrowserNukeCache();
+            Viewer.RefreshBrowserNukeCache();
         }
 
-        public bool CanOpenBrowser => this.SyncthingState == SyncthingState.Running;
+        public bool CanOpenBrowser => SyncthingState == SyncthingState.Running;
         public void OpenBrowser()
         {
-            this.processStartProvider.StartDetached(this.syncthingManager.Address.NormalizeZeroHost().ToString());
+            processStartProvider.StartDetached(syncthingManager.Address.NormalizeZeroHost().ToString());
         }
 
         public void KillAllSyncthingProcesses()
         {
-            if (this.windowManager.ShowMessageBox(
+            if (windowManager.ShowMessageBox(
                     Resources.Dialog_ConfirmKillAllProcesses_Message,
                     Resources.Dialog_ConfirmKillAllProcesses_Title,
                     MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
-                this.syncthingManager.KillAllSyncthingProcesses();
+                syncthingManager.KillAllSyncthingProcesses();
         }
 
         public void ShowSettings()
         {
-            var vm = this.settingsViewModelFactory();
-            this.windowManager.ShowDialog(vm);
+            var vm = settingsViewModelFactory();
+            windowManager.ShowDialog(vm);
         }
 
         public void ShowConflictResolver()
         {
-            var vm = this.confictResolutionViewModelFactory();
-            this.windowManager.ShowDialog(vm);
+            var vm = confictResolutionViewModelFactory();
+            windowManager.ShowDialog(vm);
         }
 
-        public bool CanZoomBrowser => this.SyncthingState == SyncthingState.Running;
+        public bool CanZoomBrowser => SyncthingState == SyncthingState.Running;
 
         public void BrowserZoomIn()
         {
-            this.Viewer.ZoomIn();
+            Viewer.ZoomIn();
         }
 
         public void BrowserZoomOut()
         {
-            this.Viewer.ZoomOut();
+            Viewer.ZoomOut();
         }
 
         public void BrowserZoomReset()
         {
-            this.Viewer.ZoomReset();
+            Viewer.ZoomReset();
         }
 
         public void ShowAbout()
         {
-            var vm = this.aboutViewModelFactory();
-            this.windowManager.ShowDialog(vm);
+            var vm = aboutViewModelFactory();
+            windowManager.ShowDialog(vm);
         }
 
         public void ShowExitedWithError()
         {
-            this.windowManager.ShowMessageBox(
+            windowManager.ShowMessageBox(
                 Resources.Dialog_FailedToStartSyncthing_Message,
                 Resources.Dialog_FailedToStartSyncthing_Title,
                 icon: MessageBoxImage.Error);
@@ -170,26 +170,26 @@ namespace SyncTrayzor.Pages
 
         public void CloseToTray()
         {
-            this.RequestClose();
+            RequestClose();
         }
 
         public void Shutdown()
         {
-            this.application.Shutdown();
+            application.Shutdown();
         }
 
         public void EnsureInForeground()
         {
-            if (!this.application.HasMainWindow)
-                this.windowManager.ShowWindow(this);
+            if (!application.HasMainWindow)
+                windowManager.ShowWindow(this);
 
-            this._activateObservable.OnNext(true);
+            _activateObservable.OnNext(true);
         }
 
         public void Dispose()
         {
-            this.Viewer.Dispose();
-            this.Console.Dispose();
+            Viewer.Dispose();
+            Console.Dispose();
         }
     }
 }

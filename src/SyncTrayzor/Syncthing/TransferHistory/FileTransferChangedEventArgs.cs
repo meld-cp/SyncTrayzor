@@ -8,7 +8,7 @@ namespace SyncTrayzor.Syncthing.TransferHistory
 
         public FileTransferChangedEventArgs(FileTransfer fileTransfer)
         {
-            this.FileTransfer = fileTransfer;
+            FileTransfer = fileTransfer;
         }
     }
 }

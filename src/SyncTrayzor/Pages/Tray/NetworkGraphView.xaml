@@ -14,6 +14,6 @@
     <DockPanel>
         <TextBlock DockPanel.Dock="Right" VerticalAlignment="Top" Margin="0,3,5,0" Foreground="DarkGray" FontSize="10" Text="{Binding MaxYValue}"/>
 
-        <oxy:PlotView Grid.Row="0" Model="{Binding OxyPlotModel}" DefaultTrackerTemplate="{x:Null}"/>
+        <oxy:PlotView Model="{Binding OxyPlotModel}" DefaultTrackerTemplate="{x:Null}"/>
     </DockPanel>
 </UserControl>

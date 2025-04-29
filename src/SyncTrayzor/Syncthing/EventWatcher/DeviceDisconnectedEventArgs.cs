@@ -9,8 +9,8 @@ namespace SyncTrayzor.Syncthing.EventWatcher
 
         public DeviceDisconnectedEventArgs(string deviceId, string error)
         {
-            this.DeviceId = deviceId;
-            this.Error = error;
+            DeviceId = deviceId;
+            Error = error;
         }
     }
 }

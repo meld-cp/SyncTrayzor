@@ -16,8 +16,8 @@ namespace SyncTrayzor.Syncthing.ApiClient
         [JsonProperty("data")]
         public FolderSummaryEventData Data { get; set; }
 
-        public override bool IsValid => this.Data != null &&
-            !string.IsNullOrWhiteSpace(this.Data.Folder);
+        public override bool IsValid => Data != null &&
+            !string.IsNullOrWhiteSpace(Data.Folder);
 
         public override void Visit(IEventVisitor visitor)
         {
@@ -26,7 +26,7 @@ namespace SyncTrayzor.Syncthing.ApiClient
 
         public override string ToString()
         {
-            return $"<FolderSummary ID={this.Id} Time={this.Time} Folder={this.Data.Folder} Summary={this.Data.Summary}>";
+            return $"<FolderSummary ID={Id} Time={Time} Folder={Data.Folder} Summary={Data.Summary}>";
         }
     }
 }

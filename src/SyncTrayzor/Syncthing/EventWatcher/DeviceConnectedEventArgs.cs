@@ -9,8 +9,8 @@ namespace SyncTrayzor.Syncthing.EventWatcher
 
         public DeviceConnectedEventArgs(string deviceId, string address)
         {
-            this.DeviceId = deviceId;
-            this.Address = address;
+            DeviceId = deviceId;
+            Address = address;
         }
     }
 }

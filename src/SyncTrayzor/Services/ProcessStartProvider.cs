@@ -29,7 +29,7 @@ namespace SyncTrayzor.Services
 
         public ProcessStartProvider(IAssemblyProvider assemblyProvider, IConfigurationProvider configurationProvider)
         {
-            this.processRunnerPath = Path.Combine(Path.GetDirectoryName(assemblyProvider.Location), processRunner);
+            processRunnerPath = Path.Combine(Path.GetDirectoryName(assemblyProvider.Location), processRunner);
             this.configurationProvider = configurationProvider;
         }
 
@@ -47,7 +47,7 @@ namespace SyncTrayzor.Services
 
         public void StartDetached(string filename)
         {
-            this.StartDetached(filename, null);
+            StartDetached(filename, null);
         }
 
         public void StartDetached(string filename, string arguments, string launchAfterFinished = null)
@@ -55,7 +55,7 @@ namespace SyncTrayzor.Services
             if (arguments == null)
                 arguments = String.Empty;
 
-            var launch = launchAfterFinished == null ? null : String.Format("--launch=\"{0}\"", launchAfterFinished.Replace("\"", "\\\""));
+            var launch = launchAfterFinished == null ? null : $"--launch=\"{launchAfterFinished.Replace("\"", "\\\"")}\"";
             var formattedArguments = $"--shell {launch} -- \"{filename}\" {arguments}";
 
             logger.Debug("Starting {0} {1}", processRunnerPath, formattedArguments);
@@ -75,7 +75,7 @@ namespace SyncTrayzor.Services
             if (arguments == null)
                 arguments = String.Empty;
 
-            var launch = launchAfterFinished == null ? null : String.Format("--launch=\"{0}\"", launchAfterFinished.Replace("\"", "\\\""));
+            var launch = launchAfterFinished == null ? null : $"--launch=\"{launchAfterFinished.Replace("\"", "\\\"")}\"";
             var formattedArguments = $"--nowindow -- \"{processRunnerPath}\" --runas {launch} -- \"{filename}\" {arguments}";
 
             logger.Debug("Starting {0} {1}", processRunnerPath, formattedArguments);
@@ -93,14 +93,14 @@ namespace SyncTrayzor.Services
 
         public void ShowFolderInExplorer(string path)
         {
-            var command = this.configurationProvider.Load().OpenFolderCommand;
-            this.StartExplorerHelper(command, path);
+            var command = configurationProvider.Load().OpenFolderCommand;
+            StartExplorerHelper(command, path);
         }
 
         public void ShowFileInExplorer(string filePath)
         {
-            var command = this.configurationProvider.Load().ShowFileInFolderCommand;
-            this.StartExplorerHelper(command, filePath);
+            var command = configurationProvider.Load().ShowFileInFolderCommand;
+            StartExplorerHelper(command, filePath);
         }
 
         private void StartExplorerHelper(string commandFromConfig, string path)
@@ -113,7 +113,7 @@ namespace SyncTrayzor.Services
                 return;
             }
 
-            this.StartDetached(executable, StringExtensions.JoinCommandLine(parts.Skip(1)));
+            StartDetached(executable, StringExtensions.JoinCommandLine(parts.Skip(1)));
         }
     }
 }

@@ -18,12 +18,12 @@ namespace SyncTrayzor.NotifyIcon
     {
         private static readonly TimeSpan debounceTime = TimeSpan.FromSeconds(10);
 
-        private readonly object syncRoot = new object();
+        private readonly object syncRoot = new();
 
         // Devices for which we've seen a connected event, but haven't yet generated a
         // Connected notification, and the CTS to cancel the timer which will signal the 
         // DeviceConnected event being fired
-        private readonly Dictionary<Device, CancellationTokenSource> pendingDeviceIds = new Dictionary<Device, CancellationTokenSource>();
+        private readonly Dictionary<Device, CancellationTokenSource> pendingDeviceIds = new();
 
         public event EventHandler<DeviceConnectedEventArgs> DeviceConnected;
 
@@ -31,18 +31,18 @@ namespace SyncTrayzor.NotifyIcon
         {
             var cts = new CancellationTokenSource();
 
-            lock (this.syncRoot)
+            lock (syncRoot)
             {
-                if (this.pendingDeviceIds.TryGetValue(device, out var existingCts))
+                if (pendingDeviceIds.TryGetValue(device, out var existingCts))
                 {
                     // It already exists. Cancel it, restart.
                     existingCts.Cancel();
                 }
 
-                this.pendingDeviceIds[device] = cts;
+                pendingDeviceIds[device] = cts;
             }
 
-            this.WaitAndRaiseConnected(device, cts.Token);
+            WaitAndRaiseConnected(device, cts.Token);
         }
 
         private async void WaitAndRaiseConnected(Device device, CancellationToken cancellationToken)
@@ -55,30 +55,30 @@ namespace SyncTrayzor.NotifyIcon
 
             bool raiseEvent = false;
 
-            lock (this.syncRoot)
+            lock (syncRoot)
             {
-                if (this.pendingDeviceIds.ContainsKey(device))
+                if (pendingDeviceIds.ContainsKey(device))
                 {
-                    this.pendingDeviceIds.Remove(device);
+                    pendingDeviceIds.Remove(device);
                     raiseEvent = true;
                 }
             }
 
             if (raiseEvent)
             {
-                this.DeviceConnected?.Invoke(this, new DeviceConnectedEventArgs(device));
+                DeviceConnected?.Invoke(this, new DeviceConnectedEventArgs(device));
             }
         }
 
 
         public bool Disconnect(Device device)
         {
-            lock (this.syncRoot)
+            lock (syncRoot)
             {
-                if (this.pendingDeviceIds.TryGetValue(device, out var cts))
+                if (pendingDeviceIds.TryGetValue(device, out var cts))
                 {
                     cts.Cancel();
-                    this.pendingDeviceIds.Remove(device);
+                    pendingDeviceIds.Remove(device);
 
                     return false;
                 }

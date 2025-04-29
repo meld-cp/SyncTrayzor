@@ -8,7 +8,7 @@ namespace SyncTrayzor.Syncthing.Devices
 
         public DeviceDisconnectedEventArgs(Device device)
         {
-            this.Device = device;
+            Device = device;
         }
     }
 }

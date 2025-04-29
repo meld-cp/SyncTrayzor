@@ -9,8 +9,8 @@ namespace SyncTrayzor.Syncthing.Folders
 
         public FolderError(string error, string path)
         {
-            this.Error = error;
-            this.Path = path;
+            Error = error;
+            Path = path;
         }
 
         public bool Equals(FolderError other)
@@ -20,13 +20,13 @@ namespace SyncTrayzor.Syncthing.Folders
             if (ReferenceEquals(other, null))
                 return false;
 
-            return this.Error == other.Error &&
-                this.Path == other.Path;
+            return Error == other.Error &&
+                Path == other.Path;
         }
 
         public override bool Equals(object obj)
         {
-            return this.Equals(obj as FolderError);
+            return Equals(obj as FolderError);
         }
 
         public override int GetHashCode()
@@ -34,8 +34,8 @@ namespace SyncTrayzor.Syncthing.Folders
             unchecked
             {
                 int hash = 17;
-                hash = hash * 23 + this.Error.GetHashCode();
-                hash = hash * 23 + this.Path.GetHashCode();
+                hash = hash * 23 + Error.GetHashCode();
+                hash = hash * 23 + Path.GetHashCode();
                 return hash;
             }
         }

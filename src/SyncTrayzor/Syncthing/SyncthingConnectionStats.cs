@@ -9,10 +9,10 @@
 
         public SyncthingConnectionStats(long inBytesTotal, long outBytesTotal, double inBytesPerSecond, double outBytesPerSecond)
         {
-            this.InBytesTotal = inBytesTotal;
-            this.OutBytesTotal = outBytesTotal;
-            this.InBytesPerSecond = inBytesPerSecond;
-            this.OutBytesPerSecond = outBytesPerSecond;
+            InBytesTotal = inBytesTotal;
+            OutBytesTotal = outBytesTotal;
+            InBytesPerSecond = inBytesPerSecond;
+            OutBytesPerSecond = outBytesPerSecond;
         }
     }
 }

@@ -13,12 +13,12 @@ namespace SyncTrayzor.Pages.BarAlerts
 
         public ConflictsAlertViewModel(int numConflicts)
         {
-            this.NumConflicts = numConflicts;
+            NumConflicts = numConflicts;
         }
 
         public void OpenConflictResolver()
         {
-            this.OpenConflictResolverClicked?.Invoke(this, EventArgs.Empty);
+            OpenConflictResolverClicked?.Invoke(this, EventArgs.Empty);
         }
     }
 }

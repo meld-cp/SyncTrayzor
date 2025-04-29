@@ -15,9 +15,9 @@ namespace SyncTrayzor.Syncthing.ApiClient
         [JsonProperty("data")]
         public DeviceRejectedEventData Data { get; set; }
 
-        public override bool IsValid => this.Data != null &&
-            !string.IsNullOrWhiteSpace(this.Data.Address) &&
-            !string.IsNullOrWhiteSpace(this.Data.DeviceId);
+        public override bool IsValid => Data != null &&
+            !string.IsNullOrWhiteSpace(Data.Address) &&
+            !string.IsNullOrWhiteSpace(Data.DeviceId);
 
         public override void Visit(IEventVisitor visitor)
         {
@@ -26,7 +26,7 @@ namespace SyncTrayzor.Syncthing.ApiClient
 
         public override string ToString()
         {
-            return $"<DeviceRejected ID={this.Id} Time={this.Time} Address={this.Data.Address} DeviceId={this.Data.DeviceId}>";
+            return $"<DeviceRejected ID={Id} Time={Time} Address={Data.Address} DeviceId={Data.DeviceId}>";
         }
     }
 }

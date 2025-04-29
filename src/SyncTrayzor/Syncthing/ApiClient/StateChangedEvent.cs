@@ -19,8 +19,8 @@ namespace SyncTrayzor.Syncthing.ApiClient
 
         public TimeSpan Duration
         {
-            get => TimeSpan.FromSeconds(this.DurationSeconds);
-            set => this.DurationSeconds = value.TotalSeconds;
+            get => TimeSpan.FromSeconds(DurationSeconds);
+            set => DurationSeconds = value.TotalSeconds;
         }
     }
 
@@ -29,11 +29,11 @@ namespace SyncTrayzor.Syncthing.ApiClient
         [JsonProperty("data")]
         public StateChangedEventData Data { get; set; }
 
-        public override bool IsValid => this.Data != null &&
-            !string.IsNullOrWhiteSpace(this.Data.Folder) &&
-            !string.IsNullOrWhiteSpace(this.Data.From) &&
-            !string.IsNullOrWhiteSpace(this.Data.To) &&
-            this.Data.Duration >= TimeSpan.Zero;
+        public override bool IsValid => Data != null &&
+            !string.IsNullOrWhiteSpace(Data.Folder) &&
+            !string.IsNullOrWhiteSpace(Data.From) &&
+            !string.IsNullOrWhiteSpace(Data.To) &&
+            Data.Duration >= TimeSpan.Zero;
 
         public override void Visit(IEventVisitor visitor)
         {
@@ -42,7 +42,7 @@ namespace SyncTrayzor.Syncthing.ApiClient
 
         public override string ToString()
         {
-            return $"<StateChangedEvent ID={this.Id} Time={this.Time} Folder={this.Data.Folder} From={this.Data.From} To={this.Data.To} Duration={this.Data.Duration}>";
+            return $"<StateChangedEvent ID={Id} Time={Time} Folder={Data.Folder} From={Data.From} To={Data.To} Duration={Data.Duration}>";
         }
     }
 }

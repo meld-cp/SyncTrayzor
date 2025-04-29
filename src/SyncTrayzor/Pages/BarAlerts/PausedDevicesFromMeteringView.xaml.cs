@@ -5,7 +5,7 @@ namespace SyncTrayzor.Pages.BarAlerts
     /// <summary>
     /// Interaction logic for PausedDevicesFromMeteringView.xaml
     /// </summary>
-    public partial class PausedDevicesFromMeteringView : UserControl
+    public partial class PausedDevicesFromMeteringView
     {
         public PausedDevicesFromMeteringView()
         {

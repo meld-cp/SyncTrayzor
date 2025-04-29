@@ -19,18 +19,18 @@ namespace SyncTrayzor.Localization
         /// </summary>
         public CustomPluralLocalizationFormatter(string defaultTwoLetterISOLanguageName)
         {
-            this.DefaultTwoLetterISOLanguageName = defaultTwoLetterISOLanguageName;
+            DefaultTwoLetterISOLanguageName = defaultTwoLetterISOLanguageName;
         }
 
         private PluralRules.PluralRuleDelegate defaultPluralRule;
         private string defaultTwoLetterISOLanguageName;
         public string DefaultTwoLetterISOLanguageName
         {
-            get => this.defaultTwoLetterISOLanguageName;
+            get => defaultTwoLetterISOLanguageName;
             set
             {
-                this.defaultTwoLetterISOLanguageName = value;
-                this.defaultPluralRule = PluralRules.GetPluralRule(value);
+                defaultTwoLetterISOLanguageName = value;
+                defaultPluralRule = PluralRules.GetPluralRule(value);
             }
         }
 
@@ -63,9 +63,9 @@ namespace SyncTrayzor.Localization
 
 
             // Use the default, if provided:
-            if (this.defaultPluralRule != null)
+            if (defaultPluralRule != null)
             {
-                return this.defaultPluralRule;
+                return defaultPluralRule;
             }
 
             return null;

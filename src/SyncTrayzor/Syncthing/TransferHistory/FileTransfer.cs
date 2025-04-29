@@ -27,42 +27,42 @@ namespace SyncTrayzor.Syncthing.TransferHistory
 
         public FileTransfer(Folder folder, string path, ItemChangedItemType itemType, ItemChangedActionType actionType)
         {
-            this.Folder = folder;
-            this.Path = path;
+            Folder = folder;
+            Path = path;
 
-            this.Status = FileTransferStatus.Started;
-            this.StartedUtc = DateTime.UtcNow;
-            this.ItemType = itemType;
-            this.ActionType = actionType;
+            Status = FileTransferStatus.Started;
+            StartedUtc = DateTime.UtcNow;
+            ItemType = itemType;
+            ActionType = actionType;
         }
 
         public void SetDownloadProgress(long bytesTransferred, long totalBytes)
         {
             var now = DateTime.UtcNow;
-            if (this.lastProgressUpdateUtc.HasValue)
+            if (lastProgressUpdateUtc.HasValue)
             {
-                var deltaBytesTransferred = bytesTransferred - this.BytesTransferred;
-                this.DownloadBytesPerSecond = deltaBytesTransferred / (now - this.lastProgressUpdateUtc.Value).TotalSeconds;
+                var deltaBytesTransferred = bytesTransferred - BytesTransferred;
+                DownloadBytesPerSecond = deltaBytesTransferred / (now - lastProgressUpdateUtc.Value).TotalSeconds;
             }
 
-            this.BytesTransferred = bytesTransferred;
-            this.TotalBytes = totalBytes;
-            this.Status = FileTransferStatus.InProgress;
-            this.lastProgressUpdateUtc = now;
+            BytesTransferred = bytesTransferred;
+            TotalBytes = totalBytes;
+            Status = FileTransferStatus.InProgress;
+            lastProgressUpdateUtc = now;
         }
 
         public void SetComplete(string error, bool isNewError)
         {
-            this.Status = FileTransferStatus.Completed;
-            this.BytesTransferred = this.TotalBytes;
-            this.FinishedUtc = DateTime.UtcNow;
-            this.Error = error;
-            this.IsNewError = isNewError;
+            Status = FileTransferStatus.Completed;
+            BytesTransferred = TotalBytes;
+            FinishedUtc = DateTime.UtcNow;
+            Error = error;
+            IsNewError = isNewError;
         }
 
         public override string ToString()
         {
-            return $"<FileTransfer Folder={this.Folder.Label} Path={this.Path} Status={this.Status} ItemType={this.ItemType} ActionType={this.ActionType} Started={this.StartedUtc} Finished={this.FinishedUtc}>";
+            return $"<FileTransfer Folder={Folder.Label} Path={Path} Status={Status} ItemType={ItemType} ActionType={ActionType} Started={StartedUtc} Finished={FinishedUtc}>";
         }
     }
 }

@@ -17,8 +17,8 @@ namespace SyncTrayzor.Services
 
         public UserActivityMonitor()
         {
-            this.desktopHandle = NativeMethods.GetDesktopWindow();
-            this.shellHandle = NativeMethods.GetShellWindow();
+            desktopHandle = NativeMethods.GetDesktopWindow();
+            shellHandle = NativeMethods.GetShellWindow();
         }
 
         public bool IsWindowFullscreen()
@@ -27,7 +27,7 @@ namespace SyncTrayzor.Services
 
             //get the dimensions of the active window
             var hWnd = NativeMethods.GetForegroundWindow();
-            if (hWnd != null && !hWnd.Equals(IntPtr.Zero))
+            if (!hWnd.Equals(IntPtr.Zero))
             {
                 //Check we haven't picked up the desktop or the shell
                 if (!(hWnd.Equals(desktopHandle) || hWnd.Equals(shellHandle)))

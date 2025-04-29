@@ -10,17 +10,17 @@ namespace SyncTrayzor.Pages.ConflictResolution
 
         public void ShowFileInFolder()
         {
-            this.Delegate.ShowFileInFolder(this.Conflict);
+            Delegate.ShowFileInFolder(Conflict);
         }
 
         public void ChooseOriginal()
         {
-            this.Delegate.ChooseOriginal(this.Conflict);
+            Delegate.ChooseOriginal(Conflict);
         }
 
         public void ChooseConflictFile(ConflictOptionViewModel conflictOption)
         {
-            this.Delegate.ChooseConflictFile(this.Conflict, conflictOption);
+            Delegate.ChooseConflictFile(Conflict, conflictOption);
         }
     }
 }

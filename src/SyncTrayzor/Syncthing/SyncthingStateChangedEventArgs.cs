@@ -9,8 +9,8 @@ namespace SyncTrayzor.Syncthing
 
         public SyncthingStateChangedEventArgs(SyncthingState oldState, SyncthingState newState)
         {
-            this.OldState = oldState;
-            this.NewState = newState;
+            OldState = oldState;
+            NewState = newState;
         }
     }
 }

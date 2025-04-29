@@ -7,21 +7,21 @@ namespace SyncTrayzor.Xaml
     {
         protected override void AttachHandlers()
         {
-            this.AssociatedObject.TextChanged += this.SomethingChanged;
-            this.AssociatedObject.SizeChanged += this.SomethingChanged;
+            AssociatedObject.TextChanged += SomethingChanged;
+            AssociatedObject.SizeChanged += SomethingChanged;
 
-            this.AssociatedObject.ScrollToEnd();
+            AssociatedObject.ScrollToEnd();
         }
 
         protected override void DetachHandlers()
         {
-            this.AssociatedObject.TextChanged -= this.SomethingChanged;
-            this.AssociatedObject.SizeChanged -= this.SomethingChanged;
+            AssociatedObject.TextChanged -= SomethingChanged;
+            AssociatedObject.SizeChanged -= SomethingChanged;
         }
 
         private void SomethingChanged(object sender, EventArgs e)
         {
-            this.AssociatedObject.ScrollToEnd();
+            AssociatedObject.ScrollToEnd();
         }
     }
 }

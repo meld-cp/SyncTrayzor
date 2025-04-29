@@ -17,7 +17,7 @@ namespace SyncTrayzor.Services.Config
         {
             foreach (var kvp in source)
             {
-                this.Add(kvp.Key, kvp.Value);
+                Add(kvp.Key, kvp.Value);
             }
         }
 
@@ -33,7 +33,7 @@ namespace SyncTrayzor.Services.Config
             var root = XElement.Parse(reader.ReadOuterXml());
             foreach (var element in root.Elements("Item"))
             {
-                this.Add(element.Element("Key").Value, element.Element("Value").Value);
+                Add(element.Element("Key").Value, element.Element("Value").Value);
             }
         }
 

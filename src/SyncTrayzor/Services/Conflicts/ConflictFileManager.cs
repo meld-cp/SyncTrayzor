@@ -20,14 +20,14 @@ namespace SyncTrayzor.Services.Conflicts
 
         public ConflictFile(string filePath, DateTime lastModified, long sizeBytes)
         {
-            this.FilePath = filePath;
-            this.LastModified = lastModified;
-            this.SizeBytes = sizeBytes;
+            FilePath = filePath;
+            LastModified = lastModified;
+            SizeBytes = sizeBytes;
         }
 
         public override string ToString()
         {
-            return this.FilePath;
+            return FilePath;
         }
     }
 
@@ -42,16 +42,16 @@ namespace SyncTrayzor.Services.Conflicts
 
         public ConflictOption(string filePath, DateTime lastModified, DateTime created, long sizeBytes, Device device)
         {
-            this.FilePath = filePath;
-            this.LastModified = lastModified;
-            this.Created = created;
-            this.SizeBytes = sizeBytes;
-            this.Device = device;
+            FilePath = filePath;
+            LastModified = lastModified;
+            Created = created;
+            SizeBytes = sizeBytes;
+            Device = device;
         }
 
         public override string ToString()
         {
-            return this.FilePath;
+            return FilePath;
         }
     }
 
@@ -62,8 +62,8 @@ namespace SyncTrayzor.Services.Conflicts
 
         public ConflictSet(ConflictFile file, List<ConflictOption> conflicts)
         {
-            this.File = file;
-            this.Conflicts = conflicts;
+            File = file;
+            Conflicts = conflicts;
         }
     }
 
@@ -76,10 +76,10 @@ namespace SyncTrayzor.Services.Conflicts
 
         public ParsedConflictFileInfo(string filePath, string originalPath, DateTime created, string shortDeviceId)
         {
-            this.FilePath = filePath;
-            this.OriginalPath = originalPath;
-            this.Created = created;
-            this.ShortDeviceId = shortDeviceId;
+            FilePath = filePath;
+            OriginalPath = originalPath;
+            Created = created;
+            ShortDeviceId = shortDeviceId;
         }
     }
 
@@ -102,7 +102,7 @@ namespace SyncTrayzor.Services.Conflicts
         private const string syncthingSpecialFileMarker = "~syncthing~";
 
         private static readonly Regex conflictRegex =
-            new Regex(@"^(?<prefix>.*).sync-conflict-(?<year>\d{4})(?<month>\d{2})(?<day>\d{2})-(?<hours>\d{2})(?<mins>\d{2})(?<secs>\d{2})(-(?<device>[a-zA-Z0-9]+))?(?<suffix>.*)(?<extension>\..*)$");
+            new(@"^(?<prefix>.*).sync-conflict-(?<year>\d{4})(?<month>\d{2})(?<day>\d{2})-(?<hours>\d{2})(?<mins>\d{2})(?<secs>\d{2})(-(?<device>[a-zA-Z0-9]+))?(?<suffix>.*)(?<extension>\..*)$");
         private static readonly Logger logger = LogManager.GetCurrentClassLogger();
         private const int maxSearchDepth = 255; // Loosely based on the max path length (a bit over)
 
@@ -126,7 +126,7 @@ namespace SyncTrayzor.Services.Conflicts
                 {
                     try
                     {
-                        this.FindConflictsImpl(basePath, observer, cancellationToken);
+                        FindConflictsImpl(basePath, observer, cancellationToken);
                         observer.OnCompleted();
                     }
                     catch (Exception e)
@@ -167,15 +167,15 @@ namespace SyncTrayzor.Services.Conflicts
                 var searchDirectory = stack.Pop();
                 var directory = searchDirectory.Directory;
 
-                this.TryFilesystemEnumeration(() =>
+                TryFilesystemEnumeration(() =>
                 {
-                    foreach (var filePath in this.filesystemProvider.EnumerateFiles(directory, conflictPattern, System.IO.SearchOption.TopDirectoryOnly))
+                    foreach (var filePath in filesystemProvider.EnumerateFiles(directory, conflictPattern, System.IO.SearchOption.TopDirectoryOnly))
                     {
-                        if (this.IsFileIgnored(filePath))
+                        if (IsFileIgnored(filePath))
                             continue;
 
                         // We may not be able to parse it properly (conflictPattern is pretty basic), or it might not exist, or...
-                        if (!this.TryFindBaseFileForConflictFile(filePath, out var conflictFileInfo))
+                        if (!TryFindBaseFileForConflictFile(filePath, out var conflictFileInfo))
                             continue;
 
                         if (!conflictLookup.TryGetValue(conflictFileInfo.OriginalPath, out var existingConflicts))
@@ -194,12 +194,12 @@ namespace SyncTrayzor.Services.Conflicts
                     // The file can have disappeared between us finding it, and this
                     try
                     {
-                        var file = new ConflictFile(kvp.Key, this.filesystemProvider.GetLastWriteTime(kvp.Key), this.filesystemProvider.GetFileSize(kvp.Key));
-                        var devices = this.syncthingManager.Devices.FetchDevices();
+                        var file = new ConflictFile(kvp.Key, filesystemProvider.GetLastWriteTime(kvp.Key), filesystemProvider.GetFileSize(kvp.Key));
+                        var devices = syncthingManager.Devices.FetchDevices();
                         var conflicts = kvp.Value.Select(x =>
                         {
                             var device = x.ShortDeviceId == null ? null : devices.FirstOrDefault(d => d.ShortDeviceId == x.ShortDeviceId);
-                            return new ConflictOption(x.FilePath, this.filesystemProvider.GetLastWriteTime(x.FilePath), x.Created, this.filesystemProvider.GetFileSize(x.FilePath), device);
+                            return new ConflictOption(x.FilePath, filesystemProvider.GetLastWriteTime(x.FilePath), x.Created, filesystemProvider.GetFileSize(x.FilePath), device);
                         }).ToList();
                         observer.OnNext(new ConflictSet(file, conflicts));
                         cancellationToken.ThrowIfCancellationRequested();
@@ -212,9 +212,9 @@ namespace SyncTrayzor.Services.Conflicts
 
                 if (searchDirectory.Depth < maxSearchDepth)
                 {
-                    this.TryFilesystemEnumeration(() =>
+                    TryFilesystemEnumeration(() =>
                     {
-                        foreach (var subDirectory in this.filesystemProvider.EnumerateDirectories(directory, "*", System.IO.SearchOption.TopDirectoryOnly))
+                        foreach (var subDirectory in filesystemProvider.EnumerateDirectories(directory, "*", System.IO.SearchOption.TopDirectoryOnly))
                         {
                             if (IsPathIgnored(subDirectory))
                                 continue;
@@ -282,7 +282,7 @@ namespace SyncTrayzor.Services.Conflicts
             catch (ArgumentException e)
             {
                 // 31st Feb, etc
-                logger.Error($"Failed to parse DateTime for file path {filePath}", e);
+                logger.Error("Failed to parse DateTime for file path {FilePath}: {e}", filePath, e);
                 parsedConflictFileInfo = default(ParsedConflictFileInfo);
                 return false;
             }
@@ -293,14 +293,14 @@ namespace SyncTrayzor.Services.Conflicts
             try
             {
                 var withSuffix = Path.Combine(directory, prefix + suffix + extension);
-                if (this.filesystemProvider.FileExists(withSuffix))
+                if (filesystemProvider.FileExists(withSuffix))
                 {
                     parsedConflictFileInfo = new ParsedConflictFileInfo(filePath, withSuffix, dateCreated, device);
                     return true;
                 }
 
                 var withoutSuffix = Path.Combine(directory, prefix + extension);
-                if (this.filesystemProvider.FileExists(withoutSuffix))
+                if (filesystemProvider.FileExists(withoutSuffix))
                 {
                     parsedConflictFileInfo = new ParsedConflictFileInfo(filePath, withoutSuffix, dateCreated, device);
                     return true;
@@ -326,13 +326,13 @@ namespace SyncTrayzor.Services.Conflicts
                 foreach (var file in conflictSet.Conflicts)
                 {
                     logger.Debug("Deleting {0}", file);
-                    this.DeleteFile(file.FilePath, deleteToRecycleBin);
+                    DeleteFile(file.FilePath, deleteToRecycleBin);
                 }
             }
             else
             {
                 logger.Debug("Deleting {0}", conflictSet.File.FilePath);
-                this.DeleteFile(conflictSet.File.FilePath, deleteToRecycleBin);
+                DeleteFile(conflictSet.File.FilePath, deleteToRecycleBin);
 
                 foreach (var file in conflictSet.Conflicts)
                 {
@@ -340,20 +340,20 @@ namespace SyncTrayzor.Services.Conflicts
                         continue;
 
                     logger.Debug("Deleting {0}", file.FilePath);
-                    this.DeleteFile(file.FilePath, deleteToRecycleBin);
+                    DeleteFile(file.FilePath, deleteToRecycleBin);
                 }
 
                 logger.Debug("Renaming {0} to {1}", chosenFilePath, conflictSet.File.FilePath);
-                this.filesystemProvider.MoveFile(chosenFilePath, conflictSet.File.FilePath);
+                filesystemProvider.MoveFile(chosenFilePath, conflictSet.File.FilePath);
             }
         }
 
         private void DeleteFile(string path, bool deleteToRecycleBin)
         {
             if (deleteToRecycleBin)
-                this.filesystemProvider.DeleteFileToRecycleBin(path);
+                filesystemProvider.DeleteFileToRecycleBin(path);
             else
-                this.filesystemProvider.DeleteFile(path);
+                filesystemProvider.DeleteFile(path);
         }
 
         private struct SearchDirectory
@@ -363,8 +363,8 @@ namespace SyncTrayzor.Services.Conflicts
 
             public SearchDirectory(string directory, int depth)
             {
-                this.Directory = directory;
-                this.Depth = depth;
+                Directory = directory;
+                Depth = depth;
             }
         }
     }

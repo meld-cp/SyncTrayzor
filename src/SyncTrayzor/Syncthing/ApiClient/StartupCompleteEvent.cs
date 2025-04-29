@@ -7,7 +7,7 @@ namespace SyncTrayzor.Syncthing.ApiClient
         [JsonProperty("myID")]
         public string MyID { get; set; }
 
-        public override bool IsValid => !string.IsNullOrWhiteSpace(this.MyID);
+        public override bool IsValid => !string.IsNullOrWhiteSpace(MyID);
 
         public override void Visit(IEventVisitor visitor)
         {
@@ -16,7 +16,7 @@ namespace SyncTrayzor.Syncthing.ApiClient
 
         public override string ToString()
         {
-            return $"<StartupComplete ID={this.Id} Time={this.Time}>";
+            return $"<StartupComplete ID={Id} Time={Time}>";
         }
     }
 }

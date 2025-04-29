@@ -33,16 +33,16 @@ namespace SyncTrayzor.Syncthing.TransferHistory
         private const int maxCompletedTransfers = 100;
 
         // Locks both completedTransfers, inProgressTransfers, and recentlySynchronized
-        private readonly object transfersLock = new object();
+        private readonly object transfersLock = new();
 
         // It's a queue because we limit its length
-        private readonly Queue<FileTransfer> completedTransfers = new Queue<FileTransfer>();
+        private readonly Queue<FileTransfer> completedTransfers = new();
 
-        private readonly Dictionary<FolderPathKey, FileTransfer> inProgressTransfers = new Dictionary<FolderPathKey, FileTransfer>();
-        private readonly Dictionary<FolderPathKey, FailingTransfer> currentlyFailingTransfers = new Dictionary<FolderPathKey, FailingTransfer>();
+        private readonly Dictionary<FolderPathKey, FileTransfer> inProgressTransfers = new();
+        private readonly Dictionary<FolderPathKey, FailingTransfer> currentlyFailingTransfers = new();
 
         // Collection of stuff synchronized recently. Keyed on folder. Cleared when that folder finished synchronizing
-        private readonly Dictionary<string, List<FileTransfer>> recentlySynchronized = new Dictionary<string, List<FileTransfer>>();
+        private readonly Dictionary<string, List<FileTransfer>> recentlySynchronized = new();
 
         public event EventHandler<FileTransferChangedEventArgs> TransferStateChanged;
         public event EventHandler<FileTransferChangedEventArgs> TransferStarted;
@@ -53,9 +53,9 @@ namespace SyncTrayzor.Syncthing.TransferHistory
         {
             get
             {
-                lock (this.transfersLock)
+                lock (transfersLock)
                 {
-                    return this.completedTransfers.ToArray();
+                    return completedTransfers.ToArray();
                 }
             }
         }
@@ -64,9 +64,9 @@ namespace SyncTrayzor.Syncthing.TransferHistory
         {
             get
             {
-                lock (this.transfersLock)
+                lock (transfersLock)
                 {
-                    return this.inProgressTransfers.Values.ToArray();
+                    return inProgressTransfers.Values.ToArray();
                 }
             }
         }
@@ -75,27 +75,27 @@ namespace SyncTrayzor.Syncthing.TransferHistory
         {
             get
             {
-                lock (this.transfersLock)
+                lock (transfersLock)
                 {
-                    return this.currentlyFailingTransfers.Values.ToArray();
+                    return currentlyFailingTransfers.Values.ToArray();
                 }
             }
         }
 
         public SyncthingTransferHistory(ISyncthingEventWatcher eventWatcher, ISyncthingFolderManager folderManager)
         {
-            this.eventDispatcher = new SynchronizedEventDispatcher(this);
+            eventDispatcher = new SynchronizedEventDispatcher(this);
 
             this.eventWatcher = eventWatcher;
             this.folderManager = folderManager;
 
-            this.eventWatcher.ItemStarted += this.ItemStarted;
-            this.eventWatcher.ItemFinished += this.ItemFinished;
-            this.eventWatcher.ItemDownloadProgressChanged += this.ItemDownloadProgressChanged;
+            this.eventWatcher.ItemStarted += ItemStarted;
+            this.eventWatcher.ItemFinished += ItemFinished;
+            this.eventWatcher.ItemDownloadProgressChanged += ItemDownloadProgressChanged;
 
             // We can't use the EventWatcher to watch for folder sync state change events: events could be skipped.
             // The folder manager knows how to listen to skipped event notifications, and refresh the folder states appropriately
-            this.folderManager.SyncStateChanged += this.SyncStateChanged;
+            this.folderManager.SyncStateChanged += SyncStateChanged;
         }
 
         private FileTransfer FetchOrInsertInProgressFileTransfer(string folderId, string path, ItemChangedItemType itemType, ItemChangedActionType actionType)
@@ -103,20 +103,20 @@ namespace SyncTrayzor.Syncthing.TransferHistory
             var key = new FolderPathKey(folderId, path);
             bool created = false;
             FileTransfer fileTransfer;
-            lock (this.transfersLock)
+            lock (transfersLock)
             {
-                if (!this.inProgressTransfers.TryGetValue(key, out fileTransfer) &&
-                    this.folderManager.TryFetchById(folderId, out var folder))
+                if (!inProgressTransfers.TryGetValue(key, out fileTransfer) &&
+                    folderManager.TryFetchById(folderId, out var folder))
                 {
                     created = true;
                     fileTransfer = new FileTransfer(folder, path, itemType, actionType);
                     logger.Debug("Created file transfer: {0}", fileTransfer);
-                    this.inProgressTransfers.Add(key, fileTransfer);
+                    inProgressTransfers.Add(key, fileTransfer);
                 }
             }
 
             if (created)
-                this.OnTransferStarted(fileTransfer);
+                OnTransferStarted(fileTransfer);
 
             return fileTransfer;
         }
@@ -131,7 +131,7 @@ namespace SyncTrayzor.Syncthing.TransferHistory
                 return;
             }
 
-            this.FetchOrInsertInProgressFileTransfer(e.Folder, e.Item, e.ItemType, e.Action);
+            FetchOrInsertInProgressFileTransfer(e.Folder, e.Item, e.ItemType, e.Action);
         }
 
         private void ItemFinished(object sender, ItemFinishedEventArgs e)
@@ -148,59 +148,59 @@ namespace SyncTrayzor.Syncthing.TransferHistory
 
             // It *should* be in the 'in progress transfers'...
             FileTransfer fileTransfer;
-            lock (this.transfersLock)
+            lock (transfersLock)
             {
-                fileTransfer = this.FetchOrInsertInProgressFileTransfer(e.Folder, e.Item, e.ItemType, e.Action);
+                fileTransfer = FetchOrInsertInProgressFileTransfer(e.Folder, e.Item, e.ItemType, e.Action);
                 // If it wasn't, and we couldn't create it, fileTransfer is null
                 if (fileTransfer != null)
                 {
-                    this.CompleteFileTransfer(fileTransfer, e.Error);
+                    CompleteFileTransfer(fileTransfer, e.Error);
                 }
             }
 
             if (fileTransfer != null)
             {
-                this.OnTransferStateChanged(fileTransfer);
-                this.OnTransferCompleted(fileTransfer);
+                OnTransferStateChanged(fileTransfer);
+                OnTransferCompleted(fileTransfer);
             }
         }
 
         private void CompleteFileTransfer(FileTransfer fileTransfer, string error)
         {
             // This is always called from within a lock, but you can't be too sure...
-            lock (this.transfersLock)
+            lock (transfersLock)
             {
                 var key = new FolderPathKey(fileTransfer.Folder.FolderId, fileTransfer.Path);
 
                 bool isNewError = false;
                 if (error == null)
                 {
-                    this.currentlyFailingTransfers.Remove(key);
+                    currentlyFailingTransfers.Remove(key);
                 }
                 else
                 {
-                    if (!this.currentlyFailingTransfers.TryGetValue(key, out var failingTransfer) || failingTransfer.Error != error)
+                    if (!currentlyFailingTransfers.TryGetValue(key, out var failingTransfer) || failingTransfer.Error != error)
                     {
                         // Remove will only do something in the case that the failure existed, but the error changed
-                        this.currentlyFailingTransfers.Remove(key);
-                        this.currentlyFailingTransfers.Add(key, new FailingTransfer(fileTransfer.Folder.FolderId, fileTransfer.Path, error));
+                        currentlyFailingTransfers.Remove(key);
+                        currentlyFailingTransfers.Add(key, new FailingTransfer(fileTransfer.Folder.FolderId, fileTransfer.Path, error));
                         isNewError = true;
                     }
                 }
 
                 fileTransfer.SetComplete(error, isNewError);
-                this.inProgressTransfers.Remove(key);
+                inProgressTransfers.Remove(key);
 
                 logger.Debug("File Transfer set to complete: {0}", fileTransfer);
 
-                this.completedTransfers.Enqueue(fileTransfer);
-                if (this.completedTransfers.Count > maxCompletedTransfers)
-                    this.completedTransfers.Dequeue();
+                completedTransfers.Enqueue(fileTransfer);
+                if (completedTransfers.Count > maxCompletedTransfers)
+                    completedTransfers.Dequeue();
 
-                if (!this.recentlySynchronized.TryGetValue(fileTransfer.Folder.FolderId, out var recentlySynchronizedList))
+                if (!recentlySynchronized.TryGetValue(fileTransfer.Folder.FolderId, out var recentlySynchronizedList))
                 {
                     recentlySynchronizedList = new List<FileTransfer>();
-                    this.recentlySynchronized[fileTransfer.Folder.FolderId] = recentlySynchronizedList;
+                    recentlySynchronized[fileTransfer.Folder.FolderId] = recentlySynchronizedList;
                 }
                 recentlySynchronizedList.Add(fileTransfer);
             }
@@ -213,16 +213,16 @@ namespace SyncTrayzor.Syncthing.TransferHistory
             // If we didn't see the started event, tough. We don't have enough information to re-create it...
             var key = new FolderPathKey(e.Folder, e.Item);
             FileTransfer fileTransfer;
-            lock (this.transfersLock)
+            lock (transfersLock)
             {
-                if (!this.inProgressTransfers.TryGetValue(key, out fileTransfer))
+                if (!inProgressTransfers.TryGetValue(key, out fileTransfer))
                     return; // Nothing we can do...
 
                 fileTransfer.SetDownloadProgress(e.BytesDone, e.BytesTotal);
                 logger.Debug("File transfer progress changed: {0}", fileTransfer);
             }
 
-            this.OnTransferStateChanged(fileTransfer);
+            OnTransferStateChanged(fileTransfer);
         }
 
         private void SyncStateChanged(object sender, FolderSyncStateChangedEventArgs e)
@@ -234,58 +234,58 @@ namespace SyncTrayzor.Syncthing.TransferHistory
                 List<FileTransfer> transferredList = null;
                 List<FileTransfer> completedFileTransfers; // Those that Syncthing didn't tell us had completed
 
-                lock (this.transfersLock)
+                lock (transfersLock)
                 {
                     // Syncthing may not have told us that a file has completed, because it can forget events.
                     // Therefore mark everything in this folder as having completed
-                    completedFileTransfers = this.inProgressTransfers.Where(x => x.Key.Folder == folderId).Select(x => x.Value).ToList();
+                    completedFileTransfers = inProgressTransfers.Where(x => x.Key.Folder == folderId).Select(x => x.Value).ToList();
                     foreach (var completedFileTransfer in completedFileTransfers)
                     {
-                        this.CompleteFileTransfer(completedFileTransfer, error: null);
+                        CompleteFileTransfer(completedFileTransfer, error: null);
                     }
 
-                    if (this.recentlySynchronized.TryGetValue(folderId, out transferredList))
-                        this.recentlySynchronized.Remove(folderId);
+                    if (recentlySynchronized.TryGetValue(folderId, out transferredList))
+                        recentlySynchronized.Remove(folderId);
                 }
 
                 foreach (var fileTransfer in completedFileTransfers)
                 {
-                    this.OnTransferStateChanged(fileTransfer);
-                    this.OnTransferCompleted(fileTransfer);
+                    OnTransferStateChanged(fileTransfer);
+                    OnTransferCompleted(fileTransfer);
                 }
-                this.OnFolderSynchronizationFinished(folderId, transferredList ?? new List<FileTransfer>());
+                OnFolderSynchronizationFinished(folderId, transferredList ?? new List<FileTransfer>());
             }
         }
 
         private void OnTransferStateChanged(FileTransfer fileTransfer)
         {
-            this.eventDispatcher.Raise(this.TransferStateChanged, new FileTransferChangedEventArgs(fileTransfer));
+            eventDispatcher.Raise(TransferStateChanged, new FileTransferChangedEventArgs(fileTransfer));
         }
 
         private void OnTransferStarted(FileTransfer fileTransfer)
         {
-            this.eventDispatcher.Raise(this.TransferStarted, new FileTransferChangedEventArgs(fileTransfer));
+            eventDispatcher.Raise(TransferStarted, new FileTransferChangedEventArgs(fileTransfer));
         }
 
         private void OnTransferCompleted(FileTransfer fileTransfer)
         {
-            this.eventDispatcher.Raise(this.TransferCompleted, new FileTransferChangedEventArgs(fileTransfer));
+            eventDispatcher.Raise(TransferCompleted, new FileTransferChangedEventArgs(fileTransfer));
         }
 
         private void OnFolderSynchronizationFinished(string folderId, List<FileTransfer> fileTransfers)
         {
-            if (!this.folderManager.TryFetchById(folderId, out var folder))
+            if (!folderManager.TryFetchById(folderId, out var folder))
                 return;
 
-            this.eventDispatcher.Raise(this.FolderSynchronizationFinished, new FolderSynchronizationFinishedEventArgs(folder, fileTransfers));
+            eventDispatcher.Raise(FolderSynchronizationFinished, new FolderSynchronizationFinishedEventArgs(folder, fileTransfers));
         }
 
         public void Dispose()
         {
-            this.eventWatcher.ItemStarted -= this.ItemStarted;
-            this.eventWatcher.ItemFinished -= this.ItemFinished;
-            this.eventWatcher.ItemDownloadProgressChanged -= this.ItemDownloadProgressChanged;
-            this.folderManager.SyncStateChanged -= this.SyncStateChanged;
+            eventWatcher.ItemStarted -= ItemStarted;
+            eventWatcher.ItemFinished -= ItemFinished;
+            eventWatcher.ItemDownloadProgressChanged -= ItemDownloadProgressChanged;
+            folderManager.SyncStateChanged -= SyncStateChanged;
         }
 
         private struct FolderPathKey : IEquatable<FolderPathKey>
@@ -295,8 +295,8 @@ namespace SyncTrayzor.Syncthing.TransferHistory
 
             public FolderPathKey(string folder, string path)
             {
-                this.Folder = folder;
-                this.Path = path;
+                Folder = folder;
+                Path = path;
             }
 
             public override int GetHashCode()
@@ -304,20 +304,20 @@ namespace SyncTrayzor.Syncthing.TransferHistory
                 unchecked
                 {
                     int hash = 17;
-                    hash = hash * 31 + this.Folder.GetHashCode();
-                    hash = hash * 31 + this.Path.GetHashCode();
+                    hash = hash * 31 + Folder.GetHashCode();
+                    hash = hash * 31 + Path.GetHashCode();
                     return hash;
                 }
             }
 
             public override bool Equals(object obj)
             {
-                return (obj is FolderPathKey) && this.Equals((FolderPathKey)obj);
+                return (obj is FolderPathKey) && Equals((FolderPathKey)obj);
             }
 
             public bool Equals(FolderPathKey other)
             {
-                return this.Folder == other.Folder && this.Path == other.Path;
+                return Folder == other.Folder && Path == other.Path;
             }
         }
     }

@@ -4,7 +4,7 @@ using SyncTrayzor.Utils;
 using System;
 using System.IO;
 using System.Linq;
-using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace SyncTrayzor.Services.UpdateManagement
@@ -27,19 +27,19 @@ namespace SyncTrayzor.Services.UpdateManagement
 
         public UpdateDownloader(IApplicationPathsProvider pathsProvider, IFilesystemProvider filesystemProvider, IInstallerCertificateVerifier installerVerifier)
         {
-            this.downloadsDir = pathsProvider.UpdatesDownloadPath;
+            downloadsDir = pathsProvider.UpdatesDownloadPath;
             this.filesystemProvider = filesystemProvider;
             this.installerVerifier = installerVerifier;
         }
 
         public async Task<string> DownloadUpdateAsync(string updateUrl, string sha512sumUrl, Version version, string downloadedFileNameTemplate)
         {
-            var sha512sumDownloadPath = Path.Combine(this.downloadsDir, String.Format(sha512sumDownloadFileName, version.ToString(3)));
-            var updateDownloadPath = Path.Combine(this.downloadsDir, String.Format(downloadedFileNameTemplate, version.ToString(3)));
+            var sha512sumDownloadPath = Path.Combine(downloadsDir, String.Format(sha512sumDownloadFileName, version.ToString(3)));
+            var updateDownloadPath = Path.Combine(downloadsDir, String.Format(downloadedFileNameTemplate, version.ToString(3)));
 
-            var sha512sumOutcome = await this.DownloadAndVerifyFileAsync<Stream>(sha512sumUrl, version, sha512sumDownloadPath, false, () =>
+            var sha512sumOutcome = await DownloadAndVerifyFileAsync<Stream>(sha512sumUrl, version, sha512sumDownloadPath, false, () =>
                 {
-                    var passed = this.installerVerifier.VerifySha512sum(sha512sumDownloadPath, out Stream sha512sumContents);
+                    var passed = installerVerifier.VerifySha512sum(sha512sumDownloadPath, out Stream sha512sumContents);
                     return (passed, sha512sumContents);
                 });
 
@@ -49,18 +49,18 @@ namespace SyncTrayzor.Services.UpdateManagement
             {
                 if (sha512sumOutcome.passed)
                 {
-                    updateSucceeded = (await this.DownloadAndVerifyFileAsync<object>(updateUrl, version, updateDownloadPath, false, () =>
+                    updateSucceeded = (await DownloadAndVerifyFileAsync<object>(updateUrl, version, updateDownloadPath, false, () =>
                     {
                         var updateUri = new Uri(updateUrl);
                         // Make sure this is rewound - we might read from it multiple times
                         sha512sumOutcome.contents.Position = 0;
-                        var updatePassed = this.installerVerifier.VerifyUpdate(updateDownloadPath, sha512sumOutcome.contents, updateUri.Segments.Last());
-                        return (updatePassed, (object)null);
+                        var updatePassed = installerVerifier.VerifyUpdate(updateDownloadPath, sha512sumOutcome.contents, updateUri.Segments.Last());
+                        return (updatePassed, null);
                     })).passed;
                 }
             }
 
-            this.CleanUpUnusedFiles();
+            CleanUpUnusedFiles();
 
             return updateSucceeded ? updateDownloadPath : null;
         }
@@ -72,10 +72,10 @@ namespace SyncTrayzor.Services.UpdateManagement
             try
             {
                 // Just in case...
-                this.filesystemProvider.CreateDirectory(this.downloadsDir);
+                filesystemProvider.CreateDirectory(downloadsDir);
 
                 // Someone downloaded it already? Oh good. Let's see if it's corrupt or not...
-                if (this.filesystemProvider.FileExists(downloadPath) && !deleteIfExists)
+                if (filesystemProvider.FileExists(downloadPath) && !deleteIfExists)
                 {
                     logger.Info("Skipping download as file {0} already exists", downloadPath);
                     var initialValidationResult = verifier();
@@ -84,7 +84,7 @@ namespace SyncTrayzor.Services.UpdateManagement
                         // Touch the file, so we (or someone else!) doesn't delete when cleaning up
                         try
                         {
-                            this.filesystemProvider.SetLastAccessTimeUtc(downloadPath, DateTime.UtcNow);
+                            filesystemProvider.SetLastAccessTimeUtc(downloadPath, DateTime.UtcNow);
                         }
                         catch (Exception e)
                         {
@@ -98,11 +98,11 @@ namespace SyncTrayzor.Services.UpdateManagement
                     {
                         if (!deleteIfExists)
                             logger.Info("Actually, it's corrupt. Re-downloading");
-                        this.filesystemProvider.DeleteFile(downloadPath);
+                        filesystemProvider.DeleteFile(downloadPath);
                     }
                 }
 
-                bool downloaded = await this.TryDownloadToFileAsync(downloadPath, url);
+                bool downloaded = await TryDownloadToFileAsync(downloadPath, url);
                 if (!downloaded)
                 {
                     logger.Warn("Problem downloading the file. Aborting");
@@ -116,7 +116,7 @@ namespace SyncTrayzor.Services.UpdateManagement
                 if (!downloadedValidationResult.passed)
                 {
                     logger.Warn("Download verification failed. Deleting {0}", downloadPath);
-                    this.filesystemProvider.DeleteFile(downloadPath);
+                    filesystemProvider.DeleteFile(downloadPath);
 
                     // EXIT POINT
                     return (passed: false, contents: default(T));
@@ -143,12 +143,12 @@ namespace SyncTrayzor.Services.UpdateManagement
             // The difference depends on whether or not it's locked...
             try
             {
-                var webClient = new WebClient();
+                var webClient = new HttpClient();
 
-                using (var downloadFileHandle = this.filesystemProvider.Open(downloadPath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None))
-                using (var downloadStream = await webClient.OpenReadTaskAsync(url))
+                using (var downloadFileHandle = filesystemProvider.Open(downloadPath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None))
+                using (var downloadStream = await webClient.GetStreamAsync(url))
                 {
-                    var responseLength = Int64.Parse(webClient.ResponseHeaders["Content-Length"]);
+                    var responseLength = downloadStream.Length;
                     var previousDownloadProgressString = String.Empty;
 
                     var progress = new Progress<CopyToAsyncProgress>(p =>
@@ -167,7 +167,7 @@ namespace SyncTrayzor.Services.UpdateManagement
             }
             catch (IOException e)
             {
-                logger.Warn($"Failed to initiate download to temp file {downloadPath}", e);
+                logger.Warn("Failed to initiate download to temp file {DownloadPath}: {e}", downloadPath, e);
                 return false;
             }
 
@@ -180,18 +180,18 @@ namespace SyncTrayzor.Services.UpdateManagement
 
             var threshold = DateTime.UtcNow - fileMaxAge;
 
-            foreach (var file in this.filesystemProvider.GetFiles(this.downloadsDir))
+            foreach (var file in filesystemProvider.GetFiles(downloadsDir))
             {
-                if (this.filesystemProvider.GetLastAccessTimeUtc(Path.Combine(this.downloadsDir, file)) < threshold)
+                if (filesystemProvider.GetLastAccessTimeUtc(Path.Combine(downloadsDir, file)) < threshold)
                 {
                     try
                     {
-                        this.filesystemProvider.DeleteFile(Path.Combine(this.downloadsDir, file));
+                        filesystemProvider.DeleteFile(Path.Combine(downloadsDir, file));
                         logger.Info("Deleted old file {0}", file);
                     }
                     catch (IOException e)
                     {
-                        logger.Warn($"Failed to delete old file {file}", e);
+                        logger.Warn("Failed to delete old file {File}: {e}", file, e);
                     }
                 }
             }

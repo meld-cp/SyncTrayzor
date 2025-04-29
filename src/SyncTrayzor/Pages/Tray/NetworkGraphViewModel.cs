@@ -5,10 +5,7 @@ using Stylet;
 using SyncTrayzor.Syncthing;
 using SyncTrayzor.Utils;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SyncTrayzor.Pages.Tray
 {
@@ -27,7 +24,7 @@ namespace SyncTrayzor.Pages.Tray
         private readonly LineSeries inboundSeries;
         private readonly LineSeries outboundSeries;
 
-        public PlotModel OxyPlotModel { get; } = new PlotModel();
+        public PlotModel OxyPlotModel { get; } = new();
         public bool ShowGraph { get; private set; }
 
         public string MaxYValue { get; private set; }
@@ -36,9 +33,9 @@ namespace SyncTrayzor.Pages.Tray
         {
             this.syncthingManager = syncthingManager;
 
-            this.OxyPlotModel.PlotAreaBorderColor = OxyColors.LightGray;
+            OxyPlotModel.PlotAreaBorderColor = OxyColors.LightGray;
 
-            this.xAxis = new LinearAxis()
+            xAxis = new LinearAxis()
             {
                 Position = AxisPosition.Bottom,
                 IsZoomEnabled = false,
@@ -47,9 +44,9 @@ namespace SyncTrayzor.Pages.Tray
                 MajorGridlineColor = OxyColors.Gray,
                 MajorGridlineStyle = LineStyle.Dash,
             };
-            this.OxyPlotModel.Axes.Add(this.xAxis);
+            OxyPlotModel.Axes.Add(xAxis);
 
-            this.yAxis = new LinearAxis()
+            yAxis = new LinearAxis()
             {
                 Position = AxisPosition.Right,
                 IsZoomEnabled = false,
@@ -57,41 +54,41 @@ namespace SyncTrayzor.Pages.Tray
                 IsAxisVisible = false,
                 AbsoluteMinimum = -1, // Leave a little bit of room for the line to draw
             };
-            this.OxyPlotModel.Axes.Add(this.yAxis);
+            OxyPlotModel.Axes.Add(yAxis);
 
-            this.inboundSeries = new LineSeries()
+            inboundSeries = new LineSeries()
             {
                 Color = OxyColors.Red,
             };
-            this.OxyPlotModel.Series.Add(this.inboundSeries);
+            OxyPlotModel.Series.Add(inboundSeries);
 
-            this.outboundSeries = new LineSeries()
+            outboundSeries = new LineSeries()
             {
                 Color = OxyColors.Green,
             };
-            this.OxyPlotModel.Series.Add(this.outboundSeries);
+            OxyPlotModel.Series.Add(outboundSeries);
 
-            this.ResetToEmptyGraph();
+            ResetToEmptyGraph();
 
-            this.Update(this.syncthingManager.TotalConnectionStats);
-            this.syncthingManager.TotalConnectionStatsChanged += this.TotalConnectionStatsChanged;
-            this.syncthingManager.StateChanged += this.SyncthingStateChanged;
+            Update(this.syncthingManager.TotalConnectionStats);
+            this.syncthingManager.TotalConnectionStatsChanged += TotalConnectionStatsChanged;
+            this.syncthingManager.StateChanged += SyncthingStateChanged;
         }
 
         protected override void OnActivate()
         {
             base.OnActivate();
-            this.OxyPlotModel.InvalidatePlot(true);
+            OxyPlotModel.InvalidatePlot(true);
         }
 
         private void SyncthingStateChanged(object sender, SyncthingStateChangedEventArgs e)
         {
             if (e.OldState == SyncthingState.Running)
             {
-                this.ResetToEmptyGraph();
+                ResetToEmptyGraph();
             }
 
-            this.ShowGraph = e.NewState == SyncthingState.Running;
+            ShowGraph = e.NewState == SyncthingState.Running;
         }
 
         private void ResetToEmptyGraph()
@@ -101,27 +98,27 @@ namespace SyncTrayzor.Pages.Tray
             var latest = (now - epoch).TotalSeconds;
 
             // Put points on the far left, so we get a line from them
-            this.inboundSeries.Points.Clear();
-            this.inboundSeries.Points.Add(new DataPoint(earliest, 0));
-            this.inboundSeries.Points.Add(new DataPoint(latest, 0));
+            inboundSeries.Points.Clear();
+            inboundSeries.Points.Add(new DataPoint(earliest, 0));
+            inboundSeries.Points.Add(new DataPoint(latest, 0));
 
-            this.outboundSeries.Points.Clear();
-            this.outboundSeries.Points.Add(new DataPoint(earliest, 0));
-            this.outboundSeries.Points.Add(new DataPoint(latest, 0));
+            outboundSeries.Points.Clear();
+            outboundSeries.Points.Add(new DataPoint(earliest, 0));
+            outboundSeries.Points.Add(new DataPoint(latest, 0));
 
-            this.xAxis.Minimum = earliest;
-            this.xAxis.Maximum = latest;
+            xAxis.Minimum = earliest;
+            xAxis.Maximum = latest;
 
-            this.yAxis.Maximum = minYValue;
-            this.MaxYValue = FormatUtils.BytesToHuman(minYValue) + "/s";
+            yAxis.Maximum = minYValue;
+            MaxYValue = FormatUtils.BytesToHuman(minYValue) + "/s";
 
-            if (this.IsActive)
-                this.OxyPlotModel.InvalidatePlot(true);
+            if (IsActive)
+                OxyPlotModel.InvalidatePlot(true);
         }
 
         private void TotalConnectionStatsChanged(object sender, ConnectionStatsChangedEventArgs e)
         {
-            this.Update(e.TotalConnectionStats);
+            Update(e.TotalConnectionStats);
         }
 
         private void Update(SyncthingConnectionStats stats)
@@ -129,14 +126,14 @@ namespace SyncTrayzor.Pages.Tray
             var now = DateTime.UtcNow;
             double earliest = (now - window - epoch).TotalSeconds;
 
-            this.Update(earliest, this.inboundSeries, stats.InBytesPerSecond);
-            this.Update(earliest, this.outboundSeries, stats.OutBytesPerSecond);
+            Update(earliest, inboundSeries, stats.InBytesPerSecond);
+            Update(earliest, outboundSeries, stats.OutBytesPerSecond);
 
-            this.xAxis.Minimum = earliest;
-            this.xAxis.Maximum = (now - epoch).TotalSeconds;
+            xAxis.Minimum = earliest;
+            xAxis.Maximum = (now - epoch).TotalSeconds;
 
             // This increases the value to the nearest 1024 boundary
-            double maxValue = this.inboundSeries.Points.Concat(this.outboundSeries.Points).Max(x => x.Y);
+            double maxValue = inboundSeries.Points.Concat(outboundSeries.Points).Max(x => x.Y);
             double roundedMax;
             if (maxValue > minYValue)
             {
@@ -149,11 +146,11 @@ namespace SyncTrayzor.Pages.Tray
             }
 
             // Give the graph a little bit of headroom, otherwise the line gets chopped
-            this.yAxis.Maximum = roundedMax * 1.05;
-            this.MaxYValue = FormatUtils.BytesToHuman(roundedMax) + "/s";
+            yAxis.Maximum = roundedMax * 1.05;
+            MaxYValue = FormatUtils.BytesToHuman(roundedMax) + "/s";
 
-            if (this.IsActive)
-                this.OxyPlotModel.InvalidatePlot(true);
+            if (IsActive)
+                OxyPlotModel.InvalidatePlot(true);
         }
 
         private void Update(double earliest, LineSeries series, double bytesPerSecond)
@@ -173,8 +170,8 @@ namespace SyncTrayzor.Pages.Tray
 
         public void Dispose()
         {
-            this.syncthingManager.TotalConnectionStatsChanged -= this.TotalConnectionStatsChanged;
-            this.syncthingManager.StateChanged -= this.SyncthingStateChanged;
+            syncthingManager.TotalConnectionStatsChanged -= TotalConnectionStatsChanged;
+            syncthingManager.StateChanged -= SyncthingStateChanged;
         }
     }
 }

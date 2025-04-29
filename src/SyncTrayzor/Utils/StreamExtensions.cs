@@ -13,13 +13,13 @@ namespace SyncTrayzor.Utils
         public CopyToAsyncProgress(long bytesRead, long totalBytesToRead)
             : this()
         {
-            this.BytesRead = bytesRead;
-            this.TotalBytesToRead = totalBytesToRead;
+            BytesRead = bytesRead;
+            TotalBytesToRead = totalBytesToRead;
 
-            if (this.TotalBytesToRead > 0)
-                this.ProgressPercent = (int)((this.BytesRead * 100) / this.TotalBytesToRead);
+            if (TotalBytesToRead > 0)
+                ProgressPercent = (int)((BytesRead * 100) / TotalBytesToRead);
             else
-                this.ProgressPercent = -1;
+                ProgressPercent = -1;
         }
     }
 

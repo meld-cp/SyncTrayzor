@@ -12,18 +12,18 @@ namespace SyncTrayzor.Services
 
     public class PathTransformer : IPathTransformer
     {
-        private static readonly Regex varRegex = new Regex(@"%(\w+)%");
+        private static readonly Regex varRegex = new(@"%(\w+)%");
         private readonly Dictionary<string, string> specials;
         private readonly string basePath;
 
         public PathTransformer(IAssemblyProvider assemblyProvider)
         {
-            this.basePath = Path.GetDirectoryName(assemblyProvider.Location);
+            basePath = Path.GetDirectoryName(assemblyProvider.Location);
 
-            this.specials = new Dictionary<string, string>()
+            specials = new Dictionary<string, string>()
             {
                 // This is legacy, in case it's managed to slip through the configuration
-                ["EXEPATH"] = this.basePath,
+                ["EXEPATH"] = basePath,
             };
         }
 
@@ -35,13 +35,13 @@ namespace SyncTrayzor.Services
             var transformed = varRegex.Replace(input, match =>
             {
                 var name = match.Groups[1].Value;
-                if (this.specials.ContainsKey(name))
-                    return this.specials[name];
+                if (specials.TryGetValue(name, out string value))
+                    return value;
                 return Environment.GetEnvironmentVariable(name);
             });
 
             if (!Path.IsPathRooted(transformed))
-                transformed = Path.Combine(this.basePath, transformed);
+                transformed = Path.Combine(basePath, transformed);
 
             return transformed;
         }

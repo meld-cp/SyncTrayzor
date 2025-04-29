@@ -9,9 +9,9 @@ namespace SyncTrayzor.Syncthing.ApiClient
     public class EventConverter : JsonCreationConverter<Event>
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();
-        private static JsonSerializer eventTypeSerializer = new JsonSerializer();
+        private static JsonSerializer eventTypeSerializer = new();
 
-        private static readonly Dictionary<EventType, Type> eventTypes = new Dictionary<EventType, Type>()
+        private static readonly Dictionary<EventType, Type> eventTypes = new()
         {
             { EventType.RemoteIndexUpdated, typeof(RemoteIndexUpdatedEvent) },
             { EventType.LocalIndexUpdated, typeof(LocalIndexUpdatedEvent) },
@@ -32,11 +32,6 @@ namespace SyncTrayzor.Syncthing.ApiClient
         };
 
         public static string GetEventsFilterString() => string.Join(",", eventTypes.Keys);
-
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
-        {
-            return base.ReadJson(reader, objectType, existingValue, serializer);
-        }
 
         protected override Event Create(Type objectType, JObject jObject)
         {

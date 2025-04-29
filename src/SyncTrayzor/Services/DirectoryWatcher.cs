@@ -13,8 +13,8 @@ namespace SyncTrayzor.Services
 
         public DirectoryChangedEventArgs(string directoryPath, string subPath)
         {
-            this.DirectoryPath = directoryPath;
-            this.SubPath = subPath;
+            DirectoryPath = directoryPath;
+            SubPath = subPath;
         }
     }
 
@@ -27,7 +27,7 @@ namespace SyncTrayzor.Services
         public PreviewDirectoryChangedEventArgs(string directoryPath, string subPath, bool pathExists)
             : base(directoryPath, subPath)
         {
-            this.PathExists = pathExists;
+            PathExists = pathExists;
         }
     }
 
@@ -47,7 +47,7 @@ namespace SyncTrayzor.Services
 
         public DirectoryWatcher Create(string directory, TimeSpan backoffInterval, TimeSpan existenceCheckingInterval)
         {
-            return new DirectoryWatcher(this.filesystem, directory, backoffInterval, existenceCheckingInterval);
+            return new DirectoryWatcher(filesystem, directory, backoffInterval, existenceCheckingInterval);
         }
     }
 
@@ -57,7 +57,7 @@ namespace SyncTrayzor.Services
 
         private readonly Timer backoffTimer;
 
-        private readonly object currentNotifyingSubPathLock = new object();
+        private readonly object currentNotifyingSubPathLock = new();
         private string currentNotifyingSubPath;
 
         public event EventHandler<PreviewDirectoryChangedEventArgs> PreviewDirectoryChanged;
@@ -69,20 +69,20 @@ namespace SyncTrayzor.Services
             if (backoffInterval.Ticks < 0)
                 throw new ArgumentException("backoffInterval must be >= 0");
 
-            this.backoffTimer = new Timer()
+            backoffTimer = new Timer()
             {
                 AutoReset = false,
                 Interval = backoffInterval.TotalMilliseconds,
             };
-            this.backoffTimer.Elapsed += (o, e) =>
+            backoffTimer.Elapsed += (o, e) =>
             {
                 string currentNotifyingSubPath;
-                lock (this.currentNotifyingSubPathLock)
+                lock (currentNotifyingSubPathLock)
                 {
                     currentNotifyingSubPath = this.currentNotifyingSubPath;
                     this.currentNotifyingSubPath = null;
                 }
-                this.OnDirectoryChanged(currentNotifyingSubPath);
+                OnDirectoryChanged(currentNotifyingSubPath);
             };
         }
 
@@ -90,19 +90,19 @@ namespace SyncTrayzor.Services
         {
             base.OnPathChanged(subPath, pathExists);
 
-            if (this.OnPreviewDirectoryChanged(subPath, pathExists))
+            if (OnPreviewDirectoryChanged(subPath, pathExists))
                 return;
 
-            this.backoffTimer.Stop();
-            lock (this.currentNotifyingSubPathLock)
+            backoffTimer.Stop();
+            lock (currentNotifyingSubPathLock)
             {
-                if (this.currentNotifyingSubPath == null)
-                    this.currentNotifyingSubPath = subPath;
+                if (currentNotifyingSubPath == null)
+                    currentNotifyingSubPath = subPath;
                 else
-                    this.currentNotifyingSubPath = this.FindCommonPrefix(this.currentNotifyingSubPath, subPath);
+                    currentNotifyingSubPath = FindCommonPrefix(currentNotifyingSubPath, subPath);
             }
 
-            this.backoffTimer.Start();
+            backoffTimer.Start();
         }
 
         private string FindCommonPrefix(string path1, string path2)
@@ -129,12 +129,12 @@ namespace SyncTrayzor.Services
         // Return true to cancel
         private bool OnPreviewDirectoryChanged(string subPath, bool pathExists)
         {
-            var handler = this.PreviewDirectoryChanged;
+            var handler = PreviewDirectoryChanged;
             if (handler != null)
             {
-                var ea = new PreviewDirectoryChangedEventArgs(this.Directory, subPath, pathExists);
+                var ea = new PreviewDirectoryChangedEventArgs(Directory, subPath, pathExists);
                 handler(this, ea);
-                logger.Trace("PreviewDirectoryChanged with path {0}. Cancelled: {1}", Path.Combine(this.Directory, subPath), ea.Cancel);
+                logger.Trace("PreviewDirectoryChanged with path {0}. Cancelled: {1}", Path.Combine(Directory, subPath), ea.Cancel);
                 return ea.Cancel;
             }
             return false;
@@ -142,16 +142,16 @@ namespace SyncTrayzor.Services
 
         private void OnDirectoryChanged(string subPath)
         {
-            logger.Debug("Path Changed: {0}", Path.Combine(this.Directory, subPath));
-            this.DirectoryChanged?.Invoke(this, new DirectoryChangedEventArgs(this.Directory, subPath));
+            logger.Debug("Path Changed: {0}", Path.Combine(Directory, subPath));
+            DirectoryChanged?.Invoke(this, new DirectoryChangedEventArgs(Directory, subPath));
         }
 
         public override void Dispose()
         {
             base.Dispose();
 
-            this.backoffTimer.Stop();
-            this.backoffTimer.Dispose();
+            backoffTimer.Stop();
+            backoffTimer.Dispose();
         }
     }
 }

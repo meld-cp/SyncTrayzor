@@ -8,7 +8,7 @@ namespace SyncTrayzor.Syncthing
 
         public TransientWrapperValueChangedEventArgs(T value)
         {
-            this.Value = value;
+            Value = value;
         }
     }
 
@@ -20,13 +20,13 @@ namespace SyncTrayzor.Syncthing
         protected T _value;
         public virtual T Value
         {
-            get => this._value;
+            get => _value;
             set
             {
-                var oldValue = this._value;
-                this._value = value;
+                var oldValue = _value;
+                _value = value;
 
-                this.RaiseEvents(oldValue, value);
+                RaiseEvents(oldValue, value);
             }
         }
 
@@ -36,38 +36,38 @@ namespace SyncTrayzor.Syncthing
 
         public TransientWrapper(T value)
         {
-            this.Value = value;
+            Value = value;
         }
 
         protected void RaiseEvents(T oldValue, T newValue)
         {
             if (oldValue != null && newValue == null)
-                this.OnValueDestroyed(oldValue);
+                OnValueDestroyed(oldValue);
             else if (oldValue == null && newValue != null)
-                this.OnValueCreated(newValue);
+                OnValueCreated(newValue);
         }
 
         private void OnValueCreated(T value)
         {
-            this.ValueCreated?.Invoke(this, new TransientWrapperValueChangedEventArgs<T>(value));
+            ValueCreated?.Invoke(this, new TransientWrapperValueChangedEventArgs<T>(value));
         }
 
         private void OnValueDestroyed(T value)
         {
-            this.ValueDestroyed?.Invoke(this, new TransientWrapperValueChangedEventArgs<T>(value));
+            ValueDestroyed?.Invoke(this, new TransientWrapperValueChangedEventArgs<T>(value));
         }
     }
 
     public class SynchronizedTransientWrapper<T> : TransientWrapper<T> where T : class
     {
         private readonly object _lockObject;
-        public object LockObject => this._lockObject;
+        public object LockObject => _lockObject;
 
         public override T Value
         {
             get
             {
-                lock (this._lockObject)
+                lock (_lockObject)
                 {
                     return base.Value;
                 }
@@ -75,13 +75,13 @@ namespace SyncTrayzor.Syncthing
             set
             {
                 T oldValue;
-                lock (this._lockObject)
+                lock (_lockObject)
                 {
-                    oldValue = this._value;
-                    this._value = value;
+                    oldValue = _value;
+                    _value = value;
                 }
 
-                this.RaiseEvents(oldValue, value);
+                RaiseEvents(oldValue, value);
             }
         }
 
@@ -93,29 +93,29 @@ namespace SyncTrayzor.Syncthing
 
         public SynchronizedTransientWrapper()
         {
-            this._lockObject = new object();
+            _lockObject = new object();
         }
 
         public SynchronizedTransientWrapper(object lockObject)
         {
-            this._lockObject = lockObject;
+            _lockObject = lockObject;
         }
 
         public SynchronizedTransientWrapper(T value)
         {
-            this._lockObject = new object();
-            this.Value = value;
+            _lockObject = new object();
+            Value = value;
         }
 
         public SynchronizedTransientWrapper(T value, object lockObject)
         {
-            this._lockObject = lockObject;
-            this.Value = value;
+            _lockObject = lockObject;
+            Value = value;
         }
 
         public T GetAsserted()
         {
-            lock (this._lockObject)
+            lock (_lockObject)
             {
                 if (base.Value == null)
                     throw new InvalidOperationException("Synchronized value is null");

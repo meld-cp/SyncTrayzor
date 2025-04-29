@@ -60,7 +60,7 @@ namespace SyncTrayzor.Syncthing.ApiClient
         [JsonProperty("data")]
         public Dictionary<string, Dictionary<string, DownloadProgressEventFileData>> Data { get; set; }
 
-        public override bool IsValid => this.Data != null;
+        public override bool IsValid => Data != null;
 
         public override void Visit(IEventVisitor visitor)
         {
@@ -70,15 +70,15 @@ namespace SyncTrayzor.Syncthing.ApiClient
         public override string ToString()
         {
             var sb = new StringBuilder();
-            foreach (var folder in this.Data)
+            foreach (var folder in Data)
             {
                 foreach (var file in folder.Value)
                 {
-                    sb.AppendFormat("{0}:{1}={2}/{3}", folder.Key, file.Key, file.Value.BytesDone, file.Value.BytesTotal);
+                    sb.Append($"{folder.Key}:{file.Key}={file.Value.BytesDone}/{file.Value.BytesTotal}");
                 }
             }
 
-            return $"<DownloadProgress ID={this.Id} Time={this.Time} {sb.ToString()}>";
+            return $"<DownloadProgress ID={Id} Time={Time} {sb}>";
         }
     }
 }

@@ -18,25 +18,25 @@ namespace SyncTrayzor.Xaml
 
         protected override void AttachHandlers()
         {
-            this.AssociatedObject.Opened += this.Opened;
-            this.AssociatedObject.Closed += this.Closed;
+            AssociatedObject.Opened += Opened;
+            AssociatedObject.Closed += Closed;
         }
 
         protected override void DetachHandlers()
         {
-            this.AssociatedObject.Opened -= this.Opened;
-            this.AssociatedObject.Closed -= this.Closed;
+            AssociatedObject.Opened -= Opened;
+            AssociatedObject.Closed -= Closed;
         }
 
         private void Opened(object sender, EventArgs e)
         {
-            if (this.DataContext is IScreenState screenState)
+            if (DataContext is IScreenState screenState)
                 screenState.Activate();
         }
 
         private void Closed(object sender, EventArgs e)
         {
-            if (this.DataContext is IScreenState screenState)
+            if (DataContext is IScreenState screenState)
                 screenState.Close();
         }
     }

@@ -22,7 +22,7 @@ namespace SyncTrayzor.Services.Ipc
 
         public IIpcCommsClient TryCreateClient()
         {
-            var ourLocation = this.assemblyProvider.Location;
+            var ourLocation = assemblyProvider.Location;
             var ourProcess = Process.GetCurrentProcess();
             var processes = Process.GetProcessesByName("SyncTrayzor");
             logger.Debug("Checking for other SyncTrayzor processes");

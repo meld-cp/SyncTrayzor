@@ -94,10 +94,7 @@ namespace ProcessRunner
             }
             catch (Win32Exception e)
             {
-                if (e.NativeErrorCode == ERROR_CANCELLED)
-                    return 2;
-                else
-                    return 3;
+                return e.NativeErrorCode == ERROR_CANCELLED ? 2 : 3;
             }
             catch (Exception)
             {

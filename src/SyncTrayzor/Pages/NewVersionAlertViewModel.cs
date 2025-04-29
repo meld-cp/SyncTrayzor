@@ -14,23 +14,23 @@ namespace SyncTrayzor.Pages
 
         public void Download()
         {
-            this.RequestClose(true);
+            RequestClose(true);
         }
 
         public void Install()
         {
-            this.RequestClose(true);
+            RequestClose(true);
         }
 
         public void RemindLater()
         {
-            this.RequestClose(false);
+            RequestClose(false);
         }
 
         public void DontRemind()
         {
-            this.DontRemindMe = true;
-            this.RequestClose(false);
+            DontRemindMe = true;
+            RequestClose(false);
         }
     }
 }

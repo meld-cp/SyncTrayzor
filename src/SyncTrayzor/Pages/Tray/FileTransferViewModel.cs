@@ -29,14 +29,14 @@ namespace SyncTrayzor.Pages.Tray
         public string Error { get; private set; }
         public bool WasDeleted { get; }
 
-        public DateTime Completed => this.FileTransfer.FinishedUtc.GetValueOrDefault().ToLocalTime();
+        public DateTime Completed => FileTransfer.FinishedUtc.GetValueOrDefault().ToLocalTime();
 
         public string CompletedTimeAgo
         {
             get
             {
-                if (this.FileTransfer.FinishedUtc.HasValue)
-                    return FormatUtils.TimeSpanToTimeAgo(DateTime.UtcNow - this.FileTransfer.FinishedUtc.Value);
+                if (FileTransfer.FinishedUtc.HasValue)
+                    return FormatUtils.TimeSpanToTimeAgo(DateTime.UtcNow - FileTransfer.FinishedUtc.Value);
                 else
                     return null;
             }
@@ -47,57 +47,57 @@ namespace SyncTrayzor.Pages.Tray
 
         public FileTransferViewModel(FileTransfer fileTransfer)
         {
-            this.completedTimeAgoUpdateTimer = new DispatcherTimer()
+            completedTimeAgoUpdateTimer = new DispatcherTimer()
             {
                 Interval = TimeSpan.FromMinutes(1),
             };
-            this.completedTimeAgoUpdateTimer.Tick += (o, e) => this.NotifyOfPropertyChange(() => this.CompletedTimeAgo);
-            this.completedTimeAgoUpdateTimer.Start();
+            completedTimeAgoUpdateTimer.Tick += (o, e) => NotifyOfPropertyChange(() => CompletedTimeAgo);
+            completedTimeAgoUpdateTimer.Start();
 
-            this.FileTransfer = fileTransfer;
-            this.Path = Pri.LongPath.Path.GetFileName(this.FileTransfer.Path);
-            this.FullPath = this.FileTransfer.Path;
-            this.Folder = this.FileTransfer.Folder;
-            using (var icon = ShellTools.GetIcon(this.FileTransfer.Path, this.FileTransfer.ItemType != ItemChangedItemType.Dir))
+            FileTransfer = fileTransfer;
+            Path = Pri.LongPath.Path.GetFileName(FileTransfer.Path);
+            FullPath = FileTransfer.Path;
+            Folder = FileTransfer.Folder;
+            using (var icon = ShellTools.GetIcon(FileTransfer.Path, FileTransfer.ItemType != ItemChangedItemType.Dir))
             {
                 var bs = Imaging.CreateBitmapSourceFromHIcon(icon.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
                 bs.Freeze();
-                this.Icon = bs;
+                Icon = bs;
             }
-            this.WasDeleted = this.FileTransfer.ActionType == ItemChangedActionType.Delete;
+            WasDeleted = FileTransfer.ActionType == ItemChangedActionType.Delete;
 
-            this.UpdateState();
+            UpdateState();
         }
 
         public void UpdateState()
         {
-            switch (this.FileTransfer.Status)
+            switch (FileTransfer.Status)
             {
                 case FileTransferStatus.InProgress:
-                    if (this.FileTransfer.DownloadBytesPerSecond.HasValue)
+                    if (FileTransfer.DownloadBytesPerSecond.HasValue)
                     {
-                        this.ProgressString = String.Format(Resources.FileTransfersTrayView_Downloading_RateKnown,
-                            FormatUtils.BytesToHuman(this.FileTransfer.BytesTransferred),
-                            FormatUtils.BytesToHuman(this.FileTransfer.TotalBytes),
-                            FormatUtils.BytesToHuman(this.FileTransfer.DownloadBytesPerSecond.Value, 1));
+                        ProgressString = String.Format(Resources.FileTransfersTrayView_Downloading_RateKnown,
+                            FormatUtils.BytesToHuman(FileTransfer.BytesTransferred),
+                            FormatUtils.BytesToHuman(FileTransfer.TotalBytes),
+                            FormatUtils.BytesToHuman(FileTransfer.DownloadBytesPerSecond.Value, 1));
                     }
                     else
                     {
-                        this.ProgressString = String.Format(Resources.FileTransfersTrayView_Downloading_RateUnknown,
-                            FormatUtils.BytesToHuman(this.FileTransfer.BytesTransferred),
-                            FormatUtils.BytesToHuman(this.FileTransfer.TotalBytes));
+                        ProgressString = String.Format(Resources.FileTransfersTrayView_Downloading_RateUnknown,
+                            FormatUtils.BytesToHuman(FileTransfer.BytesTransferred),
+                            FormatUtils.BytesToHuman(FileTransfer.TotalBytes));
                     }
 
-                    this.ProgressPercent = ((float)this.FileTransfer.BytesTransferred / (float)this.FileTransfer.TotalBytes) * 100;
+                    ProgressPercent = ((float)FileTransfer.BytesTransferred / (float)FileTransfer.TotalBytes) * 100;
                     break;
 
                 case FileTransferStatus.Completed:
-                    this.ProgressPercent = 100;
-                    this.ProgressString = null;
+                    ProgressPercent = 100;
+                    ProgressString = null;
                     break;
             }
 
-            this.Error = this.FileTransfer.Error;
+            Error = FileTransfer.Error;
         }
     }
 }

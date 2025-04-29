@@ -12,8 +12,8 @@ namespace SyncTrayzor.Syncthing.EventWatcher
 
         public FolderErrorsChangedEventArgs(string folderId, List<FolderErrorData> errors)
         {
-            this.FolderId = folderId;
-            this.Errors = errors;
+            FolderId = folderId;
+            Errors = errors;
         }
     }
 }

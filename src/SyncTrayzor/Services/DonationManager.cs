@@ -28,24 +28,24 @@ namespace SyncTrayzor.Services
             this.configurationProvider = configurationProvider;
             this.processStartProvider = processStartProvider;
 
-            this.HaveDonated = this.configurationProvider.Load().HaveDonated;
-            this.configurationProvider.ConfigurationChanged += this.ConfigurationChanged;
+            HaveDonated = this.configurationProvider.Load().HaveDonated;
+            this.configurationProvider.ConfigurationChanged += ConfigurationChanged;
         }
 
         private void ConfigurationChanged(object sender, ConfigurationChangedEventArgs e)
         {
-            this.HaveDonated = e.NewConfiguration.HaveDonated;
+            HaveDonated = e.NewConfiguration.HaveDonated;
         }
 
         public void Donate()
         {
-            this.processStartProvider.StartDetached(donateUrl);
-            this.configurationProvider.AtomicLoadAndSave(x => x.HaveDonated = true);
+            processStartProvider.StartDetached(donateUrl);
+            configurationProvider.AtomicLoadAndSave(x => x.HaveDonated = true);
         }
 
         public void Dispose()
         {
-            this.configurationProvider.ConfigurationChanged -= this.ConfigurationChanged;
+            configurationProvider.ConfigurationChanged -= ConfigurationChanged;
         }
     }
 }

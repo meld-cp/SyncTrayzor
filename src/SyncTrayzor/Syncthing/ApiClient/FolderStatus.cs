@@ -49,10 +49,10 @@ namespace SyncTrayzor.Syncthing.ApiClient
 
         public override string ToString()
         {
-            return $"<FolderStatus GlobalBytes={this.GlobalBytes} GlobalDeleted={this.GlobalDeleted} GlobalFiles={this.GlobalFiles} " +
-                $"LocalBytes={this.LocalBytes} LocalDeleted={this.LocalDeleted} LocalFiles={this.LocalFiles} " +
-                $"InSyncBytes={this.InSyncBytes} InSyncFiles={this.InSyncFiles} NeedBytes={this.NeedBytes} NeedFiles={this.NeedFiles} " +
-                $"Invalid={this.Invalid} State={this.State} StateChanged={this.StateChanged} Version={this.Version}>";
+            return $"<FolderStatus GlobalBytes={GlobalBytes} GlobalDeleted={GlobalDeleted} GlobalFiles={GlobalFiles} " +
+                $"LocalBytes={LocalBytes} LocalDeleted={LocalDeleted} LocalFiles={LocalFiles} " +
+                $"InSyncBytes={InSyncBytes} InSyncFiles={InSyncFiles} NeedBytes={NeedBytes} NeedFiles={NeedFiles} " +
+                $"Invalid={Invalid} State={State} StateChanged={StateChanged} Version={Version}>";
         }
     }
 }

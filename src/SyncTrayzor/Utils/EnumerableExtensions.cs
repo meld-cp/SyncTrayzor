@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace SyncTrayzor.Utils
+﻿namespace SyncTrayzor.Utils
 {
     public static class EnumerableExtensions
     {

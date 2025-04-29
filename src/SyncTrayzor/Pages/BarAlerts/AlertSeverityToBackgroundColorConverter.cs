@@ -8,7 +8,7 @@ namespace SyncTrayzor.Pages.BarAlerts
 {
     public class AlertSeverityToBackgroundColorConverter : IValueConverter
     {
-        public static readonly AlertSeverityToBackgroundColorConverter Instance = new AlertSeverityToBackgroundColorConverter();
+        public static readonly AlertSeverityToBackgroundColorConverter Instance = new();
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {

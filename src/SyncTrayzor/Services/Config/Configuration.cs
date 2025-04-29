@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Xml;
 using System.Xml.Serialization;
 
 namespace SyncTrayzor.Services.Config
@@ -49,8 +48,8 @@ namespace SyncTrayzor.Services.Config
         [XmlElement("LatestNotifiedVersion")]
         public string LatestNotifiedVersionRaw
         {
-            get => this.LatestNotifiedVersion?.ToString();
-            set => this.LatestNotifiedVersion = value == null ? null : new Version(value);
+            get => LatestNotifiedVersion?.ToString();
+            set => LatestNotifiedVersion = value == null ? null : new Version(value);
         }
 
         public bool UseComputerCulture { get; set; }
@@ -77,97 +76,97 @@ namespace SyncTrayzor.Services.Config
         {
             // Default configuration is for a portable setup.
 
-            this.ShowTrayIconOnlyOnClose = false;
-            this.MinimizeToTray = false;
-            this.CloseToTray = true;
-            this.ShowSynchronizedBalloonEvenIfNothingDownloaded = false;
-            this.ShowDeviceConnectivityBalloons = false;
-            this.ShowDeviceOrFolderRejectedBalloons = true;
-            this.SyncthingAddress = "localhost:8384";
-            this.StartSyncthingAutomatically = true;
-            this.SyncthingCommandLineFlags = new List<string>();
-            this.SyncthingEnvironmentalVariables = new EnvironmentalVariableCollection();
-            this.SyncthingDenyUpgrade = false;
-            this.SyncthingPriorityLevel = SyncthingPriorityLevel.Normal;
-            this.Folders = new List<FolderConfiguration>();
-            this.NotifyOfNewVersions = true;
-            this.ObfuscateDeviceIDs = true;
-            this.LatestNotifiedVersion = null;
-            this.UseComputerCulture = true;
-            this.SyncthingConsoleHeight = DefaultSyncthingConsoleHeight;
-            this.WindowPlacement = null;
-            this.SyncthingWebBrowserZoomLevel = 0;
-            this.LastSeenInstallCount = 0;
-            this.SyncthingCustomPath = null;
-            this.SyncthingCustomHomePath = null;
-            this.DisableHardwareRendering = false;
-            this.HideIntelXeWarningMessage = false;
-            this.EnableFailedTransferAlerts = true;
-            this.EnableConflictFileMonitoring = true;
-            this.ConflictResolverDeletesToRecycleBin = true;
-            this.PauseDevicesOnMeteredNetworks = true;
-            this.HaveDonated = false;
-            this.IconAnimationMode = IconAnimationMode.DataTransferring;
-            this.OpenFolderCommand = "explorer.exe \"{0}\"";
-            this.ShowFileInFolderCommand = "explorer.exe /select, \"{0}\"";
-            this.LogLevel = LogLevel.Info;
+            ShowTrayIconOnlyOnClose = false;
+            MinimizeToTray = false;
+            CloseToTray = true;
+            ShowSynchronizedBalloonEvenIfNothingDownloaded = false;
+            ShowDeviceConnectivityBalloons = false;
+            ShowDeviceOrFolderRejectedBalloons = true;
+            SyncthingAddress = "localhost:8384";
+            StartSyncthingAutomatically = true;
+            SyncthingCommandLineFlags = new List<string>();
+            SyncthingEnvironmentalVariables = new EnvironmentalVariableCollection();
+            SyncthingDenyUpgrade = false;
+            SyncthingPriorityLevel = SyncthingPriorityLevel.Normal;
+            Folders = new List<FolderConfiguration>();
+            NotifyOfNewVersions = true;
+            ObfuscateDeviceIDs = true;
+            LatestNotifiedVersion = null;
+            UseComputerCulture = true;
+            SyncthingConsoleHeight = DefaultSyncthingConsoleHeight;
+            WindowPlacement = null;
+            SyncthingWebBrowserZoomLevel = 0;
+            LastSeenInstallCount = 0;
+            SyncthingCustomPath = null;
+            SyncthingCustomHomePath = null;
+            DisableHardwareRendering = false;
+            HideIntelXeWarningMessage = false;
+            EnableFailedTransferAlerts = true;
+            EnableConflictFileMonitoring = true;
+            ConflictResolverDeletesToRecycleBin = true;
+            PauseDevicesOnMeteredNetworks = true;
+            HaveDonated = false;
+            IconAnimationMode = IconAnimationMode.DataTransferring;
+            OpenFolderCommand = "explorer.exe \"{0}\"";
+            ShowFileInFolderCommand = "explorer.exe /select, \"{0}\"";
+            LogLevel = LogLevel.Info;
         }
 
         public Configuration(Configuration other)
         {
-            this.ShowTrayIconOnlyOnClose = other.ShowTrayIconOnlyOnClose;
-            this.MinimizeToTray = other.MinimizeToTray;
-            this.CloseToTray = other.CloseToTray;
-            this.ShowSynchronizedBalloonEvenIfNothingDownloaded = other.ShowSynchronizedBalloonEvenIfNothingDownloaded;
-            this.ShowDeviceConnectivityBalloons = other.ShowDeviceConnectivityBalloons;
-            this.ShowDeviceOrFolderRejectedBalloons = other.ShowDeviceOrFolderRejectedBalloons;
-            this.SyncthingAddress = other.SyncthingAddress;
-            this.StartSyncthingAutomatically = other.StartSyncthingAutomatically;
-            this.SyncthingCommandLineFlags = other.SyncthingCommandLineFlags;
-            this.SyncthingEnvironmentalVariables = other.SyncthingEnvironmentalVariables;
-            this.SyncthingDenyUpgrade = other.SyncthingDenyUpgrade;
-            this.SyncthingPriorityLevel = other.SyncthingPriorityLevel;
-            this.Folders = other.Folders.Select(x => new FolderConfiguration(x)).ToList();
-            this.NotifyOfNewVersions = other.NotifyOfNewVersions;
-            this.ObfuscateDeviceIDs = other.ObfuscateDeviceIDs;
-            this.LatestNotifiedVersion = other.LatestNotifiedVersion;
-            this.UseComputerCulture = other.UseComputerCulture;
-            this.SyncthingConsoleHeight = other.SyncthingConsoleHeight;
-            this.WindowPlacement = other.WindowPlacement;
-            this.SyncthingWebBrowserZoomLevel = other.SyncthingWebBrowserZoomLevel;
-            this.LastSeenInstallCount = other.LastSeenInstallCount;
-            this.SyncthingCustomPath = other.SyncthingCustomPath;
-            this.SyncthingCustomHomePath = other.SyncthingCustomHomePath;
-            this.DisableHardwareRendering = other.DisableHardwareRendering;
-            this.HideIntelXeWarningMessage = other.HideIntelXeWarningMessage;
-            this.EnableFailedTransferAlerts = other.EnableFailedTransferAlerts;
-            this.EnableConflictFileMonitoring = other.EnableConflictFileMonitoring;
-            this.ConflictResolverDeletesToRecycleBin = other.ConflictResolverDeletesToRecycleBin;
-            this.PauseDevicesOnMeteredNetworks = other.PauseDevicesOnMeteredNetworks;
-            this.HaveDonated = other.HaveDonated;
-            this.IconAnimationMode = other.IconAnimationMode;
-            this.OpenFolderCommand = other.OpenFolderCommand;
-            this.ShowFileInFolderCommand = other.ShowFileInFolderCommand;
-            this.LogLevel = other.LogLevel;
+            ShowTrayIconOnlyOnClose = other.ShowTrayIconOnlyOnClose;
+            MinimizeToTray = other.MinimizeToTray;
+            CloseToTray = other.CloseToTray;
+            ShowSynchronizedBalloonEvenIfNothingDownloaded = other.ShowSynchronizedBalloonEvenIfNothingDownloaded;
+            ShowDeviceConnectivityBalloons = other.ShowDeviceConnectivityBalloons;
+            ShowDeviceOrFolderRejectedBalloons = other.ShowDeviceOrFolderRejectedBalloons;
+            SyncthingAddress = other.SyncthingAddress;
+            StartSyncthingAutomatically = other.StartSyncthingAutomatically;
+            SyncthingCommandLineFlags = other.SyncthingCommandLineFlags;
+            SyncthingEnvironmentalVariables = other.SyncthingEnvironmentalVariables;
+            SyncthingDenyUpgrade = other.SyncthingDenyUpgrade;
+            SyncthingPriorityLevel = other.SyncthingPriorityLevel;
+            Folders = other.Folders.Select(x => new FolderConfiguration(x)).ToList();
+            NotifyOfNewVersions = other.NotifyOfNewVersions;
+            ObfuscateDeviceIDs = other.ObfuscateDeviceIDs;
+            LatestNotifiedVersion = other.LatestNotifiedVersion;
+            UseComputerCulture = other.UseComputerCulture;
+            SyncthingConsoleHeight = other.SyncthingConsoleHeight;
+            WindowPlacement = other.WindowPlacement;
+            SyncthingWebBrowserZoomLevel = other.SyncthingWebBrowserZoomLevel;
+            LastSeenInstallCount = other.LastSeenInstallCount;
+            SyncthingCustomPath = other.SyncthingCustomPath;
+            SyncthingCustomHomePath = other.SyncthingCustomHomePath;
+            DisableHardwareRendering = other.DisableHardwareRendering;
+            HideIntelXeWarningMessage = other.HideIntelXeWarningMessage;
+            EnableFailedTransferAlerts = other.EnableFailedTransferAlerts;
+            EnableConflictFileMonitoring = other.EnableConflictFileMonitoring;
+            ConflictResolverDeletesToRecycleBin = other.ConflictResolverDeletesToRecycleBin;
+            PauseDevicesOnMeteredNetworks = other.PauseDevicesOnMeteredNetworks;
+            HaveDonated = other.HaveDonated;
+            IconAnimationMode = other.IconAnimationMode;
+            OpenFolderCommand = other.OpenFolderCommand;
+            ShowFileInFolderCommand = other.ShowFileInFolderCommand;
+            LogLevel = other.LogLevel;
         }
 
         public override string ToString()
         {
-            return $"<Configuration ShowTrayIconOnlyOnClose={this.ShowTrayIconOnlyOnClose} MinimizeToTray={this.MinimizeToTray} CloseToTray={this.CloseToTray} " +
-                $"ShowDeviceConnectivityBalloons={this.ShowDeviceConnectivityBalloons} ShowDeviceOrFolderRejectedBalloons={this.ShowDeviceOrFolderRejectedBalloons} " +
-                $"SyncthingAddress={this.SyncthingAddress} StartSyncthingAutomatically={this.StartSyncthingAutomatically} " +
-                $"SyncthingCommandLineFlags=[{String.Join(",", this.SyncthingCommandLineFlags)}] " +
-                $"SyncthingEnvironmentalVariables=[{String.Join(" ", this.SyncthingEnvironmentalVariables)}] " +
-                $"SyncthingDenyUpgrade={this.SyncthingDenyUpgrade} SyncthingPriorityLevel={this.SyncthingPriorityLevel} " +
-                $"Folders=[{String.Join(", ", this.Folders)}] NotifyOfNewVersions={this.NotifyOfNewVersions} LatestNotifiedVersion={this.LatestNotifiedVersion} " +
-                $"ObfuscateDeviceIDs={this.ObfuscateDeviceIDs} UseComputerCulture={this.UseComputerCulture} SyncthingConsoleHeight={this.SyncthingConsoleHeight} WindowPlacement={this.WindowPlacement} " +
-                $"SyncthingWebBrowserZoomLevel={this.SyncthingWebBrowserZoomLevel} LastSeenInstallCount={this.LastSeenInstallCount} SyncthingCustomPath={this.SyncthingCustomPath} " +
-                $"SyncthingCustomHomePath={this.SyncthingCustomHomePath} ShowSynchronizedBalloonEvenIfNothingDownloaded={this.ShowSynchronizedBalloonEvenIfNothingDownloaded} " +
-                $"DisableHardwareRendering={this.DisableHardwareRendering} HideIntelXeWarningMessage={this.HideIntelXeWarningMessage} EnableFailedTransferAlerts={this.EnableFailedTransferAlerts} " +
-                $"EnableConflictFileMonitoring={this.EnableConflictFileMonitoring} " +
-                $"ConflictResolverDeletesToRecycleBin={this.ConflictResolverDeletesToRecycleBin} PauseDevicesOnMeteredNetworks={this.PauseDevicesOnMeteredNetworks} " +
-                $"HaveDonated={this.HaveDonated} IconAnimationMode={this.IconAnimationMode} OpenFolderCommand={this.OpenFolderCommand} ShowFileInFolderCommand={this.ShowFileInFolderCommand}" +
-                $"LogLevel={this.LogLevel}>";
+            return $"<Configuration ShowTrayIconOnlyOnClose={ShowTrayIconOnlyOnClose} MinimizeToTray={MinimizeToTray} CloseToTray={CloseToTray} " +
+                $"ShowDeviceConnectivityBalloons={ShowDeviceConnectivityBalloons} ShowDeviceOrFolderRejectedBalloons={ShowDeviceOrFolderRejectedBalloons} " +
+                $"SyncthingAddress={SyncthingAddress} StartSyncthingAutomatically={StartSyncthingAutomatically} " +
+                $"SyncthingCommandLineFlags=[{String.Join(",", SyncthingCommandLineFlags)}] " +
+                $"SyncthingEnvironmentalVariables=[{String.Join(" ", SyncthingEnvironmentalVariables)}] " +
+                $"SyncthingDenyUpgrade={SyncthingDenyUpgrade} SyncthingPriorityLevel={SyncthingPriorityLevel} " +
+                $"Folders=[{String.Join(", ", Folders)}] NotifyOfNewVersions={NotifyOfNewVersions} LatestNotifiedVersion={LatestNotifiedVersion} " +
+                $"ObfuscateDeviceIDs={ObfuscateDeviceIDs} UseComputerCulture={UseComputerCulture} SyncthingConsoleHeight={SyncthingConsoleHeight} WindowPlacement={WindowPlacement} " +
+                $"SyncthingWebBrowserZoomLevel={SyncthingWebBrowserZoomLevel} LastSeenInstallCount={LastSeenInstallCount} SyncthingCustomPath={SyncthingCustomPath} " +
+                $"SyncthingCustomHomePath={SyncthingCustomHomePath} ShowSynchronizedBalloonEvenIfNothingDownloaded={ShowSynchronizedBalloonEvenIfNothingDownloaded} " +
+                $"DisableHardwareRendering={DisableHardwareRendering} HideIntelXeWarningMessage={HideIntelXeWarningMessage} EnableFailedTransferAlerts={EnableFailedTransferAlerts} " +
+                $"EnableConflictFileMonitoring={EnableConflictFileMonitoring} " +
+                $"ConflictResolverDeletesToRecycleBin={ConflictResolverDeletesToRecycleBin} PauseDevicesOnMeteredNetworks={PauseDevicesOnMeteredNetworks} " +
+                $"HaveDonated={HaveDonated} IconAnimationMode={IconAnimationMode} OpenFolderCommand={OpenFolderCommand} ShowFileInFolderCommand={ShowFileInFolderCommand}" +
+                $"LogLevel={LogLevel}>";
         }
     }
 }

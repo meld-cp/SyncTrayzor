@@ -22,15 +22,15 @@ namespace SyncTrayzor.Xaml
 
         private void ObservableChanged(IObservable<bool> newValue)
         {
-            this.registration?.Dispose();
-            this.registration = newValue?.Subscribe(_ => this.Activate());
+            registration?.Dispose();
+            registration = newValue?.Subscribe(_ => Activate());
         }
 
         private void Activate()
         {
-            if (this.AssociatedObject.WindowState == WindowState.Minimized)
-                this.AssociatedObject.WindowState = WindowState.Normal;
-            this.AssociatedObject.Activate();
+            if (AssociatedObject.WindowState == WindowState.Minimized)
+                AssociatedObject.WindowState = WindowState.Normal;
+            AssociatedObject.Activate();
         }
     }
 }

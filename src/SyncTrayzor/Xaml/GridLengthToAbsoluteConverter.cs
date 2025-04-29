@@ -6,7 +6,7 @@ namespace SyncTrayzor.Xaml
 {
     public class GridLengthToAbsoluteConverter : IValueConverter
     {
-        public static readonly GridLengthToAbsoluteConverter Instance = new GridLengthToAbsoluteConverter();
+        public static readonly GridLengthToAbsoluteConverter Instance = new();
 
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {

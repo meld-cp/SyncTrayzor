@@ -11,9 +11,9 @@ namespace SyncTrayzor.Syncthing.EventWatcher
         public ItemFinishedEventArgs(string folder, string item, ItemChangedActionType action, ItemChangedItemType itemType, string error)
             : base(folder, item)
         {
-            this.Action = action;
-            this.ItemType = itemType;
-            this.Error = error;
+            Action = action;
+            ItemType = itemType;
+            Error = error;
         }
     }
 }

@@ -17,12 +17,12 @@ namespace SyncTrayzor.Services.UpdateManagement
 
         public UpdateNotificationClient(string url)
         {
-            this.api = RestClient.For<IUpdateNotificationApi>(url);
+            api = RestClient.For<IUpdateNotificationApi>(url);
         }
 
         public async Task<UpdateNotificationResponse> FetchUpdateAsync(string version, string arch, string variant)
         {
-            var updates = await this.api.FetchUpdateAsync(version, arch, variant);
+            var updates = await api.FetchUpdateAsync(version, arch, variant);
             logger.Debug("Fetched updates response: {0}", updates);
             return updates;
         }

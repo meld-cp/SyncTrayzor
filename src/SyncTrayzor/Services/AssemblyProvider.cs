@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
+using System.Runtime.InteropServices;
 
 namespace SyncTrayzor.Services
 {
@@ -9,7 +10,8 @@ namespace SyncTrayzor.Services
         Version Version { get; }
         Version FullVersion { get; }
         string Location { get; }
-        ProcessorArchitecture ProcessorArchitecture { get; }
+        Architecture ProcessorArchitecture { get; }
+        string FrameworkDescription { get; }
         Stream GetManifestResourceStream(string path);
     }
 
@@ -19,24 +21,26 @@ namespace SyncTrayzor.Services
 
         public AssemblyProvider()
         {
-            this.assembly = Assembly.GetExecutingAssembly();
+            assembly = Assembly.GetExecutingAssembly();
 
             // Don't include the revision in this version
-            var version = this.assembly.GetName().Version;
-            this.Version = new Version(version.Major, version.Minor, version.Build);
+            var version = assembly.GetName().Version ?? Version.Parse("0.0.0");
+            Version = new Version(version.Major, version.Minor, version.Build);
         }
 
         public Version Version { get; }
 
-        public Version FullVersion => this.assembly.GetName().Version;
+        public Version FullVersion => assembly.GetName().Version;
 
-        public string Location => this.assembly.Location;
+        public string Location => assembly.Location;
 
-        public ProcessorArchitecture ProcessorArchitecture => this.assembly.GetName().ProcessorArchitecture;
+        public Architecture ProcessorArchitecture => RuntimeInformation.ProcessArchitecture;
+
+        public string FrameworkDescription => RuntimeInformation.FrameworkDescription;
 
         public Stream GetManifestResourceStream(string path)
         {
-            return this.assembly.GetManifestResourceStream(path);
+            return assembly.GetManifestResourceStream(path);
         }
     }
 }

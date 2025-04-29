@@ -11,8 +11,8 @@ namespace SyncTrayzor.Syncthing.TransferHistory
 
         public FolderSynchronizationFinishedEventArgs(Folder folder, List<FileTransfer> fileTransfers)
         {
-            this.Folder = folder;
-            this.FileTransfers = fileTransfers.AsReadOnly();
+            Folder = folder;
+            FileTransfers = fileTransfers.AsReadOnly();
         }
     }
 }

@@ -5,58 +5,58 @@ namespace SyncTrayzor.Syncthing.Devices
 {
     public class Device : IEquatable<Device>
     {
-        private readonly object syncRoot = new object();
+        private readonly object syncRoot = new();
 
         public string DeviceId { get; }
 
         private string _shortDeviceId;
-        public string ShortDeviceId => _shortDeviceId ?? (_shortDeviceId = this.DeviceId.Substring(0, this.DeviceId.IndexOf('-')));
+        public string ShortDeviceId => _shortDeviceId ?? (_shortDeviceId = DeviceId.Substring(0, DeviceId.IndexOf('-')));
 
         public string Name { get; }
 
         public bool IsConnected
         {
-            get { lock (this.syncRoot) { return this._address != null; } }
+            get { lock (syncRoot) { return _address != null; } }
         }
 
         private IPEndPoint _address;
         public IPEndPoint Address
         {
-            get { lock (this.syncRoot) { return this._address; } }
-            private set { lock(this.syncRoot) { this._address = value; } }
+            get { lock (syncRoot) { return _address; } }
+            private set { lock(syncRoot) { _address = value; } }
         }
 
         private bool _paused;
         public bool Paused
         {
-            get { lock(this.syncRoot) { return this._paused; } }
-            private set { lock(this.syncRoot) { this._paused = value; } }
+            get { lock(syncRoot) { return _paused; } }
+            private set { lock(syncRoot) { _paused = value; } }
         }
 
         public Device(string deviceId, string name)
         {
-            this.DeviceId = deviceId;
-            this.Name = name;
+            DeviceId = deviceId;
+            Name = name;
         }
 
         public void SetConnected(IPEndPoint address)
         {
-            this.Address = address;
+            Address = address;
         }
 
         public void SetDisconnected()
         {
-            this.Address = null;
+            Address = null;
         }
 
         public void SetPaused()
         {
-            this.Paused = true;
+            Paused = true;
         }
 
         public void SetResumed()
         {
-            this.Paused = false;
+            Paused = false;
         }
 
         public bool Equals(Device other)
@@ -66,17 +66,17 @@ namespace SyncTrayzor.Syncthing.Devices
             if (ReferenceEquals(other, null))
                 return false;
 
-            return this.DeviceId == other.DeviceId;
+            return DeviceId == other.DeviceId;
         }
 
         public override bool Equals(object obj)
         {
-            return this.Equals(obj as Device);
+            return Equals(obj as Device);
         }
 
         public override int GetHashCode()
         {
-            return this.DeviceId.GetHashCode();
+            return DeviceId.GetHashCode();
         }
     }
 }

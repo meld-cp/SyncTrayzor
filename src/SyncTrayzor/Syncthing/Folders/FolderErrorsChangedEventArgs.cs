@@ -10,8 +10,8 @@ namespace SyncTrayzor.Syncthing.Folders
 
         public FolderErrorsChangedEventArgs(string folderId, List<FolderError> folderErrors)
         {
-            this.FolderId = folderId;
-            this.Errors = folderErrors.AsReadOnly();
+            FolderId = folderId;
+            Errors = folderErrors.AsReadOnly();
         }
     }
 }

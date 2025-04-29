@@ -9,7 +9,7 @@ namespace SyncTrayzor.Syncthing.EventWatcher
 
         public ConfigSavedEventArgs(Config config)
         {
-            this.Config = config;
+            Config = config;
         }
     }
 }

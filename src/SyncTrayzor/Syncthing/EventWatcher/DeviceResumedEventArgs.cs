@@ -8,7 +8,7 @@ namespace SyncTrayzor.Syncthing.EventWatcher
 
         public DeviceResumedEventArgs(string deviceId)
         {
-            this.DeviceId = deviceId;
+            DeviceId = deviceId;
         }
     }
 }

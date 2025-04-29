@@ -16,23 +16,23 @@ namespace SyncTrayzor.Services
 
         public bool Enabled
         {
-            get => this.timer.Enabled;
-            set => this.timer.Enabled = value;
+            get => timer.Enabled;
+            set => timer.Enabled = value;
         }
 
         public MemoryUsageLogger()
         {
-            this.process = Process.GetCurrentProcess();
+            process = Process.GetCurrentProcess();
 
-            this.timer = new Timer()
+            timer = new Timer()
             {
                 AutoReset = true,
                 Interval = pollInterval.TotalMilliseconds,
             };
-            this.timer.Elapsed += (o, e) =>
+            timer.Elapsed += (o, e) =>
             {
                 logger.Info("Working Set: {0}. Private Memory Size: {1}. GC Total Memory: {2}",
-                    FormatUtils.BytesToHuman(this.process.WorkingSet64), FormatUtils.BytesToHuman(this.process.PrivateMemorySize64),
+                    FormatUtils.BytesToHuman(process.WorkingSet64), FormatUtils.BytesToHuman(process.PrivateMemorySize64),
                     FormatUtils.BytesToHuman(GC.GetTotalMemory(true)));
             };
         }

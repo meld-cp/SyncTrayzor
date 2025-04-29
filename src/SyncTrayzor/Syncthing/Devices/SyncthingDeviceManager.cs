@@ -34,12 +34,12 @@ namespace SyncTrayzor.Syncthing.Devices
         private readonly ISyncthingEventWatcher eventWatcher;
         private readonly ISyncthingCapabilities capabilities;
 
-        private readonly object devicesLock = new object();
-        private ConcurrentDictionary<string, Device> _devices = new ConcurrentDictionary<string, Device>();
+        private readonly object devicesLock = new();
+        private ConcurrentDictionary<string, Device> _devices = new();
         public ConcurrentDictionary<string, Device> devices
         {
-            get { lock (this.devicesLock) { return this._devices; } }
-            set { lock (this.devicesLock) this._devices = value; }
+            get { lock (devicesLock) { return _devices; } }
+            set { lock (devicesLock) _devices = value; }
         }
 
         public event EventHandler<DeviceConnectedEventArgs> DeviceConnected;
@@ -49,30 +49,30 @@ namespace SyncTrayzor.Syncthing.Devices
 
         public SyncthingDeviceManager(SynchronizedTransientWrapper<ISyncthingApiClient> apiClient, ISyncthingEventWatcher eventWatcher, ISyncthingCapabilities capabilities)
         {
-            this.eventDispatcher = new SynchronizedEventDispatcher(this);
+            eventDispatcher = new SynchronizedEventDispatcher(this);
             this.apiClient = apiClient ?? throw new ArgumentNullException(nameof(apiClient));
             this.eventWatcher = eventWatcher ?? throw new ArgumentNullException(nameof(eventWatcher));
             this.capabilities = capabilities ?? throw new ArgumentNullException(nameof(capabilities));
 
-            this.eventWatcher.DeviceConnected += this.EventDeviceConnected;
-            this.eventWatcher.DeviceDisconnected += this.EventDeviceDisconnected;
-            this.eventWatcher.DevicePaused += this.EventDevicePaused;
-            this.eventWatcher.DeviceResumed += this.EventDeviceResumed;
+            this.eventWatcher.DeviceConnected += EventDeviceConnected;
+            this.eventWatcher.DeviceDisconnected += EventDeviceDisconnected;
+            this.eventWatcher.DevicePaused += EventDevicePaused;
+            this.eventWatcher.DeviceResumed += EventDeviceResumed;
         }
 
         public bool TryFetchById(string deviceId, out Device device)
         {
-            return this.devices.TryGetValue(deviceId, out device);
+            return devices.TryGetValue(deviceId, out device);
         }
 
         public IReadOnlyCollection<Device> FetchDevices()
         {
-            return new List<Device>(this.devices.Values).AsReadOnly();
+            return new List<Device>(devices.Values).AsReadOnly();
         }
 
         public async Task LoadDevicesAsync(Config config, CancellationToken cancellationToken)
         {
-            var devices = await this.FetchDevicesAsync(config, cancellationToken);
+            var devices = await FetchDevicesAsync(config, cancellationToken);
             this.devices = new ConcurrentDictionary<string, Device>(devices.Select(x => new KeyValuePair<string, Device>(x.DeviceId, x)));
         }
 
@@ -80,7 +80,7 @@ namespace SyncTrayzor.Syncthing.Devices
         {
             // Raise events as appropriate
 
-            var devices = await this.FetchDevicesAsync(config, cancellationToken);
+            var devices = await FetchDevicesAsync(config, cancellationToken);
             var newDevices = new ConcurrentDictionary<string, Device>();
             var changeNotifications = new List<Action>();
 
@@ -89,9 +89,9 @@ namespace SyncTrayzor.Syncthing.Devices
                 if (this.devices.TryGetValue(device.DeviceId, out var existingDevice))
                 {
                     if (!existingDevice.IsConnected && device.IsConnected)
-                        changeNotifications.Add(() => this.OnDeviceConnected(device));
+                        changeNotifications.Add(() => OnDeviceConnected(device));
                     else if (existingDevice.IsConnected && !device.IsConnected)
-                        changeNotifications.Add(() => this.OnDeviceDisconnected(device));
+                        changeNotifications.Add(() => OnDeviceDisconnected(device));
                 }
 
                 newDevices[device.DeviceId] = device;
@@ -106,7 +106,7 @@ namespace SyncTrayzor.Syncthing.Devices
 
         private async Task<IEnumerable<Device>> FetchDevicesAsync(Config config, CancellationToken cancellationToken)
         {
-            var connections = await this.apiClient.Value.FetchConnectionsAsync(cancellationToken);
+            var connections = await apiClient.Value.FetchConnectionsAsync(cancellationToken);
             // We can potentially see duplicate devices (if the user set their config file that way). Ignore them.
             var devices = Enumerable.DistinctBy(config.Devices, x => x.DeviceID).Select(device =>
             {
@@ -128,10 +128,10 @@ namespace SyncTrayzor.Syncthing.Devices
         
         public async Task PauseDeviceAsync(Device device)
         {
-            if (!this.capabilities.SupportsDevicePauseResume)
+            if (!capabilities.SupportsDevicePauseResume)
                 throw new InvalidOperationException("Syncthing version does not support device pause and resume");
 
-            var client = this.apiClient.Value;
+            var client = apiClient.Value;
             if (client == null)
                 throw new InvalidOperationException("Client is not connected");
 
@@ -141,10 +141,10 @@ namespace SyncTrayzor.Syncthing.Devices
 
         public async Task ResumeDeviceAsync(Device device)
         {
-            if (!this.capabilities.SupportsDevicePauseResume)
+            if (!capabilities.SupportsDevicePauseResume)
                 throw new InvalidOperationException("Syncthing version does not support device pause and resume");
 
-            var client = this.apiClient.Value;
+            var client = apiClient.Value;
             if (client == null)
                 throw new InvalidOperationException("Client is not connected");
 
@@ -154,7 +154,7 @@ namespace SyncTrayzor.Syncthing.Devices
 
         private void EventDeviceConnected(object sender, EventWatcher.DeviceConnectedEventArgs e)
         {
-            if (!this.devices.TryGetValue(e.DeviceId, out var device))
+            if (!devices.TryGetValue(e.DeviceId, out var device))
             {
                 logger.Warn("Unexpected device connected: {0}, address {1}. It wasn't fetched when we fetched our config", e.DeviceId, e.Address);
                 return; // Not expecting this device! It wasn't in the config...
@@ -162,12 +162,12 @@ namespace SyncTrayzor.Syncthing.Devices
 
             device.SetConnected(SyncthingAddressParser.Parse(e.Address));
 
-            this.OnDeviceConnected(device);
+            OnDeviceConnected(device);
         }
 
         private void EventDeviceDisconnected(object sender, EventWatcher.DeviceDisconnectedEventArgs e)
         {
-            if (!this.devices.TryGetValue(e.DeviceId, out var device))
+            if (!devices.TryGetValue(e.DeviceId, out var device))
             {
                 logger.Warn("Unexpected device connected: {0}, error {1}. It wasn't fetched when we fetched our config", e.DeviceId, e.Error);
                 return; // Not expecting this device! It wasn't in the config...
@@ -175,12 +175,12 @@ namespace SyncTrayzor.Syncthing.Devices
 
             device.SetDisconnected();
 
-            this.OnDeviceDisconnected(device);
+            OnDeviceDisconnected(device);
         }
 
         private void EventDevicePaused(object sender, EventWatcher.DevicePausedEventArgs e)
         {
-            if (!this.devices.TryGetValue(e.DeviceId, out var device))
+            if (!devices.TryGetValue(e.DeviceId, out var device))
             {
                 logger.Warn("Unexpected device paused: {0}. It wasn't fetched when we fetched our config", e.DeviceId);
                 return; // Not expecting this device! It wasn't in the config...
@@ -188,12 +188,12 @@ namespace SyncTrayzor.Syncthing.Devices
 
             device.SetPaused();
 
-            this.OnDevicePaused(device);
+            OnDevicePaused(device);
         }
 
         private void EventDeviceResumed(object sender, EventWatcher.DeviceResumedEventArgs e)
         {
-            if (!this.devices.TryGetValue(e.DeviceId, out var device))
+            if (!devices.TryGetValue(e.DeviceId, out var device))
             {
                 logger.Warn("Unexpected device resumed: {0}. It wasn't fetched when we fetched our config", e.DeviceId);
                 return; // Not expecting this device! It wasn't in the config...
@@ -201,27 +201,27 @@ namespace SyncTrayzor.Syncthing.Devices
 
             device.SetResumed();
 
-            this.OnDeviceResumed(device);
+            OnDeviceResumed(device);
         }
 
         private void OnDeviceConnected(Device device)
         {
-            this.eventDispatcher.Raise(this.DeviceConnected, new DeviceConnectedEventArgs(device));
+            eventDispatcher.Raise(DeviceConnected, new DeviceConnectedEventArgs(device));
         }
 
         private void OnDeviceDisconnected(Device device)
         {
-            this.eventDispatcher.Raise(this.DeviceDisconnected, new DeviceDisconnectedEventArgs(device));
+            eventDispatcher.Raise(DeviceDisconnected, new DeviceDisconnectedEventArgs(device));
         }
 
         private void OnDevicePaused(Device device)
         {
-            this.eventDispatcher.Raise(this.DevicePaused, new DevicePausedEventArgs(device));
+            eventDispatcher.Raise(DevicePaused, new DevicePausedEventArgs(device));
         }
 
         private void OnDeviceResumed(Device device)
         {
-            this.eventDispatcher.Raise(this.DeviceResumed, new DeviceResumedEventArgs(device));
+            eventDispatcher.Raise(DeviceResumed, new DeviceResumedEventArgs(device));
         }
     }
 }

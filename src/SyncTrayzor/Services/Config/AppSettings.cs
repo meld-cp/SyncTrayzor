@@ -16,14 +16,14 @@ namespace SyncTrayzor.Services.Config
 
         protected override object GetRuntimeObject()
         {
-            return this.reader;
+            return reader;
         }
     }
 
     public class AppSettings
     {
         private const string sectionName = "settings";
-        private static readonly XmlSerializer serializer = new XmlSerializer(typeof(AppSettings), new XmlRootAttribute(sectionName));
+        private static readonly XmlSerializer serializer = new(typeof(AppSettings), new XmlRootAttribute(sectionName));
 
         public static readonly AppSettings Instance;
 
@@ -44,17 +44,15 @@ namespace SyncTrayzor.Services.Config
         public int SyncthingConnectTimeoutSeconds { get; set; } = 600;
         public bool EnforceSingleProcessPerUser { get; set; } = true;
 
-        public PathConfiguration PathConfiguration { get; set; } = new PathConfiguration();
+        public PathConfiguration PathConfiguration { get; set; } = new();
 
-        public Configuration DefaultUserConfiguration { get; set; } = new Configuration();
+        public Configuration DefaultUserConfiguration { get; set; } = new();
 
         public override string ToString()
         {
-            using (var writer = new StringWriter())
-            {
-                serializer.Serialize(writer, this);
-                return writer.ToString();
-            }
+            using var writer = new StringWriter();
+            serializer.Serialize(writer, this);
+            return writer.ToString();
         }
     }
 }

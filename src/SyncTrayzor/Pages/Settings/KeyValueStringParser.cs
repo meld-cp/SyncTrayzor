@@ -12,7 +12,7 @@ namespace SyncTrayzor.Pages.Settings
             if (String.IsNullOrEmpty(value))
                 return key;
 
-            return String.Format("{0}={1}", key, value.Contains(' ') ? "\"" + value + "\"" : value);
+            return $"{key}={(value.Contains(' ') ? "\"" + value + "\"" : value)}";
         }
 
         public static string Format(IEnumerable<KeyValuePair<string, string>> result)

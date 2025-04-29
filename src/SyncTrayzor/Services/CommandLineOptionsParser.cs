@@ -1,9 +1,7 @@
 ﻿using Mono.Options;
 using Stylet;
 using System.IO;
-using System.Runtime.InteropServices.ComTypes;
 using System.Windows;
-using System.Windows.Forms;
 
 namespace SyncTrayzor.Services
 {
@@ -33,13 +31,13 @@ namespace SyncTrayzor.Services
             bool show = false;
 
             var options = new OptionSet()
-                .Add("shutdown", "\nIf another SyncTrayzor process is running, tell it to shutdown.", v => this.Shutdown = true)
-                .Add("start-syncthing", "\nIf another SyncTrayzor process is running, tell it to start Syncthing. Otherwise, launch with Syncthing started regardless of configuration.", v => this.StartSyncthing = true)
-                .Add("stop-syncthing", "\nIf another SyncTrayzor process is running, tell it to stop Syncthing. Otherwise, launch with Syncthing stopped regardless of configuration.", v => this.StopSyncthing = true)
-                .Add("noautostart", null, v => this.StopSyncthing = true, hidden: true)
+                .Add("shutdown", "\nIf another SyncTrayzor process is running, tell it to shutdown.", v => Shutdown = true)
+                .Add("start-syncthing", "\nIf another SyncTrayzor process is running, tell it to start Syncthing. Otherwise, launch with Syncthing started regardless of configuration.", v => StartSyncthing = true)
+                .Add("stop-syncthing", "\nIf another SyncTrayzor process is running, tell it to stop Syncthing. Otherwise, launch with Syncthing stopped regardless of configuration.", v => StopSyncthing = true)
+                .Add("noautostart", null, v => StopSyncthing = true, hidden: true)
                 .Add("minimized", "\nIf another SyncTrayzor process is running, this flag has no effect. Otherwise, start in the tray rather than in the foreground.", v => minimized = true)
                 .Add("show", "\nIf another SyncTrayzor process is running, tell it to show its main window. Otherwise, this flag has no effect.", v => show = true)
-                .Add("culture=", "\nForce SyncTrayzor to use a particular language", v => this.Culture = v);
+                .Add("culture=", "\nForce SyncTrayzor to use a particular language", v => Culture = v);
 
             var unknownArgs = options.Parse(args);
 
@@ -47,27 +45,27 @@ namespace SyncTrayzor.Services
             {
                 var writer = new StringWriter();
                 options.WriteOptionDescriptions(writer);
-                this.windowManager.ShowMessageBox(writer.ToString(), "SyncTrayzor command-line usage");
+                windowManager.ShowMessageBox(writer.ToString(), "SyncTrayzor command-line usage");
                 return false;
             }
 
-            if (this.Shutdown && (this.StartSyncthing || this.StopSyncthing || minimized || show))
+            if (Shutdown && (StartSyncthing || StopSyncthing || minimized || show))
             {
-                this.windowManager.ShowMessageBox("--shutdown may not be used with any other options", "Error", icon: MessageBoxImage.Error);
+                windowManager.ShowMessageBox("--shutdown may not be used with any other options", "Error", icon: MessageBoxImage.Error);
                 return false;
             }
-            if (this.StartSyncthing && this.StopSyncthing)
+            if (StartSyncthing && StopSyncthing)
             {
-                this.windowManager.ShowMessageBox("--start-syncthing and --stop-syncthing may not be used together", "Error", icon: MessageBoxImage.Error);
+                windowManager.ShowMessageBox("--start-syncthing and --stop-syncthing may not be used together", "Error", icon: MessageBoxImage.Error);
                 return false;
             }
             if (minimized && show)
             {
-                this.windowManager.ShowMessageBox("--minimized and --show may not be used together", "Error", icon: MessageBoxImage.Error);
+                windowManager.ShowMessageBox("--minimized and --show may not be used together", "Error", icon: MessageBoxImage.Error);
                 return false;
             }
 
-            this.StartMinimized = minimized || ((this.StartSyncthing || this.StopSyncthing) && !show);
+            StartMinimized = minimized || ((StartSyncthing || StopSyncthing) && !show);
 
             return true;
         }

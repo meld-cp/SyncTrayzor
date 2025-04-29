@@ -21,7 +21,7 @@ namespace SyncTrayzor.Services.Config
         {
             try
             {
-                this.CleanImpl();
+                CleanImpl();
             }
             catch (Exception e)
             {
@@ -32,26 +32,26 @@ namespace SyncTrayzor.Services.Config
         private void CleanImpl()
         {
             // We used to have a 'logs archive' folder in the root - that's no longer used, in favour of 'logs/logs archive'
-            var oldLogArchivesPath = Path.Combine(Path.GetDirectoryName(this.applicationPathsProvider.LogFilePath), "logs archive");
-            if (this.filesystemProvider.DirectoryExists(oldLogArchivesPath))
+            var oldLogArchivesPath = Path.Combine(Path.GetDirectoryName(applicationPathsProvider.LogFilePath), "logs archive");
+            if (filesystemProvider.DirectoryExists(oldLogArchivesPath))
             {
                 logger.Info("Deleting old logs archive path: {0}", oldLogArchivesPath);
-                this.filesystemProvider.DeleteDirectory(oldLogArchivesPath, true);
+                filesystemProvider.DeleteDirectory(oldLogArchivesPath, true);
             }
 
             // Delete 'SyncTrayzor.log' and 'syncthing.log' in the root
-            var oldSyncTrayzorRootLogPath = Path.Combine(Path.GetDirectoryName(this.applicationPathsProvider.ConfigurationFilePath), "SyncTrayzor.log");
-            if (this.filesystemProvider.FileExists(oldSyncTrayzorRootLogPath))
+            var oldSyncTrayzorRootLogPath = Path.Combine(Path.GetDirectoryName(applicationPathsProvider.ConfigurationFilePath), "SyncTrayzor.log");
+            if (filesystemProvider.FileExists(oldSyncTrayzorRootLogPath))
             {
                 logger.Info("Deleting old SyncTrayzor log file: {0}", oldSyncTrayzorRootLogPath);
-                this.filesystemProvider.DeleteFile(oldSyncTrayzorRootLogPath);
+                filesystemProvider.DeleteFile(oldSyncTrayzorRootLogPath);
             }
 
-            var oldSyncthingRootLogPath = Path.Combine(Path.GetDirectoryName(this.applicationPathsProvider.ConfigurationFilePath), "syncthing.log");
-            if (this.filesystemProvider.FileExists(oldSyncthingRootLogPath))
+            var oldSyncthingRootLogPath = Path.Combine(Path.GetDirectoryName(applicationPathsProvider.ConfigurationFilePath), "syncthing.log");
+            if (filesystemProvider.FileExists(oldSyncthingRootLogPath))
             {
                 logger.Info("Deleting old Syncthing log file: {0}", oldSyncthingRootLogPath);
-                this.filesystemProvider.DeleteFile(oldSyncthingRootLogPath);
+                filesystemProvider.DeleteFile(oldSyncthingRootLogPath);
             }
         }
     }

@@ -10,9 +10,9 @@ namespace SyncTrayzor.Syncthing.EventWatcher
 
         public SyncStateChangedEventArgs(string folderId, string prevSyncState, string syncState)
         {
-            this.FolderId = folderId;
-            this.PrevSyncState = prevSyncState;
-            this.SyncState = syncState;
+            FolderId = folderId;
+            PrevSyncState = prevSyncState;
+            SyncState = syncState;
         }
     }
 }

@@ -41,7 +41,7 @@ namespace SyncTrayzor.Syncthing.ApiClient
 
         public Connections()
         {
-            this.DeviceConnections = new Dictionary<string, ItemConnectionData>();
+            DeviceConnections = new Dictionary<string, ItemConnectionData>();
         }
     }
 }

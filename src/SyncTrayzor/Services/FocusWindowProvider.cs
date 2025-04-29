@@ -19,7 +19,7 @@ namespace SyncTrayzor.Services
 
         public bool TryFocus<TViewModel>()
         {
-            var window = this.application.Windows.OfType<Window>().FirstOrDefault(x => x.DataContext is TViewModel);
+            var window = application.Windows.OfType<Window>().FirstOrDefault(x => x.DataContext is TViewModel);
             if (window != null)
             {
                 window.Focus();

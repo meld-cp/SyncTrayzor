@@ -10,12 +10,12 @@ namespace SyncTrayzor.Syncthing
 
     public class SyncthingCapabilities : ISyncthingCapabilities
     {
-        private static readonly Version debugFacilitiesIntroduced = new Version(0, 12, 0);
-        private static readonly Version devicePauseResumeIntroduced = new Version(0, 12, 0);
+        private static readonly Version debugFacilitiesIntroduced = new(0, 12, 0);
+        private static readonly Version devicePauseResumeIntroduced = new(0, 12, 0);
 
-        public Version SyncthingVersion { get; set; } = new Version(0, 0, 0);
+        public Version SyncthingVersion { get; set; } = new(0, 0, 0);
 
-        public bool SupportsDebugFacilities => this.SyncthingVersion >= debugFacilitiesIntroduced;
-        public bool SupportsDevicePauseResume => this.SyncthingVersion >= devicePauseResumeIntroduced;
+        public bool SupportsDebugFacilities => SyncthingVersion >= debugFacilitiesIntroduced;
+        public bool SupportsDevicePauseResume => SyncthingVersion >= devicePauseResumeIntroduced;
     }
 }

@@ -1,5 +1,4 @@
 ﻿using Stylet;
-using SyncTrayzor.Pages;
 using SyncTrayzor.Pages.Settings;
 using SyncTrayzor.Pages.Tray;
 using SyncTrayzor.Services;
@@ -34,11 +33,11 @@ namespace SyncTrayzor.NotifyIcon
 
         public SyncthingState SyncthingState { get; set; }
 
-        public bool SyncthingDevicesPaused => this.alertsManager.PausedDeviceIdsFromMetering.Count > 0;
+        public bool SyncthingDevicesPaused => alertsManager.PausedDeviceIdsFromMetering.Count > 0;
 
-        public bool SyncthingWarning => this.alertsManager.AnyWarnings;
+        public bool SyncthingWarning => alertsManager.AnyWarnings;
 
-        public bool SyncthingStarted => this.SyncthingState == SyncthingState.Running;
+        public bool SyncthingStarted => SyncthingState == SyncthingState.Running;
 
         public bool SyncthingSyncing { get; private set; }
 
@@ -60,138 +59,138 @@ namespace SyncTrayzor.NotifyIcon
             this.settingsViewModelFactory = settingsViewModelFactory;
             this.processStartProvider = processStartProvider;
             this.alertsManager = alertsManager;
-            this.FileTransfersViewModel = fileTransfersViewModel;
+            FileTransfersViewModel = fileTransfersViewModel;
             this.configurationProvider = configurationProvider;
 
-            this.syncthingManager.StateChanged += this.StateChanged;
-            this.SyncthingState = this.syncthingManager.State;
+            this.syncthingManager.StateChanged += StateChanged;
+            SyncthingState = this.syncthingManager.State;
 
-            this.syncthingManager.TotalConnectionStatsChanged += this.TotalConnectionStatsChanged;
-            this.syncthingManager.Folders.FoldersChanged += this.FoldersChanged;
-            this.syncthingManager.Folders.SyncStateChanged += this.FolderSyncStateChanged;
+            this.syncthingManager.TotalConnectionStatsChanged += TotalConnectionStatsChanged;
+            this.syncthingManager.Folders.FoldersChanged += FoldersChanged;
+            this.syncthingManager.Folders.SyncStateChanged += FolderSyncStateChanged;
 
 
-            this.alertsManager.AlertsStateChanged += this.AlertsStateChanged;
+            this.alertsManager.AlertsStateChanged += AlertsStateChanged;
 
-            this.configurationProvider.ConfigurationChanged += this.ConfigurationChanged;
-            this.iconAnimationmode = this.configurationProvider.Load().IconAnimationMode;
+            this.configurationProvider.ConfigurationChanged += ConfigurationChanged;
+            iconAnimationmode = this.configurationProvider.Load().IconAnimationMode;
         }
 
         private void StateChanged(object sender, SyncthingStateChangedEventArgs e)
         {
-            this.SyncthingState = e.NewState;
+            SyncthingState = e.NewState;
             if (e.NewState != SyncthingState.Running)
-                this.SyncthingSyncing = false; // Just make sure we reset this..
+                SyncthingSyncing = false; // Just make sure we reset this..
         }
 
         private void TotalConnectionStatsChanged(object sender, ConnectionStatsChangedEventArgs e)
         {
-            if (this.iconAnimationmode == IconAnimationMode.DataTransferring)
+            if (iconAnimationmode == IconAnimationMode.DataTransferring)
             {
                 var stats = e.TotalConnectionStats;
-                this.SyncthingSyncing = stats.InBytesPerSecond > 0 || stats.OutBytesPerSecond > 0;
+                SyncthingSyncing = stats.InBytesPerSecond > 0 || stats.OutBytesPerSecond > 0;
             }
         }
 
         private void FoldersChanged(object sender, EventArgs e)
         {
-            this.Folders = new BindableCollection<FolderViewModel>(this.syncthingManager.Folders.FetchAll()
-                    .Select(x => new FolderViewModel(x, this.processStartProvider))
+            Folders = new BindableCollection<FolderViewModel>(syncthingManager.Folders.FetchAll()
+                    .Select(x => new FolderViewModel(x, processStartProvider))
                     .OrderBy(x => x.FolderLabel));
         }
 
         private void FolderSyncStateChanged(object sender, FolderSyncStateChangedEventArgs e)
         {
-            if (this.iconAnimationmode == IconAnimationMode.Syncing)
+            if (iconAnimationmode == IconAnimationMode.Syncing)
             {
-                var anySyncing = this.syncthingManager.Folders.FetchAll().Any(x => x.SyncState == FolderSyncState.Syncing);
-                this.SyncthingSyncing = anySyncing;
+                var anySyncing = syncthingManager.Folders.FetchAll().Any(x => x.SyncState == FolderSyncState.Syncing);
+                SyncthingSyncing = anySyncing;
             }
         }
 
         private void AlertsStateChanged(object sender, EventArgs e)
         {
-            this.NotifyOfPropertyChange(nameof(this.SyncthingDevicesPaused));
-            this.NotifyOfPropertyChange(nameof(this.SyncthingWarning));
+            NotifyOfPropertyChange(nameof(SyncthingDevicesPaused));
+            NotifyOfPropertyChange(nameof(SyncthingWarning));
         }
 
         private void ConfigurationChanged(object sender, ConfigurationChangedEventArgs e)
         {
-            this.iconAnimationmode = e.NewConfiguration.IconAnimationMode;
+            iconAnimationmode = e.NewConfiguration.IconAnimationMode;
             // Reset, just in case
-            this.SyncthingSyncing = false;
+            SyncthingSyncing = false;
         }
 
         public void DoubleClick()
         {
-            this.OnWindowOpenRequested();
+            OnWindowOpenRequested();
         }
 
         public void ShowSettings()
         {
-            if (!this.focusWindowProvider.TryFocus<SettingsViewModel>())
+            if (!focusWindowProvider.TryFocus<SettingsViewModel>())
             {
-                var vm = this.settingsViewModelFactory();
-                this.windowManager.ShowDialog(vm);
+                var vm = settingsViewModelFactory();
+                windowManager.ShowDialog(vm);
             }
         }
 
         public void Restore()
         {
-            this.OnWindowOpenRequested();
+            OnWindowOpenRequested();
         }
 
         public void Minimize()
         {
-            this.OnWindowCloseRequested();
+            OnWindowCloseRequested();
         }
 
-        public bool CanStart => this.SyncthingState == SyncthingState.Stopped;
+        public bool CanStart => SyncthingState == SyncthingState.Stopped;
         public async void Start()
         {
-            await this.syncthingManager.StartWithErrorDialogAsync(this.windowManager);
+            await syncthingManager.StartWithErrorDialogAsync(windowManager);
         }
 
-        public bool CanStop => this.SyncthingState == SyncthingState.Running;
+        public bool CanStop => SyncthingState == SyncthingState.Running;
         public async void Stop()
         {
-            await this.syncthingManager.StopAsync();
+            await syncthingManager.StopAsync();
         }
 
-        public bool CanRestart => this.SyncthingState == SyncthingState.Running;
+        public bool CanRestart => SyncthingState == SyncthingState.Running;
         public async void Restart()
         {
-            await this.syncthingManager.RestartAsync();
+            await syncthingManager.RestartAsync();
         }
 
-        public bool CanRescanAll => this.SyncthingState == SyncthingState.Running;
+        public bool CanRescanAll => SyncthingState == SyncthingState.Running;
         public async void RescanAll()
         {
-            await this.syncthingManager.ScanAsync(null, null);
+            await syncthingManager.ScanAsync(null, null);
         }
 
         public void Exit()
         {
-            this.OnExitRequested();
+            OnExitRequested();
         }
 
-        private void OnWindowOpenRequested() => this.WindowOpenRequested?.Invoke(this, EventArgs.Empty);
+        private void OnWindowOpenRequested() => WindowOpenRequested?.Invoke(this, EventArgs.Empty);
 
-        private void OnWindowCloseRequested() => this.WindowCloseRequested?.Invoke(this, EventArgs.Empty);
+        private void OnWindowCloseRequested() => WindowCloseRequested?.Invoke(this, EventArgs.Empty);
 
-        private void OnExitRequested() => this.ExitRequested?.Invoke(this, EventArgs.Empty);
+        private void OnExitRequested() => ExitRequested?.Invoke(this, EventArgs.Empty);
 
         public void Dispose()
         {
-            this.syncthingManager.StateChanged -= this.StateChanged;
+            syncthingManager.StateChanged -= StateChanged;
 
-            this.syncthingManager.TotalConnectionStatsChanged -= this.TotalConnectionStatsChanged;
-            this.syncthingManager.Folders.SyncStateChanged -= this.FolderSyncStateChanged;
-            this.syncthingManager.Folders.FoldersChanged -= this.FoldersChanged;
+            syncthingManager.TotalConnectionStatsChanged -= TotalConnectionStatsChanged;
+            syncthingManager.Folders.SyncStateChanged -= FolderSyncStateChanged;
+            syncthingManager.Folders.FoldersChanged -= FoldersChanged;
 
-            this.alertsManager.AlertsStateChanged -= this.AlertsStateChanged;
+            alertsManager.AlertsStateChanged -= AlertsStateChanged;
 
-            this.configurationProvider.ConfigurationChanged -= this.ConfigurationChanged;
+            configurationProvider.ConfigurationChanged -= ConfigurationChanged;
         }
     }
 
@@ -201,7 +200,7 @@ namespace SyncTrayzor.NotifyIcon
         private readonly Folder folder;
         private readonly IProcessStartProvider processStartProvider;
 
-        public string FolderLabel => this.folder.Label;
+        public string FolderLabel => folder.Label;
 
         public FolderViewModel(Folder folder, IProcessStartProvider processStartProvider)
         {
@@ -214,7 +213,7 @@ namespace SyncTrayzor.NotifyIcon
 
         public void Execute(object parameter)
         {
-            this.processStartProvider.ShowFolderInExplorer(this.folder.Path);
+            processStartProvider.ShowFolderInExplorer(folder.Path);
         }
     }
 }

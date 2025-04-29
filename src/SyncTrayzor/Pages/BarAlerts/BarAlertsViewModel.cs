@@ -38,66 +38,66 @@ namespace SyncTrayzor.Pages.BarAlerts
 
         protected override void OnInitialActivate()
         {
-            this.alertsManager.AlertsStateChanged += this.AlertsStateChanged;
-            this.configurationProvider.ConfigurationChanged += this.AlertsStateChanged;
-            this.Load();
+            alertsManager.AlertsStateChanged += AlertsStateChanged;
+            configurationProvider.ConfigurationChanged += AlertsStateChanged;
+            Load();
         }
 
         private void AlertsStateChanged(object sender, EventArgs e)
         {
-            this.Load();
+            Load();
         }
 
         private void Load()
         { 
-            this.Items.Clear();
+            Items.Clear();
 
-            var conflictedFilesCount = this.alertsManager.ConflictedFiles.Count;
+            var conflictedFilesCount = alertsManager.ConflictedFiles.Count;
             if (conflictedFilesCount > 0)
             {
                 var vm = new ConflictsAlertViewModel(conflictedFilesCount);
-                vm.OpenConflictResolverClicked += (o, e2) => this.OpenConflictResolver();
-                this.Items.Add(vm);
+                vm.OpenConflictResolverClicked += (o, e2) => OpenConflictResolver();
+                Items.Add(vm);
             }
 
-            var foldersWithFailedTransferFiles = this.alertsManager.FoldersWithFailedTransferFiles;
+            var foldersWithFailedTransferFiles = alertsManager.FoldersWithFailedTransferFiles;
             if (foldersWithFailedTransferFiles.Count > 0)
             {
                 var vm = new FailedTransfersAlertViewModel(foldersWithFailedTransferFiles);
-                this.Items.Add(vm);
+                Items.Add(vm);
             }
 
-            var pausedDeviceIds = this.alertsManager.PausedDeviceIdsFromMetering;
+            var pausedDeviceIds = alertsManager.PausedDeviceIdsFromMetering;
             if (pausedDeviceIds.Count > 0)
             {
                 var pausedDeviceNames = new List<string>();
                 foreach (var deviceId in pausedDeviceIds)
                 {
-                    if (this.syncthingManager.Devices.TryFetchById(deviceId, out var device))
+                    if (syncthingManager.Devices.TryFetchById(deviceId, out var device))
                         pausedDeviceNames.Add(device.Name);
                 }
 
                 var vm = new PausedDevicesFromMeteringViewModel(pausedDeviceNames);
-                this.Items.Add(vm);
+                Items.Add(vm);
             }
 
-            var configuration = this.configurationProvider.Load();
-            if (!configuration.DisableHardwareRendering && !configuration.HideIntelXeWarningMessage && this.graphicsCardDetector.IsIntelXe)
+            var configuration = configurationProvider.Load();
+            if (!configuration.DisableHardwareRendering && !configuration.HideIntelXeWarningMessage && graphicsCardDetector.IsIntelXe)
             {
-                this.Items.Add(this.intelXeGraphicsAlertViewModelFactory());
+                Items.Add(intelXeGraphicsAlertViewModelFactory());
             }
         }
 
         private void OpenConflictResolver()
         {
-            var vm = this.conflictResolutionViewModelFactory();
-            this.windowManager.ShowDialog(vm);
+            var vm = conflictResolutionViewModelFactory();
+            windowManager.ShowDialog(vm);
         }
 
         protected override void OnClose()
         {
-            this.alertsManager.AlertsStateChanged -= this.AlertsStateChanged;
-            this.configurationProvider.ConfigurationChanged -= this.AlertsStateChanged;
+            alertsManager.AlertsStateChanged -= AlertsStateChanged;
+            configurationProvider.ConfigurationChanged -= AlertsStateChanged;
         }
     }
 }

@@ -26,7 +26,7 @@ namespace SyncTrayzor.Syncthing
 
         public ProcessStoppedEventArgs(SyncthingExitStatus exitStatus)
         {
-            this.ExitStatus = exitStatus;
+            ExitStatus = exitStatus;
         }
     }
 
@@ -58,9 +58,9 @@ namespace SyncTrayzor.Syncthing
         private static readonly Logger syncthingLogger = LogManager.GetLogger("Syncthing");
         private static readonly string[] defaultArguments = new[] { "--no-browser", "--no-restart" };
         // Leave just the first set of digits, removing everything after it
-        private static readonly Regex deviceIdHideRegex = new Regex(@"-[0-9A-Z]{7}-[0-9A-Z]{7}-[0-9A-Z]{7}-[0-9A-Z]{7}-[0-9A-Z]{7}-[0-9A-Z]{7}-[0-9A-Z]{7}");
+        private static readonly Regex deviceIdHideRegex = new(@"-[0-9A-Z]{7}-[0-9A-Z]{7}-[0-9A-Z]{7}-[0-9A-Z]{7}-[0-9A-Z]{7}-[0-9A-Z]{7}-[0-9A-Z]{7}");
 
-        private static readonly Dictionary<SyncthingPriorityLevel, ProcessPriorityClass> priorityMapping = new Dictionary<SyncthingPriorityLevel, ProcessPriorityClass>()
+        private static readonly Dictionary<SyncthingPriorityLevel, ProcessPriorityClass> priorityMapping = new()
         {
             { SyncthingPriorityLevel.AboveNormal, ProcessPriorityClass.AboveNormal },
             { SyncthingPriorityLevel.Normal, ProcessPriorityClass.Normal },
@@ -68,20 +68,20 @@ namespace SyncTrayzor.Syncthing
             { SyncthingPriorityLevel.Idle, ProcessPriorityClass.Idle },
         };
 
-        private readonly object processLock = new object();
+        private readonly object processLock = new();
         private Process process;
 
         private const int numRestarts = 4;
         private const int systemShutdownExitStatus = 0x40010004;
         private static readonly TimeSpan restartThreshold = TimeSpan.FromMinutes(1);
-        private readonly List<DateTime> starts = new List<DateTime>();
+        private readonly List<DateTime> starts = new();
         private bool isKilling;
 
         public string ExecutablePath { get; set; }
         public string ApiKey { get; set; }
         public string HostAddress { get; set; }
         public string CustomHomeDir { get; set; }
-        public List<string> CommandLineFlags { get; set; } = new List<string>();
+        public List<string> CommandLineFlags { get; set; } = new();
         public IDictionary<string, string> EnvironmentalVariables { get; set; } = new Dictionary<string, string>();
         public bool DenyUpgrade { get; set; }
         public SyncthingPriorityLevel SyncthingPriorityLevel { get; set; }
@@ -92,32 +92,28 @@ namespace SyncTrayzor.Syncthing
         public event EventHandler<MessageLoggedEventArgs> MessageLogged;
         public event EventHandler<ProcessStoppedEventArgs> ProcessStopped;
 
-        public SyncthingProcessRunner()
-        {
-        }
-
         public void Start()
         {
             logger.Debug("SyncthingProcessRunner.Start called");
             // This might cause our config to be set...
-            this.OnStarting();
+            OnStarting();
 
-            this.StartInternal(isRestart: false);
+            StartInternal(isRestart: false);
         }
 
         private void StartInternal(bool isRestart)
         { 
-            logger.Info("Starting syncthing: {0}", this.ExecutablePath);
+            logger.Info("Starting syncthing: {0}", ExecutablePath);
 
-            this.isKilling = false;
+            isKilling = false;
 
-            if (!File.Exists(this.ExecutablePath))
-                throw new Exception($"Unable to find Syncthing at path {this.ExecutablePath}");
+            if (!File.Exists(ExecutablePath))
+                throw new Exception($"Unable to find Syncthing at path {ExecutablePath}");
 
             var processStartInfo = new ProcessStartInfo()
             {
-                FileName = this.ExecutablePath,
-                Arguments = String.Join(" ", this.GenerateArguments()),
+                FileName = ExecutablePath,
+                Arguments = String.Join(" ", GenerateArguments()),
                 CreateNoWindow = true,
                 UseShellExecute = false,
                 RedirectStandardInput = true,
@@ -129,31 +125,31 @@ namespace SyncTrayzor.Syncthing
                 WorkingDirectory = Path.GetDirectoryName(typeof(SyncthingProcessRunner).Assembly.Location),
             };
 
-            processStartInfo.EnvironmentVariables["STGUIAPIKEY"] = this.ApiKey;
+            processStartInfo.EnvironmentVariables["STGUIAPIKEY"] = ApiKey;
 
-            if (this.DenyUpgrade)
+            if (DenyUpgrade)
                 processStartInfo.EnvironmentVariables["STNOUPGRADE"] = "1";
             if (isRestart)
                 processStartInfo.EnvironmentVariables["STRESTART"] = "yes";
 
-            foreach (var kvp in this.EnvironmentalVariables)
+            foreach (var kvp in EnvironmentalVariables)
             {
                 processStartInfo.EnvironmentVariables[kvp.Key] = kvp.Value;
             }
 
-            lock (this.processLock)
+            lock (processLock)
             {
-                this.KillInternal();
+                KillInternal();
 
-                if (this.starts.Count >= numRestarts)
-                    this.starts.RemoveRange(0, this.starts.Count - numRestarts + 1);
-                this.starts.Add(DateTime.UtcNow);
+                if (starts.Count >= numRestarts)
+                    starts.RemoveRange(0, starts.Count - numRestarts + 1);
+                starts.Add(DateTime.UtcNow);
 
-                this.process = Process.Start(processStartInfo);
+                process = Process.Start(processStartInfo);
 
                 try
                 {
-                    this.process.PriorityClass = priorityMapping[this.SyncthingPriorityLevel];
+                    process.PriorityClass = priorityMapping[SyncthingPriorityLevel];
                 }
                 catch (InvalidOperationException e)
                 {
@@ -162,35 +158,35 @@ namespace SyncTrayzor.Syncthing
                     logger.Warn("Failed to set process priority", e);
                 }
 
-                this.process.EnableRaisingEvents = true;
-                this.process.OutputDataReceived += (o, e) => this.DataReceived(e.Data);
-                this.process.ErrorDataReceived += (o, e) => this.DataReceived(e.Data);
+                process.EnableRaisingEvents = true;
+                process.OutputDataReceived += (o, e) => DataReceived(e.Data);
+                process.ErrorDataReceived += (o, e) => DataReceived(e.Data);
 
-                this.process.BeginOutputReadLine();
-                this.process.BeginErrorReadLine();
+                process.BeginOutputReadLine();
+                process.BeginErrorReadLine();
 
-                this.process.Exited += (o, e) => this.OnProcessExited();
+                process.Exited += (o, e) => OnProcessExited();
             }
         }
 
         public void Kill()
         {
             logger.Info("Killing Syncthing process");
-            lock (this.processLock)
+            lock (processLock)
             {
-                this.KillInternal();
+                KillInternal();
             }
         }
 
         // MUST BE CALLED FROM WITHIN A LOCK!
         private void KillInternal()
         {
-            if (this.process != null)
+            if (process != null)
             {
                 try
                 {
-                    this.process.Kill();
-                    this.process = null;
+                    process.Kill();
+                    process = null;
                 }
                 // These can happen in rare cases, and we don't care. See the docs for Process.Kill
                 catch (Win32Exception e) { logger.Warn("KillInternal failed with an error", e); }
@@ -202,13 +198,13 @@ namespace SyncTrayzor.Syncthing
         {
             var args = new List<string>(defaultArguments)
             {
-                $"--gui-address=\"{this.HostAddress}\""
+                $"--gui-address=\"{HostAddress}\""
             };
 
-            if (!String.IsNullOrWhiteSpace(this.CustomHomeDir))
-                args.Add($"--home=\"{this.CustomHomeDir}\"");
+            if (!String.IsNullOrWhiteSpace(CustomHomeDir))
+                args.Add($"--home=\"{CustomHomeDir}\"");
 
-            args.AddRange(this.CommandLineFlags);
+            args.AddRange(CommandLineFlags);
 
             return args;
         }
@@ -217,82 +213,82 @@ namespace SyncTrayzor.Syncthing
         {
             if (!String.IsNullOrWhiteSpace(data))
             {
-                if (this.HideDeviceIds)
+                if (HideDeviceIds)
                     data = deviceIdHideRegex.Replace(data, "");
-                this.OnMessageLogged(data);
+                OnMessageLogged(data);
             }
         }
 
         public void Dispose()
         {
-            lock (this.processLock)
+            lock (processLock)
             {
-                this.KillInternal();
+                KillInternal();
             }
         }
 
         private void OnProcessExited()
         {
             SyncthingExitStatus exitStatus;
-            lock (this.processLock)
+            lock (processLock)
             {
-                exitStatus = this.process == null ? SyncthingExitStatus.Success : (SyncthingExitStatus)this.process.ExitCode;
-                this.process = null;
+                exitStatus = process == null ? SyncthingExitStatus.Success : (SyncthingExitStatus)process.ExitCode;
+                process = null;
             }
 
             logger.Debug("Syncthing process stopped with exit status {0}", exitStatus);
             if (exitStatus == SyncthingExitStatus.Restarting || exitStatus == SyncthingExitStatus.Upgrading)
             {
                 logger.Debug("Syncthing process requested restart, so restarting");
-                this.OnProcessRestarted();
-                this.Start();
+                OnProcessRestarted();
+                Start();
             }
-            else if (exitStatus != SyncthingExitStatus.Success && (int)exitStatus != systemShutdownExitStatus && !this.isKilling)
+            else if (exitStatus != SyncthingExitStatus.Success && (int)exitStatus != systemShutdownExitStatus && !isKilling)
             {
-                if (this.starts.Count >= numRestarts && DateTime.UtcNow - this.starts[0] < restartThreshold)
+                if (starts.Count >= numRestarts && DateTime.UtcNow - starts[0] < restartThreshold)
                 {
                     logger.Warn("{0} restarts in less than {1}: not restarting again", numRestarts, restartThreshold);
-                    this.OnProcessStopped(exitStatus);
-                    this.starts.Clear();
+                    OnProcessStopped(exitStatus);
+                    starts.Clear();
                 }
                 else
                 {
                     logger.Info("Syncthing exited. Restarting...");
-                    this.StartInternal(isRestart: true);
+                    StartInternal(isRestart: true);
                 }
             }
             else
             {
-                this.OnProcessStopped(exitStatus);
+                OnProcessStopped(exitStatus);
             }
         }
 
         private void OnStarting()
         {
-            this.Starting?.Invoke(this, EventArgs.Empty);
+            Starting?.Invoke(this, EventArgs.Empty);
         }
 
         private void OnProcessStopped(SyncthingExitStatus exitStatus)
         {
-            this.ProcessStopped?.Invoke(this, new ProcessStoppedEventArgs(exitStatus));
+            ProcessStopped?.Invoke(this, new ProcessStoppedEventArgs(exitStatus));
         }
 
         private void OnProcessRestarted()
         {
-            this.ProcessRestarted?.Invoke(this, EventArgs.Empty);
+            ProcessRestarted?.Invoke(this, EventArgs.Empty);
         }
 
         private void OnMessageLogged(string logMessage)
         {
             logger.Debug(logMessage);
             syncthingLogger.Info(logMessage);
-            this.MessageLogged?.Invoke(this, new MessageLoggedEventArgs(logMessage));
+            MessageLogged?.Invoke(this, new MessageLoggedEventArgs(logMessage));
         }
 
         public void KillAllSyncthingProcesses()
         {
             // So we don't restart ourselves...
-            this.isKilling = true;
+            isKilling = true;
 
             logger.Debug("Kill all Syncthing processes");
             foreach (var process in Process.GetProcessesByName("syncthing"))

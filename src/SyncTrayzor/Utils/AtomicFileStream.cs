@@ -32,7 +32,7 @@ namespace SyncTrayzor.Utils
         {
             base.Dispose(disposing);
 
-            bool success = NativeMethods.MoveFileEx(this.tempPath, this.path, MoveFileFlags.ReplaceExisting | MoveFileFlags.WriteThrough);
+            bool success = NativeMethods.MoveFileEx(tempPath, path, MoveFileFlags.ReplaceExisting | MoveFileFlags.WriteThrough);
             if (!success)
                 Marshal.ThrowExceptionForHR(Marshal.GetLastWin32Error());
         }

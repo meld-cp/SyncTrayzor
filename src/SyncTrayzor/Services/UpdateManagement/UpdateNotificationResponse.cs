@@ -10,8 +10,8 @@ namespace SyncTrayzor.Services.UpdateManagement
 
         public Version Version
         {
-            get => String.IsNullOrWhiteSpace(this.VersionRaw) ? null : new Version(this.VersionRaw);
-            set => this.VersionRaw = value.ToString(3);
+            get => String.IsNullOrWhiteSpace(VersionRaw) ? null : new Version(VersionRaw);
+            set => VersionRaw = value.ToString(3);
         }
 
         [JsonProperty("direct_download_url")]
@@ -28,8 +28,8 @@ namespace SyncTrayzor.Services.UpdateManagement
 
         public override string ToString()
         {
-            return $"<UpdateNotificationData version={this.Version.ToString(3)} direct_download_url={this.DirectDownloadUrl} sha512sum_download_url={this.Sha512sumDownloadUrl} " +
-                $"release_page_url={this.ReleasePageUrl} release_notes={this.ReleaseNotes}>";
+            return $"<UpdateNotificationData version={Version.ToString(3)} direct_download_url={DirectDownloadUrl} sha512sum_download_url={Sha512sumDownloadUrl} " +
+                $"release_page_url={ReleasePageUrl} release_notes={ReleaseNotes}>";
         }
     }
 
@@ -43,7 +43,7 @@ namespace SyncTrayzor.Services.UpdateManagement
 
         public override string ToString()
         {
-            return $"<UpdateNotificationError code={this.Code} message={ this.Message}>";
+            return $"<UpdateNotificationError code={Code} message={ Message}>";
         }
     }
 
@@ -57,7 +57,7 @@ namespace SyncTrayzor.Services.UpdateManagement
 
         public override string ToString()
         {
-            return $"<UpdateNotificationResponse data={this.Data} error={this.Error}>";
+            return $"<UpdateNotificationResponse data={Data} error={Error}>";
         }
     }
 }

@@ -4,7 +4,6 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Media;
-using System.Windows.Resources;
 
 namespace SyncTrayzor.NotifyIcon
 {
@@ -45,17 +44,15 @@ namespace SyncTrayzor.NotifyIcon
                 // need to be disposed: PackagePart keeps a cache of streams which have been requested,
                 // and only releases them once they've been disposed, so the finalizer never gets a chance
                 // to kick in. See #479.
-                using (var stream = Application.GetResourceStream(uri)?.Stream)
-                { 
-                    if (stream == null)
-                    {
-                        string msg = "The supplied image source '{0}' could not be resolved.";
-                        msg = String.Format(msg, imageSource);
-                        throw new ArgumentException(msg);
-                    }
-
-                    icon = new Icon(stream, idealIconSize, idealIconSize);
+                using var stream = Application.GetResourceStream(uri)?.Stream;
+                if (stream == null)
+                {
+                    string msg = "The supplied image source '{0}' could not be resolved.";
+                    msg = String.Format(msg, imageSource);
+                    throw new ArgumentException(msg);
                 }
+
+                icon = new Icon(stream, idealIconSize, idealIconSize);
             }
 
             taskbarIcon.Icon?.Dispose();

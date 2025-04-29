@@ -11,13 +11,13 @@ namespace SyncTrayzor.Utils
 
         public BufferDeliveredEventArgs (IEnumerable<T> items)
 	    {
-            this.Items = items;
+            Items = items;
 	    }
     }
 
     public class Buffer<T>
     {
-        private readonly object lockObject = new object();
+        private readonly object lockObject = new();
         private readonly SynchronizationContext synchronizationContext;
         private readonly TimeSpan maximumBackoff;
         private readonly System.Timers.Timer maximumBackoffTimer;
@@ -32,33 +32,33 @@ namespace SyncTrayzor.Utils
             this.synchronizationContext = synchronizationContext ?? SynchronizationContext.Current;
             this.maximumBackoff = maximumBackoff;
 
-            this.maximumBackoffTimer = new System.Timers.Timer()
+            maximumBackoffTimer = new System.Timers.Timer()
             {
                 AutoReset = false,
                 Interval = maximumBackoff.TotalMilliseconds,
             };
-            this.maximumBackoffTimer.Elapsed += this.TimerElapsed;
+            maximumBackoffTimer.Elapsed += TimerElapsed;
 
-            this.timer = new System.Timers.Timer()
+            timer = new System.Timers.Timer()
             {
                 AutoReset = false,
                 Interval = backoff.TotalMilliseconds,
             };
-            this.timer.Elapsed += this.TimerElapsed;
+            timer.Elapsed += TimerElapsed;
 
-            this.items = new List<T>();
+            items = new List<T>();
         }
 
         public void Add(T item)
         {
-            lock (this.lockObject)
+            lock (lockObject)
             {
-                this.items.Add(item);
+                items.Add(item);
 
-                this.timer.Stop();
-                this.timer.Start();
+                timer.Stop();
+                timer.Start();
 
-                this.maximumBackoffTimer.Enabled = true;
+                maximumBackoffTimer.Enabled = true;
             }
         }
 
@@ -66,7 +66,7 @@ namespace SyncTrayzor.Utils
         {
             List<T> items;
 
-            lock (this.lockObject)
+            lock (lockObject)
             {
                 // Early-exit in case nothing's been logged since the last timer
                 if (this.items.Count == 0)
@@ -76,19 +76,19 @@ namespace SyncTrayzor.Utils
                 this.items = new List<T>();
             }
 
-            var handler = this.Delivered;
+            var handler = Delivered;
             if (handler != null)
             {
-                if (this.synchronizationContext == null)
+                if (synchronizationContext == null)
                     handler(this, new BufferDeliveredEventArgs<T>(items));
                 else
-                    this.synchronizationContext.Post(_ => handler(this, new BufferDeliveredEventArgs<T>(items)), null);
+                    synchronizationContext.Post(_ => handler(this, new BufferDeliveredEventArgs<T>(items)), null);
             }
         }
 
         private void TimerElapsed(object sender, ElapsedEventArgs e)
         {
-            this.Deliver();
+            Deliver();
         }
     }
 }

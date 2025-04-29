@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security;
-using System.Security.Permissions;
 using System.Text.RegularExpressions;
 
 namespace SyncTrayzor.Services
@@ -26,7 +25,7 @@ namespace SyncTrayzor.Services
 
         public override string ToString()
         {
-            return $"<AutostartConfiguration AutoStart={this.AutoStart} StartMinimized={this.StartMinimized}>";
+            return $"<AutostartConfiguration AutoStart={AutoStart} StartMinimized={StartMinimized}>";
         }
     }
 
@@ -37,7 +36,7 @@ namespace SyncTrayzor.Services
         private const string runPath = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Run";
         private const string runPathWithHive = @"HKEY_CURRENT_USER\" + runPath;
         // Matches 'SyncTrayzor' and 'SyncTrayzor (n)' (where n is a digit)
-        private static readonly Regex keyRegex = new Regex("^" + applicationName + @"(?: \((\d+)\))?$");
+        private static readonly Regex keyRegex = new("^" + applicationName + @"(?: \((\d+)\))?$");
         private readonly string keyName;
 
         private readonly IAssemblyProvider assemblyProvider;
@@ -45,29 +44,29 @@ namespace SyncTrayzor.Services
         public bool IsEnabled { get; set; }
 
         private bool _canRead;
-        public bool CanRead => this.IsEnabled && this._canRead;
+        public bool CanRead => IsEnabled && _canRead;
 
         private bool _canWrite;
-        public bool CanWrite => this.IsEnabled && this._canWrite;
+        public bool CanWrite => IsEnabled && _canWrite;
 
         public AutostartProvider(IAssemblyProvider assemblyProvider)
         {
             this.assemblyProvider = assemblyProvider;
 
             // Default
-            this.IsEnabled = true;
+            IsEnabled = true;
 
             // Find a key, if we can, which points to our current location
-            this.keyName = this.FindKeyNameAndCheckAccess();
+            keyName = FindKeyNameAndCheckAccess();
         }
 
         private string FindKeyNameAndCheckAccess()
         {
-            string keyName = null;
+            string keyName;
 
             try
             {
-                keyName = this.FindKeyName();
+                keyName = FindKeyName();
             }
             catch (Exception e) when (e is SecurityException || e is UnauthorizedAccessException)
             {
@@ -78,27 +77,25 @@ namespace SyncTrayzor.Services
 
             try
             {
-                using (var key = this.OpenRegistryKey(true))
+                using var key = OpenRegistryKey(true);
+                if (key != null) // It's null if "there was an error"
                 {
-                    if (key != null) // It's null if "there was an error"
+                    // We can open it, but not have access to edit this value
+                    var value = key.GetValue(keyName);
+                    if (value != null)
                     {
-                        // We can open it, but not have access to edit this value
-                        var value = key.GetValue(keyName);
-                        if (value != null)
-                        {
-                            key.SetValue(keyName, value);
-                        }
-                        else
-                        {
-                            key.SetValue(keyName, string.Empty);
-                            key.DeleteValue(keyName);
-                        }
-
-                        this._canWrite = true;
-                        this._canRead = true;
-                        logger.Debug("Have read/write access to the registry");
-                        return keyName;
+                        key.SetValue(keyName, value);
                     }
+                    else
+                    {
+                        key.SetValue(keyName, string.Empty);
+                        key.DeleteValue(keyName);
+                    }
+
+                    _canWrite = true;
+                    _canRead = true;
+                    logger.Debug("Have read/write access to the registry");
+                    return keyName;
                 }
             }
             catch (SecurityException) { }
@@ -106,17 +103,15 @@ namespace SyncTrayzor.Services
 
             try
             {
-                using (var key = this.OpenRegistryKey(false))
+                using var key = OpenRegistryKey(false);
+                if (key != null) // It's null if "there was an error"
                 {
-                    if (key != null) // It's null if "there was an error"
-                    {
-                        // We can open it, but not have access to read this value
-                        var value = key.GetValue(keyName);
+                    // We can open it, but not have access to read this value
+                    var value = key.GetValue(keyName);
 
-                        this._canRead = true;
-                        logger.Warn("Have read-only access to the registry");
-                        return keyName;
-                    }
+                    _canRead = true;
+                    logger.Warn("Have read-only access to the registry");
+                    return keyName;
                 }
             }
             catch (SecurityException) { }
@@ -131,7 +126,7 @@ namespace SyncTrayzor.Services
             var numbersSeen = new List<int>();
             string foundKey = null;
 
-            using (var key = this.OpenRegistryKey(false))
+            using (var key = OpenRegistryKey(false))
             {
                 foreach (var entry in key.GetValueNames())
                 {
@@ -146,7 +141,7 @@ namespace SyncTrayzor.Services
                             numbersSeen.Add(Int32.Parse(numberValue));
 
                         // See if this one points to our application
-                        if (key.GetValue(entry) is string keyValue && keyValue.StartsWith($"\"{this.assemblyProvider.Location}\""))
+                        if (key.GetValue(entry) is string keyValue && keyValue.StartsWith($"\"{assemblyProvider.Location}\""))
                         {
                             foundKey = entry;
                             break;
@@ -183,15 +178,15 @@ namespace SyncTrayzor.Services
 
         public AutostartConfiguration GetCurrentSetup()
         {
-            if (!this.CanRead)
+            if (!CanRead)
                 throw new InvalidOperationException("Don't have permission to read the registry");
 
             bool autoStart = false;
             bool startMinimized = false;
 
-            using (var registryKey = this.OpenRegistryKey(false))
+            using (var registryKey = OpenRegistryKey(false))
             {
-                if (registryKey.GetValue(this.keyName) is string value)
+                if (registryKey.GetValue(keyName) is string value)
                 {
                     autoStart = true;
                     if (value.Contains(" -minimized"))
@@ -206,26 +201,24 @@ namespace SyncTrayzor.Services
 
         public void SetAutoStart(AutostartConfiguration config)
         {
-            if (!this.CanWrite)
+            if (!CanWrite)
                 throw new InvalidOperationException("Don't have permission to write to the registry");
 
             logger.Debug("Setting AutoStart to {0}", config);
 
-            using (var registryKey = this.OpenRegistryKey(true))
-            {
-                var keyExists = registryKey.GetValue(this.keyName) != null;
+            using var registryKey = OpenRegistryKey(true);
+            var keyExists = registryKey.GetValue(keyName) != null;
 
-                if (config.AutoStart)
-                {
-                    var path = String.Format("\"{0}\"{1}", this.assemblyProvider.Location, config.StartMinimized ? " -minimized" : "");
-                    logger.Debug("Autostart path: {0}", path);
-                    registryKey.SetValue(this.keyName, path);
-                }
-                else if (keyExists)
-                {
-                    logger.Debug("Removing pre-existing registry key");
-                    registryKey.DeleteValue(this.keyName);
-                }
+            if (config.AutoStart)
+            {
+                var path = $"\"{assemblyProvider.Location}\"{(config.StartMinimized ? " -minimized" : "")}";
+                logger.Debug("Autostart path: {0}", path);
+                registryKey.SetValue(keyName, path);
+            }
+            else if (keyExists)
+            {
+                logger.Debug("Removing pre-existing registry key");
+                registryKey.DeleteValue(keyName);
             }
         }
     }

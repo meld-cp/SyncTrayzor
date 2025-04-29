@@ -9,8 +9,8 @@ namespace SyncTrayzor.Syncthing.EventWatcher
 
         public FolderRejectedEventArgs(string deviceId, string folderId)
         {
-            this.DeviceId = deviceId;
-            this.FolderId = folderId;
+            DeviceId = deviceId;
+            FolderId = folderId;
         }
     }
 }

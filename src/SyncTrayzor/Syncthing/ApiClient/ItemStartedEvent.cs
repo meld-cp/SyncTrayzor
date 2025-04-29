@@ -22,11 +22,11 @@ namespace SyncTrayzor.Syncthing.ApiClient
         [JsonProperty("data")]
         public ItemStartedEventData Data { get; set; }
 
-        public override bool IsValid => this.Data != null &&
-            !string.IsNullOrWhiteSpace(this.Data.Item) &&
-            !string.IsNullOrWhiteSpace(this.Data.Folder) &&
-            this.Data.Type != ItemChangedItemType.Unknown &&
-            this.Data.Action != ItemChangedActionType.Unknown;
+        public override bool IsValid => Data != null &&
+            !string.IsNullOrWhiteSpace(Data.Item) &&
+            !string.IsNullOrWhiteSpace(Data.Folder) &&
+            Data.Type != ItemChangedItemType.Unknown &&
+            Data.Action != ItemChangedActionType.Unknown;
 
         public override void Visit(IEventVisitor visitor)
         {
@@ -35,7 +35,7 @@ namespace SyncTrayzor.Syncthing.ApiClient
 
         public override string ToString()
         {
-            return $"<ItemStarted ID={this.Id} Time={this.Time} Item={this.Data.Item} Folder={this.Data.Folder} Type={this.Data.Type} Action={this.Data.Action}>";
+            return $"<ItemStarted ID={Id} Time={Time} Item={Data.Item} Folder={Data.Folder} Type={Data.Type} Action={Data.Action}>";
         }
     }
 }

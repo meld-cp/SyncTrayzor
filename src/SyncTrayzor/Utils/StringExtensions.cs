@@ -8,9 +8,7 @@ namespace SyncTrayzor.Utils
     {
         public static string TrimStart(this string input, string prefix)
         {
-            if (input.StartsWith(prefix))
-                return input.Substring(prefix.Length);
-            return input;
+            return input.StartsWith(prefix) ? input.Substring(prefix.Length) : input;
         }
 
         // Stolen from http://stackoverflow.com/a/298990/1086121

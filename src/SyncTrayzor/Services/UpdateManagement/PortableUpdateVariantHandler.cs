@@ -49,13 +49,13 @@ namespace SyncTrayzor.Services.UpdateManagement
         {
             if (!String.IsNullOrWhiteSpace(checkResult.DownloadUrl) && !String.IsNullOrWhiteSpace(checkResult.Sha512sumDownloadUrl))
             {
-                var zipPath = await this.updateDownloader.DownloadUpdateAsync(checkResult.DownloadUrl, checkResult.Sha512sumDownloadUrl, checkResult.NewVersion, updateDownloadFileName);
+                var zipPath = await updateDownloader.DownloadUpdateAsync(checkResult.DownloadUrl, checkResult.Sha512sumDownloadUrl, checkResult.NewVersion, updateDownloadFileName);
                 if (zipPath == null)
                     return false;
 
-                this.extractedZipPath = await this.ExtractDownloadedZip(zipPath);
+                extractedZipPath = await ExtractDownloadedZip(zipPath);
 
-                this.CanAutoInstall = true;
+                CanAutoInstall = true;
 
                 // If we return false, the upgrade will be aborted
                 return true;
@@ -63,7 +63,7 @@ namespace SyncTrayzor.Services.UpdateManagement
             else
             {
                 // Can continue, but not auto-install
-                this.CanAutoInstall = false;
+                CanAutoInstall = false;
 
                 return true;
             }
@@ -71,14 +71,14 @@ namespace SyncTrayzor.Services.UpdateManagement
 
         public void AutoInstall(string pathToRestartApplication)
         {
-            if (!this.CanAutoInstall)
+            if (!CanAutoInstall)
                 throw new InvalidOperationException("Auto-install not available");
-            if (this.extractedZipPath == null)
+            if (extractedZipPath == null)
                 throw new InvalidOperationException("TryHandleUpdateAvailableAsync returned false: cannot call AutoInstall");
 
-            var portableInstaller = Path.Combine(this.extractedZipPath, PortableInstallerName);
+            var portableInstaller = Path.Combine(extractedZipPath, PortableInstallerName);
 
-            if (!this.filesystem.FileExists(portableInstaller))
+            if (!filesystem.FileExists(portableInstaller))
             {
                 var e = new Exception($"Unable to find portable installer at {portableInstaller}");
                 logger.Error(e);
@@ -87,35 +87,35 @@ namespace SyncTrayzor.Services.UpdateManagement
 
             // Need to move the portable installer out of its extracted archive, otherwise it won't be able to move the archive...
 
-            var destPortableInstaller = Path.Combine(this.pathsProvider.UpdatesDownloadPath, PortableInstallerName);
-            if (this.filesystem.FileExists(destPortableInstaller))
-                this.filesystem.DeleteFile(destPortableInstaller);
-            this.filesystem.MoveFile(portableInstaller, destPortableInstaller);
+            var destPortableInstaller = Path.Combine(pathsProvider.UpdatesDownloadPath, PortableInstallerName);
+            if (filesystem.FileExists(destPortableInstaller))
+                filesystem.DeleteFile(destPortableInstaller);
+            filesystem.MoveFile(portableInstaller, destPortableInstaller);
 
             var pid = Process.GetCurrentProcess().Id;
 
             // pathToRestartApplication IS ALREADY QUOTED: it's `"C:\Foo\Bar.exe"` or `"C:\Foo\Bar.exe" --minimized`. Portable installer
             // knows to look for either 4 or 5 arguments to take account of the fact that pathToRestartApplication may contain two bits 
-            var args = $"\"{Path.GetDirectoryName(this.assemblyProvider.Location)}\" \"{this.extractedZipPath}\" {pid} {pathToRestartApplication}";
+            var args = $"\"{Path.GetDirectoryName(assemblyProvider.Location)}\" \"{extractedZipPath}\" {pid} {pathToRestartApplication}";
 
-            this.processStartProvider.StartDetached(destPortableInstaller, args);
+            processStartProvider.StartDetached(destPortableInstaller, args);
 
-            this.applicationState.Shutdown();
+            applicationState.Shutdown();
         }
 
         private async Task<string> ExtractDownloadedZip(string zipPath)
         {
             var destinationDir = Path.Combine(Path.GetDirectoryName(zipPath), Path.GetFileNameWithoutExtension(zipPath));
-            if (this.filesystem.DirectoryExists(destinationDir))
+            if (filesystem.DirectoryExists(destinationDir))
             {
                 logger.Debug($"Extracted directory {destinationDir} already exists. Deleting...");
-                this.filesystem.DeleteDirectory(destinationDir, true);
+                filesystem.DeleteDirectory(destinationDir, true);
             }
 
             await Task.Run(() => ZipFile.ExtractToDirectory(zipPath, destinationDir));
 
             // We expect a single folder inside the extracted dir, called e.g. SyncTrayzorPortable-x86
-            var children = this.filesystem.GetDirectories(destinationDir);
+            var children = filesystem.GetDirectories(destinationDir);
             if (children.Length != 1)
                 throw new Exception($"Expected 1 child in {destinationDir}, found {String.Join(", ", children)}");
 

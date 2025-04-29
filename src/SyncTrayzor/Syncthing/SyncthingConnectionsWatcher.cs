@@ -11,7 +11,7 @@ namespace SyncTrayzor.Syncthing
 
         public ConnectionStatsChangedEventArgs(SyncthingConnectionStats totalConnectionStats)
         {
-            this.TotalConnectionStats = totalConnectionStats;
+            TotalConnectionStats = totalConnectionStats;
         }
     }
 
@@ -33,56 +33,56 @@ namespace SyncTrayzor.Syncthing
         public SyncthingConnectionsWatcher(SynchronizedTransientWrapper<ISyncthingApiClient> apiClient)
             : base(TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(10))
         {
-            this.apiClientWrapper = apiClient;
+            apiClientWrapper = apiClient;
         }
 
         protected override void OnStart()
         {
-            this.apiClient = this.apiClientWrapper.Value;
-            this.prevConnections = null;
+            apiClient = apiClientWrapper.Value;
+            prevConnections = null;
         }
 
         protected override void OnStop()
         {
-            this.apiClient = null;
+            apiClient = null;
 
             // Send an update with zero transfer rate, since that's what we're now doing
-            this.Update(this.prevConnections);
+            Update(prevConnections);
         }
 
         protected override async Task PollAsync(CancellationToken cancellationToken)
         {
-            var connections = await this.apiClient.FetchConnectionsAsync(cancellationToken);
+            var connections = await apiClient.FetchConnectionsAsync(cancellationToken);
 
             // We can be stopped in the time it takes this to complete
             cancellationToken.ThrowIfCancellationRequested();
 
-            this.Update(connections);
+            Update(connections);
         }
 
         private void Update(Connections connections)
         {
-            var elapsed = DateTime.UtcNow - this.lastPollCompletion;
-            this.lastPollCompletion = DateTime.UtcNow;
+            var elapsed = DateTime.UtcNow - lastPollCompletion;
+            lastPollCompletion = DateTime.UtcNow;
 
-            if (this.prevConnections != null)
+            if (prevConnections != null)
             {
                 // Just do the total for now
                 var total = connections.Total;
-                var prevTotal = this.prevConnections.Total;
+                var prevTotal = prevConnections.Total;
 
                 double inBytesPerSecond = (total.InBytesTotal - prevTotal.InBytesTotal) / elapsed.TotalSeconds;
                 double outBytesPerSecond = (total.OutBytesTotal - prevTotal.OutBytesTotal) / elapsed.TotalSeconds;
 
                 var totalStats = new SyncthingConnectionStats(total.InBytesTotal, total.OutBytesTotal, inBytesPerSecond, outBytesPerSecond);
-                this.OnTotalConnectionStatsChanged(totalStats);
+                OnTotalConnectionStatsChanged(totalStats);
             }
-            this.prevConnections = connections;
+            prevConnections = connections;
         }
 
         private void OnTotalConnectionStatsChanged(SyncthingConnectionStats connectionStats)
         {
-            this.TotalConnectionStatsChanged?.Invoke(this, new ConnectionStatsChangedEventArgs(connectionStats));
+            TotalConnectionStatsChanged?.Invoke(this, new ConnectionStatsChangedEventArgs(connectionStats));
         }
     }
 }

@@ -28,32 +28,28 @@ namespace SyncTrayzor.Services.UpdateManagement
 
         private Stream LoadCertificate()
         {
-            return this.assemblyProvider.GetManifestResourceStream(certificateName);
+            return assemblyProvider.GetManifestResourceStream(certificateName);
         }
 
         public bool VerifySha512sum(string filePath, out Stream cleartext)
         {
-            using (var file = this.filesystemProvider.OpenRead(filePath))
-            using (var certificate = this.LoadCertificate())
-            {
-                return PgpClearsignUtilities.ReadAndVerifyFile(file, certificate, out cleartext);
-            }
+            using var file = filesystemProvider.OpenRead(filePath);
+            using var certificate = LoadCertificate();
+            return PgpClearsignUtilities.ReadAndVerifyFile(file, certificate, out cleartext);
         }
 
         public bool VerifyUpdate(string filePath, Stream sha512sumFile, string originalFileName)
         {
-            using (var hashAlgorithm = new SHA512Managed())
-            using (var file = this.filesystemProvider.OpenRead(filePath))
+            using var hashAlgorithm = SHA512.Create();
+            using var file = filesystemProvider.OpenRead(filePath);
+            try
             {
-                try
-                {
-                    return ChecksumFileUtilities.ValidateChecksum(hashAlgorithm, sha512sumFile, originalFileName, file);
-                }
-                catch (ArgumentException)
-                {
-                    logger.Warn("Could not find checksum for file {0}", originalFileName);
-                    return false;
-                }
+                return ChecksumFileUtilities.ValidateChecksum(hashAlgorithm, sha512sumFile, originalFileName, file);
+            }
+            catch (ArgumentException)
+            {
+                logger.Warn("Could not find checksum for file {0}", originalFileName);
+                return false;
             }
         }
     }

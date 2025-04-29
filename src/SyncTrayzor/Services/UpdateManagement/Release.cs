@@ -10,9 +10,9 @@ namespace SyncTrayzor.Services.UpdateManagement
 
         public Release(Version version, string downloadUrl, string body)
         {
-            this.Version = version;
-            this.DownloadUrl = downloadUrl;
-            this.Body = body;
+            Version = version;
+            DownloadUrl = downloadUrl;
+            Body = body;
         }
     }
 }

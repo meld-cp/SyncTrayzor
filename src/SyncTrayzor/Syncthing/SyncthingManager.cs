@@ -7,7 +7,6 @@ using SyncTrayzor.Syncthing.TransferHistory;
 using SyncTrayzor.Utils;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -70,7 +69,7 @@ namespace SyncTrayzor.Syncthing
         private readonly ISyncthingApiClientFactory apiClientFactory;
 
         // This lock covers the eventWatcher, connectionsWatcher, apiClients, and the CTS
-        private readonly object apiClientsLock = new object();
+        private readonly object apiClientsLock = new();
         private readonly ISyncthingEventWatcher eventWatcher;
         private readonly ISyncthingConnectionsWatcher connectionsWatcher;
         private readonly SynchronizedTransientWrapper<ISyncthingApiClient> apiClient;
@@ -78,27 +77,27 @@ namespace SyncTrayzor.Syncthing
         private CancellationTokenSource apiAbortCts;
 
         private DateTime _startedTime;
-        private readonly object startedTimeLock = new object();
+        private readonly object startedTimeLock = new();
         public DateTime StartedTime
         {
-            get { lock (this.startedTimeLock) { return this._startedTime; } }
-            set { lock (this.startedTimeLock) { this._startedTime = value; } }
+            get { lock (startedTimeLock) { return _startedTime; } }
+            set { lock (startedTimeLock) { _startedTime = value; } }
         }
 
         private DateTime _lastConnectivityEventTime;
-        private readonly object lastConnectivityEventTimeLock = new object();
+        private readonly object lastConnectivityEventTimeLock = new();
         public DateTime LastConnectivityEventTime
         {
-            get { lock (this.lastConnectivityEventTimeLock) { return this._lastConnectivityEventTime; } }
-            private set { lock (this.lastConnectivityEventTimeLock) { this._lastConnectivityEventTime = value; } }
+            get { lock (lastConnectivityEventTimeLock) { return _lastConnectivityEventTime; } }
+            private set { lock (lastConnectivityEventTimeLock) { _lastConnectivityEventTime = value; } }
         }
 
-        private readonly object stateLock = new object();
+        private readonly object stateLock = new();
         private SyncthingState _state;
         public SyncthingState State
         {
-            get { lock (this.stateLock) { return this._state; } }
-            set { lock (this.stateLock) { this._state = value; } }
+            get { lock (stateLock) { return _state; } }
+            set { lock (stateLock) { _state = value; } }
         }
 
         private SystemInfo systemInfo;
@@ -110,12 +109,12 @@ namespace SyncTrayzor.Syncthing
         public event EventHandler<DeviceRejectedEventArgs> DeviceRejected;
         public event EventHandler<FolderRejectedEventArgs> FolderRejected;
 
-        private readonly object totalConnectionStatsLock = new object();
-        private SyncthingConnectionStats _totalConnectionStats = new SyncthingConnectionStats(0, 0, 0, 0);
+        private readonly object totalConnectionStatsLock = new();
+        private SyncthingConnectionStats _totalConnectionStats = new(0, 0, 0, 0);
         public SyncthingConnectionStats TotalConnectionStats
         {
-            get { lock (this.totalConnectionStatsLock) { return this._totalConnectionStats; } }
-            set { lock (this.totalConnectionStatsLock) { this._totalConnectionStats = value; } }
+            get { lock (totalConnectionStatsLock) { return _totalConnectionStats; } }
+            set { lock (totalConnectionStatsLock) { _totalConnectionStats = value; } }
         }
         public event EventHandler<ConnectionStatsChangedEventArgs> TotalConnectionStatsChanged;
 
@@ -126,7 +125,7 @@ namespace SyncTrayzor.Syncthing
         public string PreferredHostAndPort { get; set; }
         public Uri Address { get; set; }
         public string SyncthingCustomHomeDir { get; set; }
-        public List<string> SyncthingCommandLineFlags { get; set; } = new List<string>();
+        public List<string> SyncthingCommandLineFlags { get; set; } = new();
         public IDictionary<string, string> SyncthingEnvironmentalVariables { get; set; } = new Dictionary<string, string>();
         public bool SyncthingDenyUpgrade { get; set; }
         public SyncthingPriorityLevel SyncthingPriorityLevel { get; set; }
@@ -136,16 +135,16 @@ namespace SyncTrayzor.Syncthing
         public SyncthingVersionInformation Version { get; private set; }
 
         private readonly SyncthingFolderManager _folders;
-        public ISyncthingFolderManager Folders => this._folders;
+        public ISyncthingFolderManager Folders => _folders;
 
         private readonly SyncthingDeviceManager _devices;
-        public ISyncthingDeviceManager Devices => this._devices;
+        public ISyncthingDeviceManager Devices => _devices;
 
         private readonly ISyncthingTransferHistory _transferHistory;
-        public ISyncthingTransferHistory TransferHistory => this._transferHistory;
+        public ISyncthingTransferHistory TransferHistory => _transferHistory;
 
-        private readonly SyncthingCapabilities _capabilities = new SyncthingCapabilities();
-        public ISyncthingCapabilities Capabilities => this._capabilities;
+        private readonly SyncthingCapabilities _capabilities = new();
+        public ISyncthingCapabilities Capabilities => _capabilities;
 
         public SyncthingManager(
             ISyncthingProcessRunner processRunner,
@@ -154,49 +153,49 @@ namespace SyncTrayzor.Syncthing
             ISyncthingConnectionsWatcherFactory connectionsWatcherFactory,
             IFreePortFinder freePortFinder)
         {
-            this.StartedTime = DateTime.MinValue;
-            this.LastConnectivityEventTime = DateTime.MinValue;
+            StartedTime = DateTime.MinValue;
+            LastConnectivityEventTime = DateTime.MinValue;
 
-            this.ApiKey = this.GenerateApiKey();
+            ApiKey = GenerateApiKey();
 
-            this.eventDispatcher = new SynchronizedEventDispatcher(this);
+            eventDispatcher = new SynchronizedEventDispatcher(this);
             this.processRunner = processRunner;
             this.apiClientFactory = apiClientFactory;
             this.freePortFinder = freePortFinder;
 
-            this.apiClient = new SynchronizedTransientWrapper<ISyncthingApiClient>(this.apiClientsLock);
+            apiClient = new SynchronizedTransientWrapper<ISyncthingApiClient>(apiClientsLock);
 
-            this.eventWatcher = eventWatcherFactory.CreateEventWatcher(this.apiClient);
-            this.eventWatcher.DeviceConnected += (o, e) => this.LastConnectivityEventTime = DateTime.UtcNow;
-            this.eventWatcher.DeviceDisconnected += (o, e) => this.LastConnectivityEventTime = DateTime.UtcNow;
-            this.eventWatcher.ConfigSaved += (o, e) => this.ReloadConfigDataAsync();
-            this.eventWatcher.EventsSkipped += (o, e) => this.ReloadConfigDataAsync();
-            this.eventWatcher.DeviceRejected += (o, e) => this.OnDeviceRejected(e.DeviceId, e.Address);
-            this.eventWatcher.FolderRejected += (o, e) => this.OnFolderRejected(e.DeviceId, e.FolderId);
+            eventWatcher = eventWatcherFactory.CreateEventWatcher(apiClient);
+            eventWatcher.DeviceConnected += (o, e) => LastConnectivityEventTime = DateTime.UtcNow;
+            eventWatcher.DeviceDisconnected += (o, e) => LastConnectivityEventTime = DateTime.UtcNow;
+            eventWatcher.ConfigSaved += (o, e) => ReloadConfigDataAsync();
+            eventWatcher.EventsSkipped += (o, e) => ReloadConfigDataAsync();
+            eventWatcher.DeviceRejected += (o, e) => OnDeviceRejected(e.DeviceId, e.Address);
+            eventWatcher.FolderRejected += (o, e) => OnFolderRejected(e.DeviceId, e.FolderId);
 
-            this.connectionsWatcher = connectionsWatcherFactory.CreateConnectionsWatcher(this.apiClient);
-            this.connectionsWatcher.TotalConnectionStatsChanged += (o, e) => this.OnTotalConnectionStatsChanged(e.TotalConnectionStats);
+            connectionsWatcher = connectionsWatcherFactory.CreateConnectionsWatcher(apiClient);
+            connectionsWatcher.TotalConnectionStatsChanged += (o, e) => OnTotalConnectionStatsChanged(e.TotalConnectionStats);
 
-            this._folders = new SyncthingFolderManager(this.apiClient, this.eventWatcher);
-            this._devices = new SyncthingDeviceManager(this.apiClient, this.eventWatcher, this.Capabilities);
-            this._transferHistory = new SyncthingTransferHistory(this.eventWatcher, this._folders);
+            _folders = new SyncthingFolderManager(apiClient, eventWatcher);
+            _devices = new SyncthingDeviceManager(apiClient, eventWatcher, Capabilities);
+            _transferHistory = new SyncthingTransferHistory(eventWatcher, _folders);
 
-            this.processRunner.ProcessStopped += (o, e) => this.ProcessStopped(e.ExitStatus);
-            this.processRunner.MessageLogged += (o, e) => this.OnMessageLogged(e.LogMessage);
-            this.processRunner.ProcessRestarted += (o, e) => this.ProcessRestarted();
-            this.processRunner.Starting += (o, e) => this.ProcessStarting();
+            this.processRunner.ProcessStopped += (o, e) => ProcessStopped(e.ExitStatus);
+            this.processRunner.MessageLogged += (o, e) => OnMessageLogged(e.LogMessage);
+            this.processRunner.ProcessRestarted += (o, e) => ProcessRestarted();
+            this.processRunner.Starting += (o, e) => ProcessStarting();
         }
 
         public async Task StartAsync()
         {
-            this.processRunner.Start();
-            await this.StartClientAsync();
+            processRunner.Start();
+            await StartClientAsync();
         }
 
         public async Task StopAsync()
         {
             var apiClient = this.apiClient.Value;
-            if (this.State != SyncthingState.Running || apiClient == null)
+            if (State != SyncthingState.Running || apiClient == null)
                 return;
 
             // Syncthing can stop so quickly that it doesn't finish sending the response to us
@@ -207,13 +206,13 @@ namespace SyncTrayzor.Syncthing
             catch (HttpRequestException)
             { }
 
-            this.SetState(SyncthingState.Stopping);
+            SetState(SyncthingState.Stopping);
         }
 
         public async Task StopAndWaitAsync()
         {
             var apiClient = this.apiClient.Value;
-            if (this.State != SyncthingState.Running || apiClient == null)
+            if (State != SyncthingState.Running || apiClient == null)
                 return;
 
             var tcs = new TaskCompletionSource<object>();
@@ -225,7 +224,7 @@ namespace SyncTrayzor.Syncthing
                     tcs.TrySetException(new Exception($"Failed to stop Syncthing: Went to state {e.NewState} instead"));
             };
 
-            this.StateChanged += stateChangedHandler;
+            StateChanged += stateChangedHandler;
             try
             {
                 // Syncthing can stop so quickly that it doesn't finish sending the response to us
@@ -236,25 +235,25 @@ namespace SyncTrayzor.Syncthing
                 catch (HttpRequestException)
                 { }
 
-                this.SetState(SyncthingState.Stopping);
+                SetState(SyncthingState.Stopping);
 
                 await tcs.Task;
             }
             finally
             {
-                this.StateChanged -= stateChangedHandler;
+                StateChanged -= stateChangedHandler;
             }
         }
 
         public async Task RestartAsync()
         {
-            if (this.State != SyncthingState.Running)
+            if (State != SyncthingState.Running)
                 return;
 
             // Syncthing can stop so quickly that it doesn't finish sending the response to us
             try
             {
-                await this.apiClient.Value.RestartAsync();
+                await apiClient.Value.RestartAsync();
             }
             catch (HttpRequestException)
             {
@@ -263,58 +262,58 @@ namespace SyncTrayzor.Syncthing
 
         public void Kill()
         {
-            this.processRunner.Kill();
-            this.SetState(SyncthingState.Stopped);
+            processRunner.Kill();
+            SetState(SyncthingState.Stopped);
         }
 
         public void KillAllSyncthingProcesses()
         {
-            this.processRunner.KillAllSyncthingProcesses();
+            processRunner.KillAllSyncthingProcesses();
         }  
 
         public Task ScanAsync(string folderId, string subPath)
         {
-            return this.apiClient.Value.ScanAsync(folderId, subPath);
+            return apiClient.Value.ScanAsync(folderId, subPath);
         }
 
         private void SetState(SyncthingState state)
         {
             SyncthingState oldState;
             bool abortApi = false;
-            lock (this.stateLock)
+            lock (stateLock)
             {
-                logger.Debug("Request to set state: {0} -> {1}", this._state, state);
-                if (state == this._state)
+                logger.Debug("Request to set state: {0} -> {1}", _state, state);
+                if (state == _state)
                     return;
 
-                oldState = this._state;
+                oldState = _state;
                 // We really need a proper state machine here....
                 // There's a race if Syncthing can't start because the database is locked by another process on the same port
                 // In this case, we see the process as having failed, but the event watcher chimes in a split-second later with the 'Started' event.
                 // This runs the risk of transitioning us from Stopped -> Starting -> Stopped -> Running, which is bad news for everyone
                 // So, get around this by enforcing strict state transitions.
-                if (this._state == SyncthingState.Stopped && state == SyncthingState.Running)
+                if (_state == SyncthingState.Stopped && state == SyncthingState.Running)
                     return;
 
                 // Not entirely sure where this condition comes from...
-                if (this._state == SyncthingState.Stopped && state == SyncthingState.Stopping)
+                if (_state == SyncthingState.Stopped && state == SyncthingState.Stopping)
                     return;
 
-                if (this._state == SyncthingState.Running ||
-                    (this._state == SyncthingState.Starting && state == SyncthingState.Stopped))
+                if (_state == SyncthingState.Running ||
+                    (_state == SyncthingState.Starting && state == SyncthingState.Stopped))
                     abortApi = true;
 
-                logger.Debug("Setting state: {0} -> {1}", this._state, state);
-                this._state = state;
+                logger.Debug("Setting state: {0} -> {1}", _state, state);
+                _state = state;
             }
 
-            this.eventDispatcher.Raise(this.StateChanged, new SyncthingStateChangedEventArgs(oldState, state));
+            eventDispatcher.Raise(StateChanged, new SyncthingStateChangedEventArgs(oldState, state));
 
             if (abortApi)
             {
                 logger.Debug("Aborting API clients");
                 // StopApiClients acquires the correct locks, and aborts the CTS
-                this.StopApiClients();
+                StopApiClients();
             }
         }
 
@@ -332,22 +331,22 @@ namespace SyncTrayzor.Syncthing
         private async Task CreateApiClientAsync(CancellationToken cancellationToken)
         {
             logger.Debug("Starting API clients");
-            var apiClient = await this.apiClientFactory.CreateCorrectApiClientAsync(this.Address, this.ApiKey, this.SyncthingConnectTimeout, cancellationToken);
+            var apiClient = await apiClientFactory.CreateCorrectApiClientAsync(Address, ApiKey, SyncthingConnectTimeout, cancellationToken);
             logger.Debug("Have the API client! It's {0}", apiClient.GetType().Name);
 
             this.apiClient.Value = apiClient;
 
-            this.SetState(SyncthingState.Running);
+            SetState(SyncthingState.Running);
         }
 
         private async Task StartClientAsync()
         {
             try
             {
-                this.apiAbortCts = new CancellationTokenSource();
-                await this.CreateApiClientAsync(this.apiAbortCts.Token);
-                await this.LoadStartupDataAsync(this.apiAbortCts.Token);
-                this.StartWatchers(this.apiAbortCts.Token);
+                apiAbortCts = new CancellationTokenSource();
+                await CreateApiClientAsync(apiAbortCts.Token);
+                await LoadStartupDataAsync(apiAbortCts.Token);
+                StartWatchers(apiAbortCts.Token);
             }
             catch (OperationCanceledException) // If Syncthing dies on its own, etc
             {
@@ -376,55 +375,55 @@ namespace SyncTrayzor.Syncthing
         private void StartWatchers(CancellationToken cancellationToken)
         {
             // This is all synchronous, so it's safe to execute inside the lock
-            lock (this.apiClientsLock)
+            lock (apiClientsLock)
             {
                 cancellationToken.ThrowIfCancellationRequested();
                 if (apiClient == null)
                     throw new InvalidOperationException("ApiClient must not be null");
 
-                this.connectionsWatcher.Start();
-                this.eventWatcher.Start();
+                connectionsWatcher.Start();
+                eventWatcher.Start();
             }
         }
 
         private void StopApiClients()
         {
-            lock (this.apiClientsLock)
+            lock (apiClientsLock)
             {
-                if (this.apiAbortCts != null)
-                    this.apiAbortCts.Cancel();
+                if (apiAbortCts != null)
+                    apiAbortCts.Cancel();
 
-                this.apiClient.UnsynchronizedValue = null;
+                apiClient.UnsynchronizedValue = null;
 
-                this.connectionsWatcher.Stop();
-                this.eventWatcher.Stop();
+                connectionsWatcher.Stop();
+                eventWatcher.Stop();
             }
         }
 
         private async void ProcessStarting()
         {
             // Things will attempt to talk to Syncthing over http. If Syncthing is set to 'https only', this will redirect.
-            var preferredAddressWithScheme = new Uri("https://" + this.PreferredHostAndPort);
-            var port = this.freePortFinder.FindFreePort(preferredAddressWithScheme.Port);
+            var preferredAddressWithScheme = new Uri("https://" + PreferredHostAndPort);
+            var port = freePortFinder.FindFreePort(preferredAddressWithScheme.Port);
             var uriBuilder = new UriBuilder(preferredAddressWithScheme)
             {
                 Port = port
             };
-            this.Address = uriBuilder.Uri;
+            Address = uriBuilder.Uri;
 
-            this.processRunner.ApiKey = this.ApiKey;
+            processRunner.ApiKey = ApiKey;
             // Don't pass a scheme here - we want Syncthing to choose http / https as appropriate
-            this.processRunner.HostAddress = $"{this.Address.Host}:{this.Address.Port}";
-            this.processRunner.ExecutablePath = this.ExecutablePath;
-            this.processRunner.CustomHomeDir = this.SyncthingCustomHomeDir;
-            this.processRunner.CommandLineFlags = this.SyncthingCommandLineFlags;
-            this.processRunner.EnvironmentalVariables = this.SyncthingEnvironmentalVariables;
-            this.processRunner.DenyUpgrade = this.SyncthingDenyUpgrade;
-            this.processRunner.SyncthingPriorityLevel = this.SyncthingPriorityLevel;
-            this.processRunner.HideDeviceIds = this.SyncthingHideDeviceIds;
+            processRunner.HostAddress = $"{Address.Host}:{Address.Port}";
+            processRunner.ExecutablePath = ExecutablePath;
+            processRunner.CustomHomeDir = SyncthingCustomHomeDir;
+            processRunner.CommandLineFlags = SyncthingCommandLineFlags;
+            processRunner.EnvironmentalVariables = SyncthingEnvironmentalVariables;
+            processRunner.DenyUpgrade = SyncthingDenyUpgrade;
+            processRunner.SyncthingPriorityLevel = SyncthingPriorityLevel;
+            processRunner.HideDeviceIds = SyncthingHideDeviceIds;
 
-            var isRestart = (this.State == SyncthingState.Restarting);
-            this.SetState(SyncthingState.Starting);
+            var isRestart = (State == SyncthingState.Restarting);
+            SetState(SyncthingState.Starting);
 
             // Catch restart cases, and re-start the API
             // This isn't ideal, as we don't get to nicely propagate any exceptions to the UI
@@ -432,7 +431,7 @@ namespace SyncTrayzor.Syncthing
             {
                 try
                 {
-                    await this.StartClientAsync();
+                    await StartClientAsync();
                 }
                 catch (SyncthingDidNotStartCorrectlyException)
                 {
@@ -443,14 +442,14 @@ namespace SyncTrayzor.Syncthing
 
         private void ProcessStopped(SyncthingExitStatus exitStatus)
         {
-            this.SetState(SyncthingState.Stopped);
+            SetState(SyncthingState.Stopped);
             if (exitStatus == SyncthingExitStatus.Error)
-                this.OnProcessExitedWithError();
+                OnProcessExitedWithError();
         }
 
         private void ProcessRestarted()
         {
-            this.SetState(SyncthingState.Restarting);
+            SetState(SyncthingState.Restarting);
         }
 
         private async Task LoadStartupDataAsync(CancellationToken cancellationToken)
@@ -467,21 +466,21 @@ namespace SyncTrayzor.Syncthing
 
             await Task.WhenAll(syncthingVersionTask, systemInfoTask);
 
-            this.systemInfo = systemInfoTask.Result;
+            systemInfo = systemInfoTask.Result;
             var syncthingVersion = syncthingVersionTask.Result;
 
-            this.Version = new SyncthingVersionInformation(syncthingVersion.Version, syncthingVersion.LongVersion);
-            this._capabilities.SyncthingVersion = this.Version.ParsedVersion;
+            Version = new SyncthingVersionInformation(syncthingVersion.Version, syncthingVersion.LongVersion);
+            _capabilities.SyncthingVersion = Version.ParsedVersion;
             
             cancellationToken.ThrowIfCancellationRequested();
 
-            await this.LoadConfigDataAsync(this.systemInfo.Tilde, false, cancellationToken);
+            await LoadConfigDataAsync(systemInfo.Tilde, false, cancellationToken);
 
             cancellationToken.ThrowIfCancellationRequested();
             
-            this.StartedTime = DateTime.UtcNow;
-            this.IsDataLoaded = true;
-            this.OnDataLoaded();
+            StartedTime = DateTime.UtcNow;
+            IsDataLoaded = true;
+            OnDataLoaded();
         }
 
         private async Task LoadConfigDataAsync(string tilde, bool isReload, CancellationToken cancellationToken)
@@ -495,11 +494,11 @@ namespace SyncTrayzor.Syncthing
 
             if (isReload)
             {
-                await Task.WhenAll(this._folders.ReloadFoldersAsync(config, tilde, cancellationToken), this._devices.ReloadDevicesAsync(config, cancellationToken));
+                await Task.WhenAll(_folders.ReloadFoldersAsync(config, tilde, cancellationToken), _devices.ReloadDevicesAsync(config, cancellationToken));
             }
             else
             {
-                await Task.WhenAll(this._folders.LoadFoldersAsync(config, tilde, cancellationToken), this._devices.LoadDevicesAsync(config, cancellationToken));
+                await Task.WhenAll(_folders.LoadFoldersAsync(config, tilde, cancellationToken), _devices.LoadDevicesAsync(config, cancellationToken));
             }
         }
 
@@ -514,7 +513,7 @@ namespace SyncTrayzor.Syncthing
 
             try
             { 
-                await this.LoadConfigDataAsync(this.systemInfo.Tilde, true, CancellationToken.None);
+                await LoadConfigDataAsync(systemInfo.Tilde, true, CancellationToken.None);
             }
             catch (HttpRequestException)
             { }
@@ -526,47 +525,47 @@ namespace SyncTrayzor.Syncthing
 
         private void OnMessageLogged(string logMessage)
         {
-            this.eventDispatcher.Raise(this.MessageLogged, new MessageLoggedEventArgs(logMessage));
+            eventDispatcher.Raise(MessageLogged, new MessageLoggedEventArgs(logMessage));
         }
 
         private void OnTotalConnectionStatsChanged(SyncthingConnectionStats stats)
         {
-            this.TotalConnectionStats = stats;
-            this.eventDispatcher.Raise(this.TotalConnectionStatsChanged, new ConnectionStatsChangedEventArgs(stats));
+            TotalConnectionStats = stats;
+            eventDispatcher.Raise(TotalConnectionStatsChanged, new ConnectionStatsChangedEventArgs(stats));
         }
 
         private void OnDataLoaded()
         {
-            this.eventDispatcher.Raise(this.DataLoaded);
+            eventDispatcher.Raise(DataLoaded);
         }
 
         private void OnProcessExitedWithError()
         {
-            this.eventDispatcher.Raise(this.ProcessExitedWithError);
+            eventDispatcher.Raise(ProcessExitedWithError);
         }
 
         private void OnDeviceRejected(string deviceId, string address)
         {
-            this.eventDispatcher.Raise(this.DeviceRejected, new DeviceRejectedEventArgs(deviceId, address));
+            eventDispatcher.Raise(DeviceRejected, new DeviceRejectedEventArgs(deviceId, address));
         }
 
         private void OnFolderRejected(string deviceId, string folderId)
         {
-            if (!this.Devices.TryFetchById(deviceId, out var device))
+            if (!Devices.TryFetchById(deviceId, out var device))
                 return;
 
-            if (!this.Folders.TryFetchById(folderId, out var folder))
+            if (!Folders.TryFetchById(folderId, out var folder))
                 return;
 
-            this.eventDispatcher.Raise(this.FolderRejected, new FolderRejectedEventArgs(device, folder));
+            eventDispatcher.Raise(FolderRejected, new FolderRejectedEventArgs(device, folder));
         }
 
         public void Dispose()
         {
-            this.processRunner.Dispose();
-            this.StopApiClients();
-            this.eventWatcher.Dispose();
-            this.connectionsWatcher.Dispose();
+            processRunner.Dispose();
+            StopApiClients();
+            eventWatcher.Dispose();
+            connectionsWatcher.Dispose();
         }
     }
 }

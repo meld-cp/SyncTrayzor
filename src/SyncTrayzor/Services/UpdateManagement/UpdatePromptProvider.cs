@@ -43,12 +43,12 @@ namespace SyncTrayzor.Services.UpdateManagement
 
         public VersionPromptResult ShowDialog(VersionCheckResults checkResults, bool canAutoInstall, bool requiresUac)
         {
-            var vm = this.newVersionAlertViewModelFactory();
+            var vm = newVersionAlertViewModelFactory();
             vm.Changelog = checkResults.ReleaseNotes;
             vm.Version = checkResults.NewVersion;
             vm.CanInstall = canAutoInstall;
             vm.ShowUacBadge = requiresUac;
-            var dialogResult = this.windowManager.ShowDialog(vm);
+            var dialogResult = windowManager.ShowDialog(vm);
 
             if (dialogResult == true)
                 return canAutoInstall ? VersionPromptResult.InstallNow : VersionPromptResult.Download;
@@ -59,12 +59,12 @@ namespace SyncTrayzor.Services.UpdateManagement
 
         public async Task<VersionPromptResult> ShowToast(VersionCheckResults checkResults, bool canAutoInstall, bool requiresUac, CancellationToken cancellationToken)
         {
-            var vm = this.upgradeAvailableToastViewModelFactory();
+            var vm = upgradeAvailableToastViewModelFactory();
             vm.Version = checkResults.NewVersion;
             vm.CanInstall = canAutoInstall;
             vm.ShowUacBadge = requiresUac;
 
-            var dialogResult = await this.notifyIconManager.ShowBalloonAsync(vm, cancellationToken: cancellationToken);
+            var dialogResult = await notifyIconManager.ShowBalloonAsync(vm, cancellationToken: cancellationToken);
 
             if (dialogResult == true)
                 return canAutoInstall ? VersionPromptResult.InstallNow : VersionPromptResult.Download;

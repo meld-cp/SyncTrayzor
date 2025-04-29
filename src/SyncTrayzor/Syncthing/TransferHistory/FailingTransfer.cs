@@ -10,14 +10,14 @@ namespace SyncTrayzor.Syncthing.TransferHistory
 
         public FailingTransfer(string folderId, string path, string error)
         {
-            this.FolderId = folderId;
-            this.Path = path;
-            this.Error = error;
+            FolderId = folderId;
+            Path = path;
+            Error = error;
         }
 
         public override bool Equals(object obj)
         {
-            return this.Equals(obj as FailingTransfer);
+            return Equals(obj as FailingTransfer);
         }
 
         public bool Equals(FailingTransfer other)
@@ -27,7 +27,7 @@ namespace SyncTrayzor.Syncthing.TransferHistory
             if (ReferenceEquals(this, other))
                 return true;
 
-            return this.FolderId == other.FolderId && this.Path == other.Path;
+            return FolderId == other.FolderId && Path == other.Path;
         }
 
         public override int GetHashCode()
@@ -35,8 +35,8 @@ namespace SyncTrayzor.Syncthing.TransferHistory
             unchecked
             {
                 int hash = 17;
-                hash = hash * 31 + this.FolderId.GetHashCode();
-                hash = hash * 31 + this.Path.GetHashCode();
+                hash = hash * 31 + FolderId.GetHashCode();
+                hash = hash * 31 + Path.GetHashCode();
                 return hash;
             }
         }

@@ -21,10 +21,10 @@ namespace SyncTrayzor.Xaml
             // This is set twice in succession when loaded - the first time the height is NaN, the second time it isn't
             // We only want to set this once, one the second time that top is set
 
-            if (!Double.IsNaN(this.AssociatedObject.Height) && !Double.IsNaN(topValue) && !this.haveSet)
+            if (!Double.IsNaN(AssociatedObject.Height) && !Double.IsNaN(topValue) && !haveSet)
             {
-                this.AssociatedObject.MaxHeight = SystemParameters.VirtualScreenHeight - topValue - taskbarHeight;
-                this.haveSet = true;
+                AssociatedObject.MaxHeight = SystemParameters.VirtualScreenHeight - topValue - taskbarHeight;
+                haveSet = true;
             }
         }
 
@@ -35,7 +35,7 @@ namespace SyncTrayzor.Xaml
                 Source = this,
                 Mode = BindingMode.TwoWay,
             };
-            BindingOperations.SetBinding(this.AssociatedObject, Window.TopProperty, topBinding);
+            BindingOperations.SetBinding(AssociatedObject, Window.TopProperty, topBinding);
         }
     }
 }

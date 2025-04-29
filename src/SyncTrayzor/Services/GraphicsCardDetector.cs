@@ -13,9 +13,9 @@ namespace SyncTrayzor.Services
         {
             get
             {
-                if (this._isIntelXe == null)
-                    this._isIntelXe = GetIsIntelXe();
-                return this._isIntelXe.Value;
+                if (_isIntelXe == null)
+                    _isIntelXe = GetIsIntelXe();
+                return _isIntelXe.Value;
             }
         }
 

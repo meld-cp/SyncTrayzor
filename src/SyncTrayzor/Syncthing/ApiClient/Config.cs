@@ -12,12 +12,12 @@ namespace SyncTrayzor.Syncthing.ApiClient
 
         public bool Equals(ConfigFolderDevice other)
         {
-            return other != null && this.DeviceId == other.DeviceId;
+            return other != null && DeviceId == other.DeviceId;
         }
 
         public override string ToString()
         {
-            return $"<Device deviceId={this.DeviceId}>";
+            return $"<Device deviceId={DeviceId}>";
         }
     }
 
@@ -44,8 +44,8 @@ namespace SyncTrayzor.Syncthing.ApiClient
 
         public TimeSpan RescanInterval
         {
-            get => TimeSpan.FromSeconds(this.RescanIntervalSeconds);
-            set => this.RescanIntervalSeconds = (long)value.TotalSeconds;
+            get => TimeSpan.FromSeconds(RescanIntervalSeconds);
+            set => RescanIntervalSeconds = (long)value.TotalSeconds;
         }
 
         [JsonProperty("invalid")]
@@ -57,19 +57,19 @@ namespace SyncTrayzor.Syncthing.ApiClient
         public bool Equals(ConfigFolder other)
         {
             return other != null &&
-                this.ID == other.ID &&
-                this.Path == other.Path &&
-                this.Devices.SequenceEqual(other.Devices) &&
+                ID == other.ID &&
+                Path == other.Path &&
+                Devices.SequenceEqual(other.Devices) &&
                 //this.Type == other.Type &&
-                this.RescanIntervalSeconds == other.RescanIntervalSeconds &&
-                this.Invalid == other.Invalid &&
-                this.IsFsWatcherEnabled == other.IsFsWatcherEnabled;
+                RescanIntervalSeconds == other.RescanIntervalSeconds &&
+                Invalid == other.Invalid &&
+                IsFsWatcherEnabled == other.IsFsWatcherEnabled;
         }
 
         public override string ToString()
         {
-            return $"<Folder id={this.ID} label={this.Label} path={this.Path} devices=[{String.Join(", ", this.Devices)}] rescalinterval={this.RescanInterval} " +
-                $"invalid={this.Invalid} fsWatcherEnabled={this.IsFsWatcherEnabled}>";
+            return $"<Folder id={ID} label={Label} path={Path} devices=[{String.Join(", ", Devices)}] rescalinterval={RescanInterval} " +
+                $"invalid={Invalid} fsWatcherEnabled={IsFsWatcherEnabled}>";
         }
     }
 
@@ -98,16 +98,16 @@ namespace SyncTrayzor.Syncthing.ApiClient
         public bool Equals(ConfigDevice other)
         {
             return other != null &&
-                this.DeviceID == other.DeviceID &&
-                this.Name == other.Name &&
-                this.Addresses.SequenceEqual(other.Addresses) &&
-                this.CertName == other.CertName &&
-                this.IsIntroducer == other.IsIntroducer;
+                DeviceID == other.DeviceID &&
+                Name == other.Name &&
+                Addresses.SequenceEqual(other.Addresses) &&
+                CertName == other.CertName &&
+                IsIntroducer == other.IsIntroducer;
         }
 
         public override string ToString()
         {
-            return $"Device id={this.DeviceID} name={this.Name} addresses=[{String.Join(", ", this.Addresses)}] compression=N/A certname={this.CertName} isintroducer={this.IsIntroducer}>";
+            return $"Device id={DeviceID} name={Name} addresses=[{String.Join(", ", Addresses)}] compression=N/A certname={CertName} isintroducer={IsIntroducer}>";
         }
     }
 
@@ -125,14 +125,14 @@ namespace SyncTrayzor.Syncthing.ApiClient
         public bool Equals(Config other)
         {
             return other != null &&
-                this.Version == other.Version &&
-                this.Folders.SequenceEqual(other.Folders) &&
-                this.Devices.SequenceEqual(other.Devices);
+                Version == other.Version &&
+                Folders.SequenceEqual(other.Folders) &&
+                Devices.SequenceEqual(other.Devices);
         }
 
         public override string ToString()
         {
-            return $"<Config version={this.Version} folders=[{String.Join(", ", this.Folders)}] devices=[{String.Join(", ", this.Devices)}]>";
+            return $"<Config version={Version} folders=[{String.Join(", ", Folders)}] devices=[{String.Join(", ", Devices)}]>";
         }
     }
 }

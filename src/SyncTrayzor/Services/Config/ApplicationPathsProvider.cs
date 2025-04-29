@@ -50,28 +50,28 @@ namespace SyncTrayzor.Services.Config
             if (pathConfiguration == null)
                 throw new ArgumentNullException(nameof(pathConfiguration));
 
-            this.LogFilePath = this.pathTransformer.MakeAbsolute(pathConfiguration.LogFilePath);
-            this.SyncthingBackupPath = this.pathTransformer.MakeAbsolute("syncthing.exe");
-            this.ConfigurationFilePath = this.pathTransformer.MakeAbsolute(pathConfiguration.ConfigurationFilePath);
-            this.ConfigurationFileBackupPath = this.pathTransformer.MakeAbsolute(pathConfiguration.ConfigurationFileBackupPath);
-            this.CefCachePath = this.pathTransformer.MakeAbsolute(pathConfiguration.CefCachePath);
-            this.UpdatesDownloadPath = Path.Combine(Path.GetTempPath(), "SyncTrayzor");
-            this.InstallCountFilePath = this.pathTransformer.MakeAbsolute("InstallCount.txt");
-            this.DefaultSyncthingPath = String.IsNullOrWhiteSpace(pathConfiguration.SyncthingPath) ?
+            LogFilePath = pathTransformer.MakeAbsolute(pathConfiguration.LogFilePath);
+            SyncthingBackupPath = pathTransformer.MakeAbsolute("syncthing.exe");
+            ConfigurationFilePath = pathTransformer.MakeAbsolute(pathConfiguration.ConfigurationFilePath);
+            ConfigurationFileBackupPath = pathTransformer.MakeAbsolute(pathConfiguration.ConfigurationFileBackupPath);
+            CefCachePath = pathTransformer.MakeAbsolute(pathConfiguration.CefCachePath);
+            UpdatesDownloadPath = Path.Combine(Path.GetTempPath(), "SyncTrayzor");
+            InstallCountFilePath = pathTransformer.MakeAbsolute("InstallCount.txt");
+            DefaultSyncthingPath = String.IsNullOrWhiteSpace(pathConfiguration.SyncthingPath) ?
                 null :
-                this.pathTransformer.MakeAbsolute(pathConfiguration.SyncthingPath);
-            this.DefaultSyncthingHomePath = String.IsNullOrWhiteSpace(pathConfiguration.SyncthingHomePath) ?
+                pathTransformer.MakeAbsolute(pathConfiguration.SyncthingPath);
+            DefaultSyncthingHomePath = String.IsNullOrWhiteSpace(pathConfiguration.SyncthingHomePath) ?
                 null :
-                this.pathTransformer.MakeAbsolute(pathConfiguration.SyncthingHomePath);
-            this.UnexpandedDefaultSyncthingPath = pathConfiguration.SyncthingPath;
+                pathTransformer.MakeAbsolute(pathConfiguration.SyncthingHomePath);
+            UnexpandedDefaultSyncthingPath = pathConfiguration.SyncthingPath;
 
-            logger.Debug("LogFilePath: {0}", this.LogFilePath);
-            logger.Debug("SyncthingBackupPath: {0}", this.SyncthingBackupPath);
-            logger.Debug("ConfigurationFilePath: {0}", this.ConfigurationFilePath);
-            logger.Debug("ConfigurationFileBackupPath: {0}", this.ConfigurationFileBackupPath);
-            logger.Debug("CefCachePath: {0}", this.CefCachePath);
-            logger.Debug("DefaultSyncthingPath: {0}", this.DefaultSyncthingPath);
-            logger.Debug("DefaultSyncthingHomePath: {0}", this.DefaultSyncthingHomePath);
+            logger.Debug("LogFilePath: {0}", LogFilePath);
+            logger.Debug("SyncthingBackupPath: {0}", SyncthingBackupPath);
+            logger.Debug("ConfigurationFilePath: {0}", ConfigurationFilePath);
+            logger.Debug("ConfigurationFileBackupPath: {0}", ConfigurationFileBackupPath);
+            logger.Debug("CefCachePath: {0}", CefCachePath);
+            logger.Debug("DefaultSyncthingPath: {0}", DefaultSyncthingPath);
+            logger.Debug("DefaultSyncthingHomePath: {0}", DefaultSyncthingHomePath);
         }
     }
 }

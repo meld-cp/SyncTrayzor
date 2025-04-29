@@ -29,60 +29,60 @@ namespace SyncTrayzor.Pages
             this.windowManager = windowManager;
             this.syncthingManager = syncthingManager;
             this.settingsViewModelFactory = settingsViewModelFactory;
-            this.LogMessages = new Queue<string>();
+            LogMessages = new Queue<string>();
 
             // Display log messages 100ms after the previous message, or every 500ms if they're arriving thick and fast
-            this.logMessagesBuffer = new Buffer<string>(TimeSpan.FromMilliseconds(100), TimeSpan.FromMilliseconds(500));
-            this.logMessagesBuffer.Delivered += this.LogMessageDelivered;
+            logMessagesBuffer = new Buffer<string>(TimeSpan.FromMilliseconds(100), TimeSpan.FromMilliseconds(500));
+            logMessagesBuffer.Delivered += LogMessageDelivered;
 
-            this.syncthingManager.MessageLogged += this.SyncthingMessageLogged;
+            this.syncthingManager.MessageLogged += SyncthingMessageLogged;
         }
 
         private void LogMessageDelivered(object sender, BufferDeliveredEventArgs<string> e)
         {
             foreach (var message in e.Items)
             {
-                this.LogMessages.Enqueue(message);
-                if (this.LogMessages.Count > maxLogMessages)
-                    this.LogMessages.Dequeue();
+                LogMessages.Enqueue(message);
+                if (LogMessages.Count > maxLogMessages)
+                    LogMessages.Dequeue();
             }
 
-            if (!this.LogPaused)
-                this.NotifyOfPropertyChange(nameof(this.LogMessages));
+            if (!LogPaused)
+                NotifyOfPropertyChange(nameof(LogMessages));
         }
 
         private void SyncthingMessageLogged(object sender, MessageLoggedEventArgs e)
         {
-            this.logMessagesBuffer.Add(e.LogMessage);
+            logMessagesBuffer.Add(e.LogMessage);
         }
 
         public void ClearLog()
         {
-            this.LogMessages.Clear();
-            this.NotifyOfPropertyChange(nameof(this.LogMessages));
+            LogMessages.Clear();
+            NotifyOfPropertyChange(nameof(LogMessages));
         }
 
         public void ShowSettings()
         {
-            var vm = this.settingsViewModelFactory();
+            var vm = settingsViewModelFactory();
             vm.SelectLoggingTab();
-            this.windowManager.ShowDialog(vm);
+            windowManager.ShowDialog(vm);
         }
 
         public void PauseLog()
         {
-            this.LogPaused = true;
+            LogPaused = true;
         }
 
         public void ResumeLog()
         {
-            this.LogPaused = false;
-            this.NotifyOfPropertyChange(nameof(this.LogMessages));
+            LogPaused = false;
+            NotifyOfPropertyChange(nameof(LogMessages));
         }
 
         public void Dispose()
         {
-            this.syncthingManager.MessageLogged -= this.SyncthingMessageLogged;
+            syncthingManager.MessageLogged -= SyncthingMessageLogged;
         }
     }
 }

@@ -20,34 +20,34 @@ namespace SyncTrayzor.Syncthing
         private readonly TimeSpan pollingInterval;
         private readonly TimeSpan erroredWaitInterval;
 
-        private readonly object runningLock = new object();
+        private readonly object runningLock = new();
         private CancellationTokenSource cancelCts;
         private bool _running;
 
         public void Start()
         {
-            lock (this.runningLock)
+            lock (runningLock)
             {
-                if (this._running)
+                if (_running)
                     return;
 
-                this.cancelCts = new CancellationTokenSource();
-                this._running = true;
-                this.StartInternal(this.cancelCts.Token);
+                cancelCts = new CancellationTokenSource();
+                _running = true;
+                StartInternal(cancelCts.Token);
             }
         }
 
         public void Stop()
         {
-            CancellationTokenSource ctsToCancel = null;
-            lock (this.runningLock)
+            CancellationTokenSource ctsToCancel;
+            lock (runningLock)
             {
-                if (!this._running)
+                if (!_running)
                     return;
 
-                this._running = false;
-                ctsToCancel = this.cancelCts;
-                this.cancelCts = null;
+                _running = false;
+                ctsToCancel = cancelCts;
+                cancelCts = null;
             }
 
             if (ctsToCancel != null)
@@ -66,27 +66,27 @@ namespace SyncTrayzor.Syncthing
 
         protected virtual async void StartInternal(CancellationToken cancellationToken)
         {
-            this.OnStart();
+            OnStart();
 
             // We're aborted by the CTS
             try
             {
                 while (!cancellationToken.IsCancellationRequested)
                 {
-                    bool errored = await this.DoWithErrorHandlingAsync(async () =>
+                    bool errored = await DoWithErrorHandlingAsync(async () =>
                     {
-                        await this.PollAsync(cancellationToken);
+                        await PollAsync(cancellationToken);
                         cancellationToken.ThrowIfCancellationRequested();
 
-                        if (this.pollingInterval.Ticks > 0)
-                            await Task.Delay(this.pollingInterval, cancellationToken);
+                        if (pollingInterval.Ticks > 0)
+                            await Task.Delay(pollingInterval, cancellationToken);
                     }, cancellationToken);
 
                     if (errored)
                     {
                         try
                         {
-                            await Task.Delay(this.erroredWaitInterval, cancellationToken);
+                            await Task.Delay(erroredWaitInterval, cancellationToken);
                         }
                         catch (OperationCanceledException)
                         { }
@@ -95,7 +95,7 @@ namespace SyncTrayzor.Syncthing
             }
             finally
             {
-                this.OnStop();
+                OnStop();
             }
         }
 
@@ -140,7 +140,7 @@ namespace SyncTrayzor.Syncthing
 
         public void Dispose()
         {
-            this.Stop();
+            Stop();
         }
     }
 }

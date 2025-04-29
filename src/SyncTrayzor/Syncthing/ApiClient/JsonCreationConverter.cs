@@ -22,7 +22,7 @@ namespace SyncTrayzor.Syncthing.ApiClient
         /// <returns>True if the type is supported.</returns>
         public override bool CanConvert(Type objectType)
         {
-            return this.AllowSubtype ? typeof(T).GetTypeInfo().IsAssignableFrom(objectType.GetTypeInfo()) : typeof(T) == objectType;
+            return AllowSubtype ? typeof(T).GetTypeInfo().IsAssignableFrom(objectType.GetTypeInfo()) : typeof(T) == objectType;
         }
 
         /// <summary>Parses the json to the specified type.</summary>

@@ -8,8 +8,8 @@
         public ItemDownloadProgressChangedEventArgs(string folder, string item, long bytesDone, long bytesTotal)
             : base(folder, item)
         {
-            this.BytesDone = bytesDone;
-            this.BytesTotal = bytesTotal;
+            BytesDone = bytesDone;
+            BytesTotal = bytesTotal;
         }
     }
 }

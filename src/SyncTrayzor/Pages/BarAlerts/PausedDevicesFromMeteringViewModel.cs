@@ -7,11 +7,11 @@ namespace SyncTrayzor.Pages.BarAlerts
     {
         public AlertSeverity Severity => AlertSeverity.Info;
 
-        public BindableCollection<string> PausedDeviceNames { get; } = new BindableCollection<string>();
+        public BindableCollection<string> PausedDeviceNames { get; } = new();
 
         public PausedDevicesFromMeteringViewModel(IEnumerable<string> pausedDeviceNames)
         {
-            this.PausedDeviceNames.AddRange(pausedDeviceNames);
+            PausedDeviceNames.AddRange(pausedDeviceNames);
         }
     }
 }

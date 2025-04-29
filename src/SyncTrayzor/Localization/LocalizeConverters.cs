@@ -22,11 +22,11 @@ namespace SyncTrayzor.Localization
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (this.Key == null)
+            if (Key == null)
                 throw new InvalidOperationException("Key must not be null");
 
-            var convertedValue = (this.Converter == null) ? value : this.Converter.Convert(value, targetType, parameter, culture);
-            return Localizer.Translate(this.Key, convertedValue);
+            var convertedValue = (Converter == null) ? value : Converter.Convert(value, targetType, parameter, culture);
+            return Localizer.Translate(Key, convertedValue);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -52,14 +52,14 @@ namespace SyncTrayzor.Localization
 
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            if (this.Key == null)
+            if (Key == null)
                 throw new InvalidOperationException("Key must not be null");
 
-            if (this.Converter == null)
-                return Localizer.Translate(this.Key, values);
+            if (Converter == null)
+                return Localizer.Translate(Key, values);
 
-            var convertedValues = this.Converter.Convert(values, targetType, parameter, culture);
-            return Localizer.Translate(this.Key, convertedValues as object[] ?? new object[] { convertedValues });
+            var convertedValues = Converter.Convert(values, targetType, parameter, culture);
+            return Localizer.Translate(Key, convertedValues as object[] ?? new object[] { convertedValues });
         }
 
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
@@ -80,7 +80,7 @@ namespace SyncTrayzor.Localization
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var stringValue = (this.Converter == null) ? value as string : this.Converter.Convert(value, targetType, parameter, culture) as string;
+            var stringValue = (Converter == null) ? value as string : Converter.Convert(value, targetType, parameter, culture) as string;
             return (stringValue != null) ? Localizer.Translate(stringValue) : null;
         }
 
@@ -112,10 +112,10 @@ namespace SyncTrayzor.Localization
                 return null;
 
             var parameters = values.Skip(1).ToArray();
-            if (this.ValuesConverter == null)
+            if (ValuesConverter == null)
                 return Localizer.Translate(key, parameters);
 
-            var convertedParameters = this.ValuesConverter.Convert(parameters, targetType, parameter, culture);
+            var convertedParameters = ValuesConverter.Convert(parameters, targetType, parameter, culture);
             return Localizer.Translate(key, convertedParameters as object[] ?? new object[] { convertedParameters });
         }
 

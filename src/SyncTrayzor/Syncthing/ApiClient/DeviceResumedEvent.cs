@@ -13,8 +13,8 @@ namespace SyncTrayzor.Syncthing.ApiClient
         [JsonProperty("data")]
         public DevicePausedEventData Data { get; set; }
 
-        public override bool IsValid => this.Data != null &&
-            !string.IsNullOrEmpty(this.Data.DeviceId);
+        public override bool IsValid => Data != null &&
+            !string.IsNullOrEmpty(Data.DeviceId);
 
         public override void Visit(IEventVisitor visitor)
         {
@@ -23,7 +23,7 @@ namespace SyncTrayzor.Syncthing.ApiClient
 
         public override string ToString()
         {
-            return $"<DeviceResumed ID={this.Id} Time={this.Time} DeviceId={this.Data.DeviceId}>";
+            return $"<DeviceResumed ID={Id} Time={Time} DeviceId={Data.DeviceId}>";
         }
     }
 }

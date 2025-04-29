@@ -52,7 +52,7 @@ namespace SyncTrayzor.Xaml
         public GridViewSortAdorner(UIElement element, ListSortDirection dir)          
             : base(element)
         {
-            this.Direction = dir;
+            Direction = dir;
         }
 
         protected override void OnRender(DrawingContext drawingContext)
@@ -65,7 +65,7 @@ namespace SyncTrayzor.Xaml
             TranslateTransform transform = new TranslateTransform(AdornedElement.RenderSize.Width - 12, (AdornedElement.RenderSize.Height - 5) / 2);
             drawingContext.PushTransform(transform);
 
-            var geometry = (this.Direction == ListSortDirection.Ascending) ? ascendingArrow : descendingArrow;
+            var geometry = (Direction == ListSortDirection.Ascending) ? ascendingArrow : descendingArrow;
 
             drawingContext.DrawGeometry(Brushes.Black, null, geometry);
 
@@ -82,14 +82,14 @@ namespace SyncTrayzor.Xaml
 
         protected override void AttachHandlers()
         {
-            this.AssociatedObject.AddHandler(GridViewColumnHeader.ClickEvent, new RoutedEventHandler(this.GridViewColumnHeaderClicked));
-            this.AssociatedObject.Loaded += this.ListViewLoaded;
+            AssociatedObject.AddHandler(GridViewColumnHeader.ClickEvent, new RoutedEventHandler(GridViewColumnHeaderClicked));
+            AssociatedObject.Loaded += ListViewLoaded;
         }
 
         protected override void DetachHandlers()
         {
-            this.AssociatedObject.RemoveHandler(GridViewColumnHeader.ClickEvent, new RoutedEventHandler(this.GridViewColumnHeaderClicked));
-            this.AssociatedObject.Loaded -= this.ListViewLoaded;
+            AssociatedObject.RemoveHandler(GridViewColumnHeader.ClickEvent, new RoutedEventHandler(GridViewColumnHeaderClicked));
+            AssociatedObject.Loaded -= ListViewLoaded;
         }
 
         private void GridViewColumnHeaderClicked(object sender, RoutedEventArgs e)
@@ -98,17 +98,17 @@ namespace SyncTrayzor.Xaml
             if (headerClicked == null)
                 return;
 
-            this.SortBy(headerClicked);
+            SortBy(headerClicked);
         }
 
         private void ListViewLoaded(object sender, RoutedEventArgs e)
         {
-            this.PerformInitialSort();
+            PerformInitialSort();
         }
 
         private void PerformInitialSort()
         {
-            var gridView = this.AssociatedObject.View as GridView;
+            var gridView = AssociatedObject.View as GridView;
             if (gridView == null)
                 return;
 
@@ -118,7 +118,7 @@ namespace SyncTrayzor.Xaml
                 return;
 
             if (initialSortColumn.Header is GridViewColumnHeader header)
-                this.ApplyColumnSort(header, initialSortColumn, ListSortDirection.Ascending);
+                ApplyColumnSort(header, initialSortColumn, ListSortDirection.Ascending);
         }
 
         private void SortBy(GridViewColumnHeader header)
@@ -128,10 +128,10 @@ namespace SyncTrayzor.Xaml
                 return;
 
             var direction = ListSortDirection.Ascending;
-            if (header == this.lastColumnHeader)
-                direction = (this.lastDirection == ListSortDirection.Ascending) ? ListSortDirection.Descending : ListSortDirection.Ascending;
+            if (header == lastColumnHeader)
+                direction = (lastDirection == ListSortDirection.Ascending) ? ListSortDirection.Descending : ListSortDirection.Ascending;
 
-            this.ApplyColumnSort(header, header.Column, direction);
+            ApplyColumnSort(header, header.Column, direction);
         }
 
         private void ApplyColumnSort(GridViewColumnHeader header, GridViewColumn column, ListSortDirection direction)
@@ -144,21 +144,21 @@ namespace SyncTrayzor.Xaml
             // the Loaded event. Maybe it's because the Window hasn't yet fully loaded? Don't crash in this case
             // anyway: we won't show the little arrow, but that's not the end of the world.
 
-            if (this.lastColumnHeader != null && this.lastAdorner != null)
-                AdornerLayer.GetAdornerLayer(this.lastColumnHeader)?.Remove(this.lastAdorner);
+            if (lastColumnHeader != null && lastAdorner != null)
+                AdornerLayer.GetAdornerLayer(lastColumnHeader)?.Remove(lastAdorner);
 
             var adorner = new GridViewSortAdorner(header, direction);
             AdornerLayer.GetAdornerLayer(header)?.Add(adorner);
 
-            var collectionView = CollectionViewSource.GetDefaultView(this.AssociatedObject.ItemsSource);
+            var collectionView = CollectionViewSource.GetDefaultView(AssociatedObject.ItemsSource);
 
             collectionView.SortDescriptions.Clear();
             collectionView.SortDescriptions.Add(new SortDescription(propertyName, direction));
             collectionView.Refresh();
 
-            this.lastColumnHeader = header;
-            this.lastDirection = direction;
-            this.lastAdorner = adorner;
+            lastColumnHeader = header;
+            lastDirection = direction;
+            lastAdorner = adorner;
         }
     }
 }

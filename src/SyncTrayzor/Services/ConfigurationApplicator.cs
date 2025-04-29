@@ -39,7 +39,7 @@ namespace SyncTrayzor.Services
             IPathTransformer pathTransformer)
         {
             this.configurationProvider = configurationProvider;
-            this.configurationProvider.ConfigurationChanged += this.ConfigurationChanged;
+            this.configurationProvider.ConfigurationChanged += ConfigurationChanged;
 
             this.pathsProvider = pathsProvider;
             this.notifyIconManager = notifyIconManager;
@@ -52,74 +52,74 @@ namespace SyncTrayzor.Services
             this.meteredNetworkManager = meteredNetworkManager;
             this.pathTransformer = pathTransformer;
 
-            this.syncthingManager.Folders.FoldersChanged += this.FoldersChanged;
-            this.updateManager.VersionIgnored += this.VersionIgnored;
+            this.syncthingManager.Folders.FoldersChanged += FoldersChanged;
+            this.updateManager.VersionIgnored += VersionIgnored;
         }
 
         private void ConfigurationChanged(object sender, ConfigurationChangedEventArgs e)
         {
-            this.ApplyNewConfiguration(e.NewConfiguration);
+            ApplyNewConfiguration(e.NewConfiguration);
         }
 
         private void VersionIgnored(object sender, VersionIgnoredEventArgs e)
         {
-            this.configurationProvider.AtomicLoadAndSave(config => config.LatestNotifiedVersion = e.IgnoredVersion);
+            configurationProvider.AtomicLoadAndSave(config => config.LatestNotifiedVersion = e.IgnoredVersion);
         }
 
         public void ApplyConfiguration()
         {
-            this.watchedFolderMonitor.BackoffInterval = TimeSpan.FromMilliseconds(AppSettings.Instance.DirectoryWatcherBackoffMilliseconds);
-            this.watchedFolderMonitor.FolderExistenceCheckingInterval = TimeSpan.FromMilliseconds(AppSettings.Instance.DirectoryWatcherFolderExistenceCheckMilliseconds);
+            watchedFolderMonitor.BackoffInterval = TimeSpan.FromMilliseconds(AppSettings.Instance.DirectoryWatcherBackoffMilliseconds);
+            watchedFolderMonitor.FolderExistenceCheckingInterval = TimeSpan.FromMilliseconds(AppSettings.Instance.DirectoryWatcherFolderExistenceCheckMilliseconds);
 
-            this.conflictFileWatcher.BackoffInterval = TimeSpan.FromMilliseconds(AppSettings.Instance.DirectoryWatcherBackoffMilliseconds);
-            this.conflictFileWatcher.FolderExistenceCheckingInterval = TimeSpan.FromMilliseconds(AppSettings.Instance.DirectoryWatcherFolderExistenceCheckMilliseconds);
+            conflictFileWatcher.BackoffInterval = TimeSpan.FromMilliseconds(AppSettings.Instance.DirectoryWatcherBackoffMilliseconds);
+            conflictFileWatcher.FolderExistenceCheckingInterval = TimeSpan.FromMilliseconds(AppSettings.Instance.DirectoryWatcherFolderExistenceCheckMilliseconds);
 
-            this.syncthingManager.SyncthingConnectTimeout = TimeSpan.FromSeconds(AppSettings.Instance.SyncthingConnectTimeoutSeconds);
+            syncthingManager.SyncthingConnectTimeout = TimeSpan.FromSeconds(AppSettings.Instance.SyncthingConnectTimeoutSeconds);
 
-            this.updateManager.UpdateCheckApiUrl = AppSettings.Instance.UpdateApiUrl;
+            updateManager.UpdateCheckApiUrl = AppSettings.Instance.UpdateApiUrl;
 
-            this.ApplyNewConfiguration(this.configurationProvider.Load());
+            ApplyNewConfiguration(configurationProvider.Load());
         }
 
         private void ApplyNewConfiguration(Configuration configuration)
         {
-            this.notifyIconManager.MinimizeToTray = configuration.MinimizeToTray;
-            this.notifyIconManager.CloseToTray = configuration.CloseToTray;
-            this.notifyIconManager.ShowOnlyOnClose = configuration.ShowTrayIconOnlyOnClose;
-            this.notifyIconManager.FolderNotificationsEnabled = configuration.Folders.ToDictionary(x => x.ID, x => x.NotificationsEnabled);
-            this.notifyIconManager.ShowSynchronizedBalloonEvenIfNothingDownloaded = configuration.ShowSynchronizedBalloonEvenIfNothingDownloaded;
-            this.notifyIconManager.ShowDeviceConnectivityBalloons = configuration.ShowDeviceConnectivityBalloons;
-            this.notifyIconManager.ShowDeviceOrFolderRejectedBalloons = configuration.ShowDeviceOrFolderRejectedBalloons;
+            notifyIconManager.MinimizeToTray = configuration.MinimizeToTray;
+            notifyIconManager.CloseToTray = configuration.CloseToTray;
+            notifyIconManager.ShowOnlyOnClose = configuration.ShowTrayIconOnlyOnClose;
+            notifyIconManager.FolderNotificationsEnabled = configuration.Folders.ToDictionary(x => x.ID, x => x.NotificationsEnabled);
+            notifyIconManager.ShowSynchronizedBalloonEvenIfNothingDownloaded = configuration.ShowSynchronizedBalloonEvenIfNothingDownloaded;
+            notifyIconManager.ShowDeviceConnectivityBalloons = configuration.ShowDeviceConnectivityBalloons;
+            notifyIconManager.ShowDeviceOrFolderRejectedBalloons = configuration.ShowDeviceOrFolderRejectedBalloons;
 
-            this.syncthingManager.PreferredHostAndPort = configuration.SyncthingAddress;
-            this.syncthingManager.SyncthingCommandLineFlags = configuration.SyncthingCommandLineFlags;
-            this.syncthingManager.SyncthingEnvironmentalVariables = configuration.SyncthingEnvironmentalVariables;
-            this.syncthingManager.SyncthingCustomHomeDir = String.IsNullOrWhiteSpace(configuration.SyncthingCustomHomePath) ?
-                this.pathsProvider.DefaultSyncthingHomePath :
-                this.pathTransformer.MakeAbsolute(configuration.SyncthingCustomHomePath);
-            this.syncthingManager.SyncthingDenyUpgrade = configuration.SyncthingDenyUpgrade;
-            this.syncthingManager.SyncthingPriorityLevel = configuration.SyncthingPriorityLevel;
-            this.syncthingManager.SyncthingHideDeviceIds = configuration.ObfuscateDeviceIDs;
-            this.syncthingManager.ExecutablePath = String.IsNullOrWhiteSpace(configuration.SyncthingCustomPath) ?
-                this.pathsProvider.DefaultSyncthingPath :
-                this.pathTransformer.MakeAbsolute(configuration.SyncthingCustomPath);
+            syncthingManager.PreferredHostAndPort = configuration.SyncthingAddress;
+            syncthingManager.SyncthingCommandLineFlags = configuration.SyncthingCommandLineFlags;
+            syncthingManager.SyncthingEnvironmentalVariables = configuration.SyncthingEnvironmentalVariables;
+            syncthingManager.SyncthingCustomHomeDir = String.IsNullOrWhiteSpace(configuration.SyncthingCustomHomePath) ?
+                pathsProvider.DefaultSyncthingHomePath :
+                pathTransformer.MakeAbsolute(configuration.SyncthingCustomHomePath);
+            syncthingManager.SyncthingDenyUpgrade = configuration.SyncthingDenyUpgrade;
+            syncthingManager.SyncthingPriorityLevel = configuration.SyncthingPriorityLevel;
+            syncthingManager.SyncthingHideDeviceIds = configuration.ObfuscateDeviceIDs;
+            syncthingManager.ExecutablePath = String.IsNullOrWhiteSpace(configuration.SyncthingCustomPath) ?
+                pathsProvider.DefaultSyncthingPath :
+                pathTransformer.MakeAbsolute(configuration.SyncthingCustomPath);
 
-            this.watchedFolderMonitor.WatchedFolderIDs = configuration.Folders.Where(x => x.IsWatched).Select(x => x.ID);
+            watchedFolderMonitor.WatchedFolderIDs = configuration.Folders.Where(x => x.IsWatched).Select(x => x.ID);
 
-            this.updateManager.LatestIgnoredVersion = configuration.LatestNotifiedVersion;
-            this.updateManager.CheckForUpdates = configuration.NotifyOfNewVersions;
+            updateManager.LatestIgnoredVersion = configuration.LatestNotifiedVersion;
+            updateManager.CheckForUpdates = configuration.NotifyOfNewVersions;
 
-            this.conflictFileWatcher.IsEnabled = configuration.EnableConflictFileMonitoring;
+            conflictFileWatcher.IsEnabled = configuration.EnableConflictFileMonitoring;
 
-            this.meteredNetworkManager.IsEnabled = configuration.PauseDevicesOnMeteredNetworks;
+            meteredNetworkManager.IsEnabled = configuration.PauseDevicesOnMeteredNetworks;
 
-            this.alertsManager.EnableConflictedFileAlerts = configuration.EnableConflictFileMonitoring;
-            this.alertsManager.EnableFailedTransferAlerts = configuration.EnableFailedTransferAlerts;
+            alertsManager.EnableConflictedFileAlerts = configuration.EnableConflictFileMonitoring;
+            alertsManager.EnableFailedTransferAlerts = configuration.EnableFailedTransferAlerts;
 
             SetLogLevel(configuration);
         }
 
-        private static readonly Dictionary<LogLevel, NLog.LogLevel> logLevelMapping = new Dictionary<Config.LogLevel, NLog.LogLevel>()
+        private static readonly Dictionary<LogLevel, NLog.LogLevel> logLevelMapping = new()
         {
             { LogLevel.Info, NLog.LogLevel.Info },
             { LogLevel.Debug, NLog.LogLevel.Debug },
@@ -146,15 +146,15 @@ namespace SyncTrayzor.Services
 
         private void FoldersChanged(object sender, EventArgs e)
         {
-            this.configurationProvider.AtomicLoadAndSave(c =>
+            configurationProvider.AtomicLoadAndSave(c =>
             {
-                this.LoadFolders(c);
+                LoadFolders(c);
             });
         }
 
         private void LoadFolders(Configuration configuration)
         {
-            var folderIds = this.syncthingManager.Folders.FetchAll().Select(x => x.FolderId).ToList();
+            var folderIds = syncthingManager.Folders.FetchAll().Select(x => x.FolderId).ToList();
 
             // If all folders are not watched, new folders are not watched too. Likewise notifications.
             // If there are no folders, then enable (notifications only)
@@ -171,9 +171,9 @@ namespace SyncTrayzor.Services
 
         public void Dispose()
         {
-            this.configurationProvider.ConfigurationChanged -= this.ConfigurationChanged;
-            this.syncthingManager.Folders.FoldersChanged -= this.FoldersChanged;
-            this.updateManager.VersionIgnored -= this.VersionIgnored;
+            configurationProvider.ConfigurationChanged -= ConfigurationChanged;
+            syncthingManager.Folders.FoldersChanged -= FoldersChanged;
+            updateManager.VersionIgnored -= VersionIgnored;
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using FluentValidation;
+﻿using FluentValidation;
 using SyncTrayzor.Properties;
 
 namespace SyncTrayzor.Pages.Settings

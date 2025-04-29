@@ -18,7 +18,7 @@ namespace SyncTrayzor.Pages
 
         public string IssuesUrl { get; }
 
-        public string ErrorMessage => this.GenerateErrorMessage();
+        public string ErrorMessage => GenerateErrorMessage();
         public Icon Icon => SystemIcons.Error;
 
         public UnhandledExceptionViewModel(IApplicationPathsProvider applicationPathsProvider, IProcessStartProvider processStartProvider, IAssemblyProvider assemblyProvider)
@@ -27,36 +27,37 @@ namespace SyncTrayzor.Pages
             this.processStartProvider = processStartProvider;
             this.assemblyProvider = assemblyProvider;
 
-            this.IssuesUrl = AppSettings.Instance.IssuesUrl;
+            IssuesUrl = AppSettings.Instance.IssuesUrl;
         }
 
         private string GenerateErrorMessage()
         {
             var sb = new StringBuilder();
-            sb.AppendFormat("Version: {0}; Variant: {1}; Arch: {2}", this.assemblyProvider.FullVersion, AppSettings.Instance.Variant, this.assemblyProvider.ProcessorArchitecture);
+            sb.Append(
+                $"Version: {assemblyProvider.FullVersion}; Variant: {AppSettings.Instance.Variant}; Arch: {assemblyProvider.ProcessorArchitecture}");
             sb.AppendLine();
 
-            sb.AppendFormat("Path: {0}", this.assemblyProvider.Location);
+            sb.Append($"Path: {assemblyProvider.Location}");
             sb.AppendLine();
 
-            sb.AppendLine(this.Exception.ToString());
+            sb.AppendLine(Exception.ToString());
 
             return sb.ToString();
         }
 
         public void ShowIssues()
         {
-            this.processStartProvider.StartDetached(this.IssuesUrl);
+            processStartProvider.StartDetached(IssuesUrl);
         }
 
         public void OpenLogFilePath()
         {
-            this.processStartProvider.ShowFileInExplorer(Path.Combine(this.applicationPathsProvider.LogFilePath, "SyncTrayzor.log"));
+            processStartProvider.ShowFileInExplorer(Path.Combine(applicationPathsProvider.LogFilePath, "SyncTrayzor.log"));
         }
 
         public void Close()
         {
-            this.RequestClose(true);
+            RequestClose(true);
         }
     }
 }

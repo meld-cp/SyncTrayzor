@@ -29,8 +29,8 @@ namespace SyncTrayzor.Syncthing.ApiClient
 
         public override string ToString()
         {
-            return $"<SystemInfo alloc={this.AllocatedMemoryInUse} cpuPercent={this.CpuPercent} goroutines={this.GoRoutines} myId={this.MyID} " +
-                $"pathSeparator={this.PathSeparator} sys={this.AllocatedMemoryTotal} tilde={this.Tilde}>";
+            return $"<SystemInfo alloc={AllocatedMemoryInUse} cpuPercent={CpuPercent} goroutines={GoRoutines} myId={MyID} " +
+                $"pathSeparator={PathSeparator} sys={AllocatedMemoryTotal} tilde={Tilde}>";
         }
     }
 }
