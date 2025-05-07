@@ -30,7 +30,8 @@ using System.Runtime.Versioning;
 using System.Windows.Media;
 using System.Windows.Interop;
 
-[assembly:SupportedOSPlatform("windows10.0.17763.0")]
+[assembly: SupportedOSPlatform("windows10.0.17763.0")]
+
 namespace SyncTrayzor
 {
     public class Bootstrapper : Bootstrapper<ShellViewModel>
@@ -92,9 +93,6 @@ namespace SyncTrayzor
         protected override void Configure()
         {
             LogManager.Setup().LoadConfigurationFromFile();
-            // GitHub uses Tls 1.2 only, and it isn't enabled by default before .NET 4.6. Since we target an earlier
-            // .NET version, we have to enable this ourselves.
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
 
             options = Container.Get<CommandLineOptionsParser>();
             if (!options.Parse(Args))
