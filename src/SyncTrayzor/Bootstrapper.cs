@@ -30,7 +30,7 @@ using System.Runtime.Versioning;
 using System.Windows.Media;
 using System.Windows.Interop;
 
-[assembly:SupportedOSPlatform("windows")]
+[assembly:SupportedOSPlatform("windows10.0.17763.0")]
 namespace SyncTrayzor
 {
     public class Bootstrapper : Bootstrapper<ShellViewModel>
