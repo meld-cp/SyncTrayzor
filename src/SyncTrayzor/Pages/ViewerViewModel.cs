@@ -1,3 +1,4 @@
+#nullable enable
 using Stylet;
 using SyncTrayzor.Syncthing;
 using SyncTrayzor.Utils;
@@ -7,16 +8,17 @@ using CefSharp;
 using CefSharp.Wpf;
 using SyncTrayzor.Services.Config;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using SyncTrayzor.Services;
 using SyncTrayzor.Properties;
-
 using Microsoft.WindowsAPICodePack.Dialogs;
 using CefSharp.Handler;
 
 namespace SyncTrayzor.Pages
 {
-    public class ViewerViewModel : Screen, IResourceRequestHandlerFactory, ILifeSpanHandler, IContextMenuHandler, IDisposable
+    public class ViewerViewModel : Screen, IResourceRequestHandlerFactory, ILifeSpanHandler, IContextMenuHandler,
+        IDisposable
     {
         private readonly IWindowManager windowManager;
         private readonly ISyncthingManager syncthingManager;
@@ -30,6 +32,9 @@ namespace SyncTrayzor.Pages
         private CultureInfo culture;
         private double zoomLevel;
 
+        private CancellationTokenSource? _resizeCancellation;
+        private readonly object _resizeTokenLock = new();
+
         public string Location
         {
             get => WebBrowser?.Address;
@@ -39,7 +44,7 @@ namespace SyncTrayzor.Pages
                     WebBrowser.Address = value;
             }
         }
-        
+
         private SyncthingState syncthingState { get; set; }
         public bool ShowSyncthingStarting => syncthingState == SyncthingState.Starting;
         public bool ShowSyncthingStopped => syncthingState == SyncthingState.Stopped;
@@ -65,7 +70,7 @@ namespace SyncTrayzor.Pages
             zoomLevel = configuration.SyncthingWebBrowserZoomLevel;
 
             this.syncthingManager.StateChanged += SyncthingStateChanged;
-            
+
             customResourceRequestHandler = new CustomResourceRequestHandler(this);
             callback = new JavascriptCallbackObject(this);
 
@@ -158,47 +163,47 @@ namespace SyncTrayzor.Pages
                     // I tried to do this using Syncthing's events, but it's very painful - the DOM is updated some time
                     // after the event is fired. It's a lot easier to just watch for changes on the DOM.
                     var addOpenFolderButton =
-                    @"var syncTrayzorAddOpenFolderButton = function(elem) {" +
-                    @"    var $buttonContainer = elem.find('.panel-footer .pull-right');" +
-                    @"    $buttonContainer.find('.panel-footer .synctrayzor-add-folder-button').remove();" +
-                    @"    $buttonContainer.prepend(" +
-                    @"      '<button class=""btn btn-sm btn-default synctrayzor-add-folder-button"" onclick=""callbackObject.openFolder(angular.element(this).scope().folder.id)"">" +
-                    @"          <span class=""fa fa-folder-open""></span>" +
-                    @"          <span style=""margin-left: 3px"">" + Resources.ViewerView_OpenFolder + @"</span>" +
-                    @"      </button>');" +
-                    @"};" +
-                    @"new MutationObserver(function(mutations, observer) {" +
-                    @"  for (var i = 0; i < mutations.length; i++) {" +
-                    @"    for (var j = 0; j < mutations[i].addedNodes.length; j++) {" +
-                    @"      syncTrayzorAddOpenFolderButton($(mutations[i].addedNodes[j]));" +
-                    @"    }" +
-                    @"  }" +
-                    @"}).observe(document.getElementById('folders'), {" +
-                    @"  childList: true" +
-                    @"});" +
-                    @"syncTrayzorAddOpenFolderButton($('#folders'));" +
-                    @"";
+                        @"var syncTrayzorAddOpenFolderButton = function(elem) {" +
+                        @"    var $buttonContainer = elem.find('.panel-footer .pull-right');" +
+                        @"    $buttonContainer.find('.panel-footer .synctrayzor-add-folder-button').remove();" +
+                        @"    $buttonContainer.prepend(" +
+                        @"      '<button class=""btn btn-sm btn-default synctrayzor-add-folder-button"" onclick=""callbackObject.openFolder(angular.element(this).scope().folder.id)"">" +
+                        @"          <span class=""fa fa-folder-open""></span>" +
+                        @"          <span style=""margin-left: 3px"">" + Resources.ViewerView_OpenFolder + @"</span>" +
+                        @"      </button>');" +
+                        @"};" +
+                        @"new MutationObserver(function(mutations, observer) {" +
+                        @"  for (var i = 0; i < mutations.length; i++) {" +
+                        @"    for (var j = 0; j < mutations[i].addedNodes.length; j++) {" +
+                        @"      syncTrayzorAddOpenFolderButton($(mutations[i].addedNodes[j]));" +
+                        @"    }" +
+                        @"  }" +
+                        @"}).observe(document.getElementById('folders'), {" +
+                        @"  childList: true" +
+                        @"});" +
+                        @"syncTrayzorAddOpenFolderButton($('#folders'));" +
+                        @"";
                     webBrowser.ExecuteScriptAsync(addOpenFolderButton);
 
                     var addFolderBrowse =
-                    @"$('#folderPath').wrap($('<div/>').css('display', 'flex'));" +
-                    @"$('#folderPath').after(" +
-                    @"  $('<button>').attr('id', 'folderPathBrowseButton')" +
-                    @"               .addClass('btn btn-sm btn-default')" +
-                    @"               .html('" + Resources.ViewerView_BrowseToFolder + @"')" +
-                    @"               .css({'flex-grow': 1, 'margin': '0 0 0 5px'})" +
-                    @"               .on('click', function() { callbackObject.browseFolderPath() })" +
-                    @");" +
-                    @"$('#folderPath').removeAttr('list');" +
-                    @"$('#directory-list').remove();" +
-                    @"$('#editFolder').on('shown.bs.modal', function() {" +
-                    @"  if ($('#folderPath').is('[readonly]')) {" +
-                    @"      $('#folderPathBrowseButton').attr('disabled', 'disabled');" +
-                    @"  }" +
-                    @"  else {" +
-                    @"      $('#folderPathBrowseButton').removeAttr('disabled');" +
-                    @"  }" +
-                    @"});";
+                        @"$('#folderPath').wrap($('<div/>').css('display', 'flex'));" +
+                        @"$('#folderPath').after(" +
+                        @"  $('<button>').attr('id', 'folderPathBrowseButton')" +
+                        @"               .addClass('btn btn-sm btn-default')" +
+                        @"               .html('" + Resources.ViewerView_BrowseToFolder + @"')" +
+                        @"               .css({'flex-grow': 1, 'margin': '0 0 0 5px'})" +
+                        @"               .on('click', function() { callbackObject.browseFolderPath() })" +
+                        @");" +
+                        @"$('#folderPath').removeAttr('list');" +
+                        @"$('#directory-list').remove();" +
+                        @"$('#editFolder').on('shown.bs.modal', function() {" +
+                        @"  if ($('#folderPath').is('[readonly]')) {" +
+                        @"      $('#folderPathBrowseButton').attr('disabled', 'disabled');" +
+                        @"  }" +
+                        @"  else {" +
+                        @"      $('#folderPathBrowseButton').removeAttr('disabled');" +
+                        @"  }" +
+                        @"});";
                     webBrowser.ExecuteScriptAsync(addFolderBrowse);
                 }
             };
@@ -215,6 +220,7 @@ namespace SyncTrayzor.Pages
                     keyEvent.Type = KeyEventType.Char;
                     host.SendKeyEvent(keyEvent);
                 }
+
                 e.Handled = true;
             };
 
@@ -287,8 +293,8 @@ namespace SyncTrayzor.Pages
                 if (result == CommonFileDialogResult.Ok)
                 {
                     var script =
-                    @"$('#folderPath').val('" + dialog.FileName.Replace("\\", "\\\\").Replace("'", "\\'") + "');" +
-                    @"$('#folderPath').change();";
+                        @"$('#folderPath').val('" + dialog.FileName.Replace("\\", "\\\\").Replace("'", "\\'") + "');" +
+                        @"$('#folderPath').change();";
                     WebBrowser.ExecuteScriptAsync(script);
                 }
             });
@@ -328,18 +334,22 @@ namespace SyncTrayzor.Pages
 
         bool IResourceRequestHandlerFactory.HasHandlers => true;
 
-        IResourceRequestHandler IResourceRequestHandlerFactory.GetResourceRequestHandler(IWebBrowser chromiumWebBrowser, IBrowser browser, IFrame frame, IRequest request, bool isNavigation, bool isDownload, string requestInitiator, ref bool disableDefaultHandling)
+        IResourceRequestHandler IResourceRequestHandlerFactory.GetResourceRequestHandler(IWebBrowser chromiumWebBrowser,
+            IBrowser browser, IFrame frame, IRequest request, bool isNavigation, bool isDownload,
+            string requestInitiator, ref bool disableDefaultHandling)
         {
             return customResourceRequestHandler;
         }
 
-        private CefReturnValue OnBeforeResourceLoad(IWebBrowser browserControl, IBrowser browser, IFrame frame, IRequest request, IRequestCallback callback)
+        private CefReturnValue OnBeforeResourceLoad(IWebBrowser browserControl, IBrowser browser, IFrame frame,
+            IRequest request, IRequestCallback callback)
         {
             var uri = new Uri(request.Url);
             // We can get http requests just after changing Syncthing's address: after we've navigated to about:blank but before navigating to
             // the new address (Which we do when Syncthing hits the 'running' State).
             // Therefore only open external browsers if Syncthing is actually running
-            if (syncthingManager.State == SyncthingState.Running && (uri.Scheme == "http" || uri.Scheme == "https") && uri.Host != GetSyncthingAddress().Host)
+            if (syncthingManager.State == SyncthingState.Running && (uri.Scheme == "http" || uri.Scheme == "https") &&
+                uri.Host != GetSyncthingAddress().Host)
             {
                 processStartProvider.StartDetached(request.Url);
                 return CefReturnValue.Cancel;
@@ -360,6 +370,7 @@ namespace SyncTrayzor.Pages
                 if (culture != null)
                     headers["Accept-Language"] = $"{culture.Name};q=0.8,en;q=0.6";
             }
+
             request.Headers = headers;
 
             return CefReturnValue.Continue;
@@ -367,11 +378,33 @@ namespace SyncTrayzor.Pages
 
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            if (syncthingState == SyncthingState.Running)
+            if (syncthingState != SyncthingState.Running) return;
+            lock (_resizeTokenLock)
             {
-                // Workaround for https://github.com/cefsharp/CefSharp/issues/4953
-                WebBrowser?.GetBrowserHost()?.Invalidate(PaintElementType.View);
-                WebBrowser?.InvalidateVisual();
+                // Cancel previous scheduled task if it exists
+                _resizeCancellation?.Cancel();
+                _resizeCancellation?.Dispose();
+
+                // Create a new CTS for the new task
+                _resizeCancellation = new CancellationTokenSource();
+                var token = _resizeCancellation.Token;
+
+                // Schedule the task
+                _ = Task.Run(async () =>
+                {
+                    try
+                    {
+                        await Task.Delay(10, token);
+
+                        // Workaround for https://github.com/cefsharp/CefSharp/issues/4953
+                        WebBrowser?.GetBrowserHost()?.Invalidate(PaintElementType.View);
+                        WebBrowser?.InvalidateVisual();
+                    }
+                    catch (TaskCanceledException)
+                    {
+                        // Swallow cancellation
+                    }
+                }, token);
             }
         }
 
@@ -379,7 +412,10 @@ namespace SyncTrayzor.Pages
         {
         }
 
-        bool ILifeSpanHandler.OnBeforePopup(IWebBrowser browserControl, IBrowser browser, IFrame frame, string targetUrl, string targetFrameName, WindowOpenDisposition targetDisposition, bool userGesture, IPopupFeatures popupFeatures, IWindowInfo windowInfo, IBrowserSettings browserSettings, ref bool noJavascriptAccess, out IWebBrowser newBrowser)
+        bool ILifeSpanHandler.OnBeforePopup(IWebBrowser browserControl, IBrowser browser, IFrame frame,
+            string targetUrl, string targetFrameName, WindowOpenDisposition targetDisposition, bool userGesture,
+            IPopupFeatures popupFeatures, IWindowInfo windowInfo, IBrowserSettings browserSettings,
+            ref bool noJavascriptAccess, out IWebBrowser newBrowser)
         {
             processStartProvider.StartDetached(targetUrl);
             newBrowser = null;
@@ -395,13 +431,15 @@ namespace SyncTrayzor.Pages
             return false;
         }
 
-        void IContextMenuHandler.OnBeforeContextMenu(IWebBrowser browserControl, IBrowser browser, IFrame frame, IContextMenuParams parameters, IMenuModel model)
+        void IContextMenuHandler.OnBeforeContextMenu(IWebBrowser browserControl, IBrowser browser, IFrame frame,
+            IContextMenuParams parameters, IMenuModel model)
         {
             // Clear the default menu, just leaving our custom one
             model.Clear();
         }
 
-        bool IContextMenuHandler.OnContextMenuCommand(IWebBrowser browserControl, IBrowser browser, IFrame frame, IContextMenuParams parameters, CefMenuCommand commandId, CefEventFlags eventFlags)
+        bool IContextMenuHandler.OnContextMenuCommand(IWebBrowser browserControl, IBrowser browser, IFrame frame,
+            IContextMenuParams parameters, CefMenuCommand commandId, CefEventFlags eventFlags)
         {
             return false;
         }
@@ -410,7 +448,8 @@ namespace SyncTrayzor.Pages
         {
         }
 
-        bool IContextMenuHandler.RunContextMenu(IWebBrowser browserControl, IBrowser browser, IFrame frame, IContextMenuParams parameters, IMenuModel model, IRunContextMenuCallback callback)
+        bool IContextMenuHandler.RunContextMenu(IWebBrowser browserControl, IBrowser browser, IFrame frame,
+            IContextMenuParams parameters, IMenuModel model, IRunContextMenuCallback callback)
         {
             return false;
         }
@@ -423,7 +462,8 @@ namespace SyncTrayzor.Pages
 
         private class CustomRequestHandler : RequestHandler
         {
-            protected override bool OnCertificateError(IWebBrowser chromiumWebBrowser, IBrowser browser, CefErrorCode errorCode, string requestUrl, ISslInfo sslInfo, IRequestCallback callback)
+            protected override bool OnCertificateError(IWebBrowser chromiumWebBrowser, IBrowser browser,
+                CefErrorCode errorCode, string requestUrl, ISslInfo sslInfo, IRequestCallback callback)
             {
                 // We shouldn't hit this because IgnoreCertificateErrors is true, but we do
                 callback.Continue(true);
@@ -440,7 +480,8 @@ namespace SyncTrayzor.Pages
                 this.parent = parent;
             }
 
-            protected override CefReturnValue OnBeforeResourceLoad(IWebBrowser chromiumWebBrowser, IBrowser browser, IFrame frame, IRequest request, IRequestCallback callback)
+            protected override CefReturnValue OnBeforeResourceLoad(IWebBrowser chromiumWebBrowser, IBrowser browser,
+                IFrame frame, IRequest request, IRequestCallback callback)
             {
                 return parent.OnBeforeResourceLoad(chromiumWebBrowser, browser, frame, request, callback);
             }
