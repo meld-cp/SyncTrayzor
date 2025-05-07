@@ -55,7 +55,7 @@ namespace SyncTrayzor.Pages.Tray
             completedTimeAgoUpdateTimer.Start();
 
             FileTransfer = fileTransfer;
-            Path = Pri.LongPath.Path.GetFileName(FileTransfer.Path);
+            Path = System.IO.Path.GetFileName(FileTransfer.Path);
             FullPath = FileTransfer.Path;
             Folder = FileTransfer.Folder;
             using (var icon = ShellTools.GetIcon(FileTransfer.Path, FileTransfer.ItemType != ItemChangedItemType.Dir))

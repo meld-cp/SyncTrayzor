@@ -1,6 +1,6 @@
 ﻿using NLog;
 using System;
-using Pri.LongPath;
+using System.IO;
 
 namespace SyncTrayzor.Services.Config
 {

@@ -2,11 +2,11 @@
 using SyncTrayzor.Utils;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Xml.Linq;
 using System.Xml.Serialization;
-using Pri.LongPath;
 
 namespace SyncTrayzor.Services.Config
 {

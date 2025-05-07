@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net8.0-windows10.0.17763.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <OutputType>Exe</OutputType>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <AssemblyTitle>SyncTrayzor ProcessRunner</AssemblyTitle>
@@ -9,28 +9,18 @@
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
     <FileVersion>0.0.0.0</FileVersion>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-    <OutputPath>..\..\bin\x64\Debug\</OutputPath>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <OutputPath>..\..\bin\x64\Release\</OutputPath>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
-    <OutputPath>..\..\bin\x86\Debug\</OutputPath>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
-    <OutputPath>..\..\bin\x86\Release\</OutputPath>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-    <OutputPath>..\..\bin\Debug\</OutputPath>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-    <OutputPath>..\..\bin\Release\</OutputPath>
-  </PropertyGroup>
+  <Target Name="CopyToMainOutput" AfterTargets="Build">
+    <PropertyGroup>
+      <MainOutputDir>..\SyncTrayzor\bin\$(Configuration)\net8.0-windows10.0.17763.0</MainOutputDir>
+    </PropertyGroup>
+    <ItemGroup>
+      <HelperOutputFiles Include="$(OutputPath)\**\*.*" />
+    </ItemGroup>
+
+    <Copy SourceFiles="@(HelperOutputFiles)"
+          DestinationFolder="$(MainOutputDir)"
+          SkipUnchangedFiles="true" />
+  </Target>
   <ItemGroup>
     <Compile Include="..\SyncTrayzor\Utils\StringExtensions.cs">
       <Link>StringExtensions.cs</Link>

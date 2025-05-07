@@ -1,8 +1,8 @@
 ﻿using Stylet;
 using SyncTrayzor.Services.Conflicts;
 using System;
+using System.IO;
 using System.Linq;
-using Pri.LongPath;
 using SyncTrayzor.Utils;
 using System.Windows.Media.Imaging;
 using System.Windows.Media;

@@ -4,7 +4,6 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Timers;
-using Path = Pri.LongPath.Path;
 
 namespace SyncTrayzor.Services
 {

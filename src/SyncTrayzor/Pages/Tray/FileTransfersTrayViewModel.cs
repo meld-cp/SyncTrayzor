@@ -1,11 +1,11 @@
-﻿using Pri.LongPath;
-using Stylet;
+﻿using Stylet;
 using SyncTrayzor.Services;
 using SyncTrayzor.Syncthing;
 using SyncTrayzor.Syncthing.ApiClient;
 using SyncTrayzor.Syncthing.TransferHistory;
 using SyncTrayzor.Utils;
 using System;
+using System.IO;
 using System.Linq;
 
 namespace SyncTrayzor.Pages.Tray

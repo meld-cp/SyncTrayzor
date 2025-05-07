@@ -1,8 +1,8 @@
 ﻿using NLog;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Timers;
-using Path = Pri.LongPath.Path;
 
 namespace SyncTrayzor.Services
 {
