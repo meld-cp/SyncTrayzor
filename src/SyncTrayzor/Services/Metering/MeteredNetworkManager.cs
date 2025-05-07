@@ -72,7 +72,6 @@ namespace SyncTrayzor.Services.Metering
                 this.syncthingManager.Devices.DeviceResumed += DeviceResumed;
                 this.syncthingManager.Devices.DeviceConnected += DeviceConnected;
                 this.syncthingManager.Devices.DeviceDisconnected += DeviceDisconnected;
-                this.costManager.NetworkCostsChanged += NetworkCostsChanged;
                 this.costManager.NetworksChanged += NetworksChanged;
             }
         }
@@ -183,16 +182,6 @@ namespace SyncTrayzor.Services.Metering
         {
             // Not sure what to do here - this is caused by the pausing. We can't unpause it otherwise
             // we'll get stuck in a cycle of connected/disconnected.
-        }
-
-        private void NetworkCostsChanged(object sender, EventArgs e)
-        {
-            if (!IsEnabled)
-                return;
-
-            logger.Debug("Network costs changed. Updating devices");
-            ResetRenegades();
-            Update();
         }
 
         private void NetworksChanged(object sender, EventArgs e)
@@ -355,7 +344,6 @@ namespace SyncTrayzor.Services.Metering
             syncthingManager.Devices.DeviceResumed -= DeviceResumed;
             syncthingManager.Devices.DeviceConnected -= DeviceConnected;
             syncthingManager.Devices.DeviceDisconnected -= DeviceDisconnected;
-            costManager.NetworkCostsChanged -= NetworkCostsChanged;
             costManager.NetworksChanged -= NetworksChanged;
         }
 

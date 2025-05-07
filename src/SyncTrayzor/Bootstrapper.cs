@@ -108,7 +108,8 @@ namespace SyncTrayzor
 
             var logger = LogManager.GetCurrentClassLogger();
             var assembly = Container.Get<IAssemblyProvider>();
-            logger.Info("SyncTrazor version {0} ({1}) started at {2} (.NET version: {3})", assembly.FullVersion, assembly.ProcessorArchitecture, assembly.Location, assembly.FrameworkDescription);
+            logger.Info("SyncTrazor version {0} ({1}) started at {2} (.NET version: {3})", assembly.FullVersion,
+                assembly.ProcessorArchitecture, assembly.Location, assembly.FrameworkDescription);
 
             // This needs to happen before anything which might cause the unhandled exception stuff to be shown, as that wants to know
             // where to find the log file.
@@ -125,10 +126,11 @@ namespace SyncTrayzor
                         // Give it some time to shut down
                         var elapsed = Stopwatch.StartNew();
                         while (elapsed.Elapsed < TimeSpan.FromSeconds(10) &&
-                            Container.Get<IIpcCommsClientFactory>().TryCreateClient() != null)
+                               Container.Get<IIpcCommsClientFactory>().TryCreateClient() != null)
                         {
                             Thread.Sleep(100);
                         }
+
                         // Wait another half-second -- it seems it can take the browser process a little longer to exit
                         Thread.Sleep(500);
                         Environment.Exit(0);
@@ -180,7 +182,9 @@ namespace SyncTrayzor
                 Thread.CurrentThread.CurrentUICulture = new CultureInfo("en-US");
 
             // WPF ignores the current culture by default - so we have to force it
-            FrameworkElement.LanguageProperty.OverrideMetadata(typeof(FrameworkElement), new FrameworkPropertyMetadata(XmlLanguage.GetLanguage(Thread.CurrentThread.CurrentCulture.IetfLanguageTag)));
+            FrameworkElement.LanguageProperty.OverrideMetadata(typeof(FrameworkElement),
+                new FrameworkPropertyMetadata(
+                    XmlLanguage.GetLanguage(Thread.CurrentThread.CurrentCulture.IetfLanguageTag)));
 
             var autostartProvider = Container.Get<IAutostartProvider>();
 #if DEBUG
@@ -188,8 +192,10 @@ namespace SyncTrayzor
 #endif
 
             // If it's not in portable mode, and if we had to create config (i.e. it's the first start ever), then enable autostart
-            if (autostartProvider.CanWrite && AppSettings.Instance.EnableAutostartOnFirstStart && configurationProvider.HadToCreateConfiguration)
-                autostartProvider.SetAutoStart(new AutostartConfiguration() { AutoStart = true, StartMinimized = true });
+            if (autostartProvider.CanWrite && AppSettings.Instance.EnableAutostartOnFirstStart &&
+                configurationProvider.HadToCreateConfiguration)
+                autostartProvider.SetAutoStart(new AutostartConfiguration()
+                    { AutoStart = true, StartMinimized = true });
 
             // Needs to be done before ConfigurationApplicator is run
             Container.Get<IApplicationWindowState>().Setup(RootViewModel);
@@ -262,7 +268,8 @@ namespace SyncTrayzor
         {
             // Testing has indicated that this and OnUnhandledException won't be called at the same time
             var logger = LogManager.GetCurrentClassLogger();
-            logger.Error(e.ExceptionObject as Exception, $"An unhandled AppDomain exception occurred. Terminating: {e.IsTerminating}");
+            logger.Error(e.ExceptionObject as Exception,
+                $"An unhandled AppDomain exception occurred. Terminating: {e.IsTerminating}");
         }
 
         protected override void OnUnhandledException(DispatcherUnhandledExceptionEventArgs e)
@@ -310,10 +317,12 @@ namespace SyncTrayzor
 
                 if (e.Exception is CouldNotFindSyncthingException couldNotFindSyncthingException)
                 {
-                    var msg = $"Could not find syncthing.exe at {couldNotFindSyncthingException.SyncthingPath}\n\nIf you deleted it manually, put it back. If an over-enthsiastic " +
-                    "antivirus program quarantined it, restore it. If all else fails, download syncthing.exe from https://github.com/syncthing/syncthing/releases the put it " +
-                    "in this location.\n\nSyncTrayzor will now close.";
-                    windowManager.ShowMessageBox(msg, "Configuration Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    var msg =
+                        $"Could not find syncthing.exe at {couldNotFindSyncthingException.SyncthingPath}\n\nIf you deleted it manually, put it back. If an over-enthsiastic " +
+                        "antivirus program quarantined it, restore it. If all else fails, download syncthing.exe from https://github.com/syncthing/syncthing/releases the put it " +
+                        "in this location.\n\nSyncTrayzor will now close.";
+                    windowManager.ShowMessageBox(msg, "Configuration Error", MessageBoxButton.OK,
+                        MessageBoxImage.Error);
 
                     // Don't "crash"
                     e.Handled = true;
@@ -328,10 +337,12 @@ namespace SyncTrayzor
                         inner += ": " + configurationException.InnerException.InnerException.Message;
 
                     var msg = String.Format("Failed to parse the configuration file at {0}.\n\n{1}\n\n" +
-                        "If you manually downgraded SyncTrayzor, note that this is not supported.\n\n" +
-                        "Please attempt to fix {0} by hand. If unsuccessful, please delete {0} and let SyncTrayzor re-create it.\n\n" +
-                        "SyncTrayzor will now close.", configurationException.ConfigurationFilePath, inner);
-                    windowManager.ShowMessageBox(msg, "Configuration Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                                            "If you manually downgraded SyncTrayzor, note that this is not supported.\n\n" +
+                                            "Please attempt to fix {0} by hand. If unsuccessful, please delete {0} and let SyncTrayzor re-create it.\n\n" +
+                                            "SyncTrayzor will now close.", configurationException.ConfigurationFilePath,
+                        inner);
+                    windowManager.ShowMessageBox(msg, "Configuration Error", MessageBoxButton.OK,
+                        MessageBoxImage.Error);
 
                     // Don't "crash"
                     e.Handled = true;
@@ -342,10 +353,11 @@ namespace SyncTrayzor
                 if (e.Exception is CouldNotSaveConfigurationExeption couldNotSaveConfigurationException)
                 {
                     var msg = $"Could not save configuration file.\n\n" +
-                        $"{couldNotSaveConfigurationException.InnerException.GetType().Name}: {couldNotSaveConfigurationException.InnerException.Message}.\n\n" +
-                        $"Please close any other programs which may be using this file.";
+                              $"{couldNotSaveConfigurationException.InnerException.GetType().Name}: {couldNotSaveConfigurationException.InnerException.Message}.\n\n" +
+                              $"Please close any other programs which may be using this file.";
 
-                    windowManager.ShowMessageBox(msg, "Configuration Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    windowManager.ShowMessageBox(msg, "Configuration Error", MessageBoxButton.OK,
+                        MessageBoxImage.Error);
 
                     // Don't "crash"
                     e.Handled = true;

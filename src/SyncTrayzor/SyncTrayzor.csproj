@@ -29,10 +29,6 @@
         <ApplicationManifest>app.manifest</ApplicationManifest>
     </PropertyGroup>
     <ItemGroup>
-        <Reference Include="PresentationFramework.Aero"/>
-        <Reference Include="ReachFramework"/>
-    </ItemGroup>
-    <ItemGroup>
         <EmbeddedResource Include="..\..\security\synctrayzor_releases_cert.asc">
             <Link>Resources\synctrayzor_releases_cert.asc</Link>
         </EmbeddedResource>
@@ -174,7 +170,6 @@
         </PackageReference>
         <PackageReference Include="PropertyChanged.Fody">
             <Version>4.1.0</Version>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
         <PackageReference Include="RestEase">

@@ -14,6 +14,7 @@ using SyncTrayzor.Services;
 using SyncTrayzor.Properties;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using CefSharp.Handler;
+using PropertyChanged;
 
 namespace SyncTrayzor.Pages
 {
@@ -29,13 +30,13 @@ namespace SyncTrayzor.Pages
         private readonly CustomResourceRequestHandler customResourceRequestHandler;
 
         private readonly object cultureLock = new(); // This can be read from many threads
-        private CultureInfo culture;
+        private CultureInfo? culture;
         private double zoomLevel;
 
         private CancellationTokenSource? _resizeCancellation;
         private readonly object _resizeTokenLock = new();
 
-        public string Location
+        public string? Location
         {
             get => WebBrowser?.Address;
             private set
@@ -49,7 +50,7 @@ namespace SyncTrayzor.Pages
         public bool ShowSyncthingStarting => syncthingState == SyncthingState.Starting;
         public bool ShowSyncthingStopped => syncthingState == SyncthingState.Stopped;
 
-        public ChromiumWebBrowser WebBrowser { get; set; }
+        public ChromiumWebBrowser? WebBrowser { get; set; }
 
         private JavascriptCallbackObject callback;
 
@@ -78,13 +79,13 @@ namespace SyncTrayzor.Pages
             configurationProvider.ConfigurationChanged += ConfigurationChanged;
         }
 
-        private void SyncthingStateChanged(object sender, SyncthingStateChangedEventArgs e)
+        private void SyncthingStateChanged(object? sender, SyncthingStateChangedEventArgs e)
         {
             syncthingState = e.NewState;
             RefreshBrowser();
         }
 
-        private void ConfigurationChanged(object sender, ConfigurationChangedEventArgs e)
+        private void ConfigurationChanged(object? sender, ConfigurationChangedEventArgs e)
         {
             SetCulture(e.NewConfiguration);
         }
@@ -376,7 +377,8 @@ namespace SyncTrayzor.Pages
             return CefReturnValue.Continue;
         }
 
-        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
+        [SuppressPropertyChangedWarnings]
+        private void OnSizeChanged(object? sender, SizeChangedEventArgs e)
         {
             if (syncthingState != SyncthingState.Running) return;
             lock (_resizeTokenLock)
@@ -415,7 +417,7 @@ namespace SyncTrayzor.Pages
         bool ILifeSpanHandler.OnBeforePopup(IWebBrowser browserControl, IBrowser browser, IFrame frame,
             string targetUrl, string targetFrameName, WindowOpenDisposition targetDisposition, bool userGesture,
             IPopupFeatures popupFeatures, IWindowInfo windowInfo, IBrowserSettings browserSettings,
-            ref bool noJavascriptAccess, out IWebBrowser newBrowser)
+            ref bool noJavascriptAccess, out IWebBrowser? newBrowser)
         {
             processStartProvider.StartDetached(targetUrl);
             newBrowser = null;

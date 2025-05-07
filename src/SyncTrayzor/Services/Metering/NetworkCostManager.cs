@@ -10,8 +10,6 @@ namespace SyncTrayzor.Services.Metering
     {
         bool IsSupported { get; }
 
-        // TODO: Unused
-        event EventHandler NetworkCostsChanged;
         event EventHandler NetworksChanged;
 
         Task<bool> IsConnectionMetered(IPAddress address);
@@ -23,7 +21,6 @@ namespace SyncTrayzor.Services.Metering
 
         public bool IsSupported => true;
 
-        public event EventHandler NetworkCostsChanged;
         public event EventHandler NetworksChanged;
 
         public NetworkCostManager()
