@@ -21,6 +21,8 @@
         <UseWindowsForms>true</UseWindowsForms>
         <UseWPF>true</UseWPF>
         <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
+        <UseCurrentRuntimeIdentifier Condition="'$(UseCurrentRuntimeIdentifier)' == ''">true</UseCurrentRuntimeIdentifier>
+        <SelfContained Condition="'$(SelfContained)' == ''">false</SelfContained>
     </PropertyGroup>
     <PropertyGroup>
         <ApplicationIcon>Icons\default.ico</ApplicationIcon>
@@ -47,23 +49,6 @@
         <Resource Include="Icons\syncing_2.ico"/>
         <Resource Include="Icons\syncing_3.ico"/>
         <Resource Include="Icons\syncing_4.ico"/>
-    </ItemGroup>
-    <ItemGroup>
-        <BootstrapperPackage Include=".NETFramework,Version=v4.5">
-            <Visible>False</Visible>
-            <ProductName>Microsoft .NET Framework 4.5 %28x86 and x64%29</ProductName>
-            <Install>true</Install>
-        </BootstrapperPackage>
-        <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
-            <Visible>False</Visible>
-            <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
-            <Install>false</Install>
-        </BootstrapperPackage>
-        <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-            <Visible>False</Visible>
-            <ProductName>.NET Framework 3.5 SP1</ProductName>
-            <Install>false</Install>
-        </BootstrapperPackage>
     </ItemGroup>
     <ItemGroup>
         <Resource Include="Icons\default.ico"/>
@@ -133,10 +118,10 @@
             <Version>2.5.1</Version>
         </PackageReference>
         <PackageReference Include="CefSharp.Common.NETCore">
-            <Version>135.0.170</Version>
+            <Version>135.0.220</Version>
         </PackageReference>
         <PackageReference Include="CefSharp.Wpf.NETCore">
-            <Version>135.0.170</Version>
+            <Version>135.0.220</Version>
         </PackageReference>
         <PackageReference Include="FluentValidation">
             <Version>11.11.0</Version>

@@ -11,10 +11,10 @@
   </PropertyGroup>
   <Target Name="CopyToMainOutput" AfterTargets="Build">
     <PropertyGroup>
-      <MainOutputDir>..\SyncTrayzor\bin\$(Configuration)\net8.0-windows10.0.17763.0</MainOutputDir>
+      <MainOutputDir>..\SyncTrayzor\bin\$(Configuration)\net8.0-windows10.0.17763.0\win-x64\</MainOutputDir>
     </PropertyGroup>
     <ItemGroup>
-      <HelperOutputFiles Include="$(OutputPath)\**\*.*" />
+      <HelperOutputFiles Include="$(OutputPath)\**\*.exe;$(OutputPath)\**\*.dll;$(OutputPath)\**\*.json" />
     </ItemGroup>
 
     <Copy SourceFiles="@(HelperOutputFiles)"
@@ -27,8 +27,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="Mono.Options" Version="6.12.0.148" />
-    <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
   </ItemGroup>
 </Project>
