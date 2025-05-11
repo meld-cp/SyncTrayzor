@@ -1,5 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
+        <AppConfigVariant Condition="'$(AppConfigVariant)' == ''">Portable</AppConfigVariant>
+        <AppConfigSource>App.$(AppConfigVariant).config</AppConfigSource>
+    </PropertyGroup>
+    <ItemGroup>
+        <None Include="$(AppConfigSource)">
+            <Link>$(AssemblyName).dll.config</Link>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
+    <PropertyGroup>
         <TargetFramework>net8.0-windows10.0.17763.0</TargetFramework>
         <OutputType>WinExe</OutputType>
         <PublishUrl>publish\</PublishUrl>
@@ -20,6 +30,7 @@
         <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
         <UseWindowsForms>true</UseWindowsForms>
         <UseWPF>true</UseWPF>
+        <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
         <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
         <UseCurrentRuntimeIdentifier Condition="'$(UseCurrentRuntimeIdentifier)' == ''">true</UseCurrentRuntimeIdentifier>
         <SelfContained Condition="'$(SelfContained)' == ''">false</SelfContained>
@@ -35,12 +46,6 @@
             <Link>Resources\synctrayzor_releases_cert.asc</Link>
         </EmbeddedResource>
         <AppDesigner Include="Properties\"/>
-    </ItemGroup>
-    <ItemGroup>
-        <None Update="App.Installer.config.xslt">
-            <DependentUpon>App.config</DependentUpon>
-            <SubType>Designer</SubType>
-        </None>
     </ItemGroup>
     <ItemGroup>
         <Resource Include="FodyWeavers.xml"/>
@@ -135,17 +140,17 @@
             <Version>2.0.1</Version>
         </PackageReference>
         <PackageReference Include="Microsoft-WindowsAPICodePack-Core">
-          <Version>1.1.5</Version>
+            <Version>1.1.5</Version>
         </PackageReference>
         <PackageReference Include="Microsoft-WindowsAPICodePack-Shell">
-          <Version>1.1.5</Version>
+            <Version>1.1.5</Version>
         </PackageReference>
         <PackageReference Include="Microsoft.CSharp" Version="4.7.0"/>
         <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf">
             <Version>1.1.135</Version>
         </PackageReference>
         <PackageReference Include="Mono.Options">
-          <Version>6.12.0.148</Version>
+            <Version>6.12.0.148</Version>
         </PackageReference>
         <PackageReference Include="NLog">
             <Version>5.4.0</Version>
@@ -202,9 +207,6 @@
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
     </ItemGroup>
-    <Target Name="Configs">
-        <XslTransformation XmlInputPaths="App.config" XslInputPath="App.Installer.config.xslt" OutputPaths="$(OutputPath)$(RootNamespace).exe.Installer.config"/>
-    </Target>
     <Target Name="AfterBuild">
         <CallTarget Targets="Configs"/>
     </Target>
