@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net;
 using System.Threading.Tasks;
+using System.Windows;
 using Windows.Networking.Connectivity;
 using NLog;
 
@@ -30,6 +31,25 @@ namespace SyncTrayzor.Services.Metering
 
         public async Task<bool> IsConnectionMetered(IPAddress address)
         {
+            var tcs = new TaskCompletionSource<bool>();
+            // Must be run on UI thread, as this is a non-threadsafe COM API
+            await Application.Current.Dispatcher.InvokeAsync(async () =>
+            {
+                try
+                {
+                    var metered = await IsConnectionMeteredUnsafe(address);
+                    tcs.SetResult(metered);
+                }
+                catch (Exception e)
+                {
+                    tcs.SetException(e);
+                }
+            });
+            return await tcs.Task;
+        }
+
+        private async Task<bool> IsConnectionMeteredUnsafe(IPAddress address)
+        {
             var profile = await NetworkUtils.GetNetworkProfileForIpAddress(address);
             if (profile == null)
             {
@@ -38,7 +58,8 @@ namespace SyncTrayzor.Services.Metering
 
             var cost = profile.GetConnectionCost();
             // A network is "metered" if it is not unrestricted or unknown:
-            return cost.NetworkCostType != NetworkCostType.Unrestricted && cost.NetworkCostType != NetworkCostType.Unknown;
+            return cost.NetworkCostType != NetworkCostType.Unrestricted &&
+                   cost.NetworkCostType != NetworkCostType.Unknown;
         }
 
         private void NetworkStatusChanged(object sender)
