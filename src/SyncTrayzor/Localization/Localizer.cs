@@ -17,21 +17,13 @@ namespace SyncTrayzor.Localization
         
         static Localizer()
         {
-            formatter = new SmartFormatter();
-
-            var listFormatter = new ListFormatter(formatter);
-
-            formatter.AddExtensions(
-                listFormatter,
-                new DefaultSource(formatter)
-            );
-
-            formatter.AddExtensions(
-                listFormatter,
-                new CustomPluralLocalizationFormatter("en"),
-                new ChooseFormatter(),
-                new DefaultFormatter()
-            );
+            formatter = Smart.CreateDefaultSmartFormat()
+                .AddExtensions(
+                    new ListFormatter(),
+                    new CustomPluralLocalizationFormatter("en"),
+                    new ChooseFormatter(),
+                    new DefaultFormatter()
+                );
         }
 
         public static string Translate(string key, params object[] parameters)

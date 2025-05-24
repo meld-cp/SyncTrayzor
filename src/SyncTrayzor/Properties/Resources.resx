@@ -630,9 +630,9 @@ Full Path: {1}</value>
     <value>Show "Synchronized" balloon messages even if no files were updated</value>
   </data>
   <data name="TrayIcon_Balloon_FinishedSyncing_Multiple" xml:space="preserve">
-    <value>{0}: {1:l:{}|; }</value>
+    <value>{0}: {1:list:{}|; }</value>
     <comment>{0}: Folder that finished syncing
-{1}: List of things that happened. Can be a single TrayIcon_Balloon_FinishedSyncing_UpdatedFile or TrayIcon_Balloon_FinishedSyncing_UpdatedFileWithFailures, a single TrayIcon_Balloon_FinishedSyncing_DeletedFile or TrayIcon_Balloon_FinishedSyncing_DeletedFileWithFailures, or one of each (e.g. output might be 'MyFolder: Updated 2 files', 'MyFolder: Updated 1 file; Deleted 2 files', or 'MyFolder: Updated 2 files (1 failure); Deleted 2 files')</comment>
+      {1}: List of things that happened. Can be a single TrayIcon_Balloon_FinishedSyncing_UpdatedFile or TrayIcon_Balloon_FinishedSyncing_UpdatedFileWithFailures, a single TrayIcon_Balloon_FinishedSyncing_DeletedFile or TrayIcon_Balloon_FinishedSyncing_DeletedFileWithFailures, or one of each (e.g. output might be 'MyFolder: Updated 2 files', 'MyFolder: Updated 1 file; Deleted 2 files', or 'MyFolder: Updated 2 files (1 failure); Deleted 2 files')</comment>
   </data>
   <data name="SettingsView_DisableHardwareRendering" xml:space="preserve">
     <value>Disable hardware rendering</value>
@@ -823,9 +823,9 @@ Do you want to restart SyncTrayzor now?</value>
     <value>Alert me of conflicted files</value>
   </data>
   <data name="BarAlertsView_FailedTransfer_AlertText" xml:space="preserve">
-    <value>The following {0:p:folder has|folders have} failing file transfers: {0:l:{}|, }.</value>
+    <value>The following {0:p:folder has|folders have} failing file transfers: {0:list:{}|, }.</value>
     <comment>Text show in a bar alert at the top of the screen when there are 1 or more folders with failing transfers. 
-{0}: List of folders with failing file transfers</comment>
+      {0}: List of folders with failing file transfers</comment>
   </data>
   <data name="BarAlertsView_FailedTransfer_Details" xml:space="preserve">
     <value>Please see the Syncthing GUI or Console for clues.</value>
