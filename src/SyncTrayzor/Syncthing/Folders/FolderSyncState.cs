@@ -4,6 +4,8 @@
     {
         Syncing,
         Scanning,
+        Cleaning,
+        Waiting,
         Idle,
         Error,
     }

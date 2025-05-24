@@ -16,7 +16,7 @@ namespace SyncTrayzor.Syncthing.ApiClient
         [Get("/rest/events")]
         Task<List<Event>> FetchEventsLimitAsync(int since, int limit, string events, CancellationToken cancellationToken);
 
-        [Get("/rest/system/config")]
+        [Get("/rest/config")]
         Task<Config> FetchConfigAsync();
 
         [Post("/rest/system/shutdown")]
