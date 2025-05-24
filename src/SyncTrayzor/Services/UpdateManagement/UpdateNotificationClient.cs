@@ -17,7 +17,14 @@ namespace SyncTrayzor.Services.UpdateManagement
 
         public UpdateNotificationClient(string url)
         {
-            api = RestClient.For<IUpdateNotificationApi>(url);
+            if (string.IsNullOrWhiteSpace(url))
+            {
+                api = null;
+            }
+            else
+            {
+                api = RestClient.For<IUpdateNotificationApi>(url);
+            }
         }
 
         public async Task<UpdateNotificationResponse> FetchUpdateAsync(string version, string arch, string variant)

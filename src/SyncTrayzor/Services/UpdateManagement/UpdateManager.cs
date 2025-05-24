@@ -188,7 +188,7 @@ namespace SyncTrayzor.Services.UpdateManagement
             {
                 lastCheckedTime = DateTime.UtcNow;
 
-                if (!CheckForUpdates)
+                if (!CheckForUpdates || string.IsNullOrWhiteSpace(UpdateCheckApiUrl))
                     return;
 
                 var variantHandler = updateVariantHandlerFactory();
