@@ -1,0 +1,37 @@
+name: Build SyncTrayzor
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [windows-latest, windows-11-arm]
+    runs-on: ${{ matrix.os }}
+    env:
+      arch: ${{ matrix.os == 'windows-latest' && 'x64' || (matrix.os == 'windows-11-arm' && 'arm64' || 'unknown') }}
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        
+    - name: Install .NET Core
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+        
+    - name: Install Task
+      uses: arduino/setup-task@v2
+      
+    - name: Build SyncTrayzor (Portable)
+      run: task build-portable
+
+    - name: Upload portable dist
+      uses: actions/upload-artifact@v4
+      with:
+        name: SyncTrayzorPortable-${{ env.arch }}
+        path: ./dist/
