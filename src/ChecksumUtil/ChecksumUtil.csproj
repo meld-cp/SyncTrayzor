@@ -18,6 +18,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="BouncyCastle.Cryptography" Version="2.5.1" />
+    <PackageReference Include="BouncyCastle.Cryptography" Version="2.6.1" />
   </ItemGroup>
 </Project>
