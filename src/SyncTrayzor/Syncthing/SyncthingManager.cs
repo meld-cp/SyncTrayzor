@@ -402,7 +402,6 @@ namespace SyncTrayzor.Syncthing
 
         private async void ProcessStarting()
         {
-            // Things will attempt to talk to Syncthing over http. If Syncthing is set to 'https only', this will redirect.
             var preferredAddressWithScheme = new Uri("https://" + PreferredHostAndPort);
             var port = freePortFinder.FindFreePort(preferredAddressWithScheme.Port);
             var uriBuilder = new UriBuilder(preferredAddressWithScheme)
