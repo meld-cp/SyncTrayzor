@@ -191,6 +191,9 @@
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
     </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\ProcessRunner\ProcessRunner.csproj" />
+    </ItemGroup>
     <Target Name="AfterBuild">
         <CallTarget Targets="Configs"/>
     </Target>

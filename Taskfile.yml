@@ -1,0 +1,46 @@
+# https://taskfile.dev
+
+version: "3"
+
+vars:
+   DOWNLOAD_SYNCTHING_VERSION: "v2.0.0-rc.16"
+   DOTNET_TARGET: "net8.0-windows10.0.17763.0"
+   PUBLISH_DIRECTORY: "./src/SyncTrayzor/bin/Release/net8.0-windows10.0.17763.0/win-x64"
+
+tasks:
+   download-syncthing:
+      desc: "Download and extract syncthing"
+      cmds:
+         - powershell -ExecutionPolicy Bypass -File scripts/download-syncthing.ps1 -Version "{{.DOWNLOAD_SYNCTHING_VERSION}}"
+      platforms: [windows]
+      run: once
+   upgrade-syncthing:
+      desc: "Upgrade local syncthing binary"
+      deps:
+         - download-syncthing
+      cmds:
+         - powershell -ExecutionPolicy Bypass -File scripts/upgrade-syncthing.ps1
+      platforms: [windows]
+      run: once
+   build:
+      desc: "Build SyncTrayzor"
+      deps:
+         - upgrade-syncthing
+      cmds:
+         - powershell -ExecutionPolicy Bypass -File scripts/build-dist.ps1 -Variant "{{.variant}}"
+      requires:
+         vars:
+            - variant
+      platforms: [windows]
+   build-portable:
+      desc: "Build SyncTrayzor in portable configuration"
+      cmds:
+         - task: build
+           vars:
+              variant: "Portable"
+   build-installer:
+      desc: "Build SyncTrayzor with installer"
+      cmds:
+         - task: build
+           vars:
+              variant: "Installed"

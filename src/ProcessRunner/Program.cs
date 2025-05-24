@@ -1,5 +1,4 @@
 ﻿using Mono.Options;
-using SyncTrayzor.Utils;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
