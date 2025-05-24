@@ -27,6 +27,9 @@ obj/
 [Dd]ebug/
 [Rr]elease*/
 
+# IDE
+.idea
+
 #Project files
 [Bb]uild/
 !/build
