@@ -1,16 +1,14 @@
 #define AppExeName "SyncTrayzor.exe"
-#define AppRoot "..\.."
+#define AppRoot ".."
+#define AppBin AppRoot + "\dist"
 #define AppSrc AppRoot + "\src\SyncTrayzor"
-#define AppBin AppRoot +"\bin\" + Arch + "\Release"
 #define AppExe AppBin + "\SyncTrayzor.exe"
 #define AppName GetStringFileInfo(AppExe, "ProductName")
 #define AppVersion GetVersionNumbersString(AppExe)
 #define AppPublisher "SyncTrayzor"
-#define AppURL "https://github.com/canton7/SyncTrayzor"
+#define AppURL "https://github.com/GermanCoding/SyncTrayzor"
 #define AppDataFolder "SyncTrayzor"
 #define RunRegKey "Software\Microsoft\Windows\CurrentVersion\Run"
-#define DotNetInstallerExe "dotNet472Setup.exe"
-#define DonateUrl "https://synctrayzor.antonymale.co.uk/donate"
 
 [Setup]
 AppId={{#AppId}
@@ -28,7 +26,7 @@ AllowNoIcons=yes
 OutputDir="."
 OutputBaseFilename={#AppName}Setup-{#Arch}
 SetupIconFile={#AppSrc}\Icons\default.ico
-WizardSmallImageFile=..\icon.bmp
+WizardSmallImageFile=icon.bmp
 Compression=lzma2/max
 ;Compression=None
 SolidCompression=yes
@@ -43,20 +41,15 @@ WizardStyle=modern
 ; We do access user areas, but only as a best-effort attempt to clean up after ourselves
 UsedUserAreasWarning=no
 #if "x64" == Arch
-ArchitecturesInstallIn64BitMode=x64
-ArchitecturesAllowed=x64
+ArchitecturesInstallIn64BitMode=x64os
+ArchitecturesAllowed=x64os
+#else
+ArchitecturesInstallIn64BitMode=arm64
+ArchitecturesAllowed=arm64
 #endif
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
-
-[CustomMessages]
-InstallingDotNetFramework=Installing .NET Framework. This might take a few minutes...
-DotNetFrameworkFailedToLaunch=Failed to launch .NET Framework Installer with error "%1". Please fix the error then run this installer again.
-DotNetFrameworkFailed1602=.NET Framework installation was cancelled. This installation can continue, but be aware that this application may not run unless the .NET Framework installation is completed successfully.
-DotNetFrameworkFailed1603=A fatal error occurred while installing the .NET Framework. Please fix the error, then run the installer again.
-DotNetFrameworkFailed5100=Your computer does not meet the requirements of the .NET Framework. Please consult the documentation.
-DotNetFrameworkFailedOther=The .NET Framework installer exited with an unexpected status code "%1". Please review any other messages shown by the installer to determine whether the installation completed successfully, and abort this installation and fix the problem if it did not.
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
@@ -65,24 +58,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Name: "{userappdata}\{#AppDataFolder}"
 
 [Files]
-; Near the beginning, as it's extracted first and this makes it cheaper
-Source: "..\{#DotNetInstallerExe}"; DestDir: {tmp}; Flags: dontcopy nocompression noencryption
-
-Source: "{#AppBin}\*"; DestDir: "{app}"; Excludes: "*.xml,*.vshost.*,*.config,*.log,*.pdb,FluentValidation.resources.dll,System.Windows.Interactivity.resources.dll,syncthing.exe,data,logs,cef_extensions.pak,d3dcompiler_47.dll,libEGL.dll,libGLESv2.dll,swiftshader/libEGL.dll,swiftshader/libGLESv2.dll"; Flags: ignoreversion recursesubdirs
-Source: "{#AppBin}\SyncTrayzor.exe.Installer.config"; DestDir: "{app}"; DestName: "SyncTrayzor.exe.config"; Flags: ignoreversion
-Source: "{#AppSrc}\Icons\default.ico"; DestDir: "{app}"; Flags: ignoreversion
-Source: "{#AppRoot}\*.md"; DestDir: "{app}"; Flags: ignoreversion
-Source: "{#AppRoot}\*.txt"; DestDir: "{app}"; Flags: ignoreversion
-Source: "vc++\*.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "ucrt\*.dll"; DestDir: "{app}"; Flags: ignoreversion; OnlyBelowVersion: 10.0
-Source: "syncthing.exe"; DestDir: "{app}"; DestName: "syncthing.exe"; Flags: ignoreversion
-
-[InstallDelete]
-Type: files; Name: "{app}\msvcp120.dll"
-Type: files; Name: "{app}\msvcr120.dll"
-Type: files; Name: "{app}\vccorlib120.dll"
-Type: files; Name: "{app}\*.pdb"
-Type: files; Name: "{app}\System.Windows.Interactivity.dll"
+Source: "{#AppBin}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs
 
 [Icons]
 Name: "{group}\{#AppName}"; Filename: "{app}\{#AppExeName}"
@@ -93,67 +69,6 @@ Name: "{commondesktop}\{#AppName}"; Filename: "{app}\{#AppExeName}"; Tasks: desk
 Filename: "{app}\{#AppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(AppName, '&', '&&')}}"; Flags: nowait postinstall; Parameters: {code:SyncTrayzorStartFlags}; Check: ShouldStartSyncTrayzor
 
 [Code]
-var
-  GlobalRestartRequired: boolean;
-
-function DotNetIsMissing(): Boolean;
-var 
-  Exists: Boolean;
-  Release: Cardinal;
-begin
-  // https://docs.microsoft.com/en-us/dotnet/framework/migration-guide/how-to-determine-which-versions-are-installed#minimum-version
-  Exists := RegQueryDWordValue(HKEY_LOCAL_MACHINE, 'SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full', 'Release', Release);
-  Result := not Exists or (Release < 461808);
-end;
-
-// Adapted from https://blogs.msdn.microsoft.com/davidrickard/2015/07/17/installing-net-framework-4-5-automatically-with-inno-setup/
-function InstallDotNet(): String;
-var
-  StatusText: string;
-  ResultCode: Integer;
-begin
-  StatusText := WizardForm.StatusLabel.Caption;
-  WizardForm.StatusLabel.Caption := CustomMessage('InstallingDotNetFramework');
-  WizardForm.ProgressGauge.Style := npbstMarquee;
-  try
-    ExtractTemporaryFile('{#DotNetInstallerExe}');
-    if not Exec(ExpandConstant('{tmp}\{#DotNetInstallerExe}'), '/passive /norestart /showrmui /showfinalerror', '', SW_SHOW, ewWaitUntilTerminated, ResultCode) then
-    begin
-      Result := FmtMessage(CustomMessage('DotNetFrameworkFailedToLaunch'), [SysErrorMessage(ResultCode)]);
-    end
-    else
-    begin
-      // See https://msdn.microsoft.com/en-us/library/ee942965(v=vs.110).aspx#return_codes
-      case resultCode of
-        0: begin
-          // Successful
-        end;
-        1602 : begin
-          MsgBox(CustomMessage('DotNetFrameworkFailed1602'), mbInformation, MB_OK);
-        end;
-        1603: begin
-          Result := CustomMessage('DotNetFrameworkFailed1603');
-        end;
-        1641: begin
-          GlobalRestartRequired := True;
-        end;
-        3010: begin
-          GlobalRestartRequired := True;
-        end;
-        5100: begin
-          Result := CustomMessage('DotNetFrameworkFailed5100');
-        end;
-        else begin
-          MsgBox(FmtMessage(CustomMessage('DotNetFrameworkFailedOther'), [IntToStr(ResultCode)]), mbError, MB_OK);
-        end;
-      end;
-    end;
-  finally
-    WizardForm.StatusLabel.Caption := StatusText;
-    WizardForm.ProgressGauge.Style := npbstNormal;
-  end;
-end;
-
 procedure BumpInstallCount;
 var
   FileContents: AnsiString;
@@ -170,29 +85,6 @@ begin
   end;
 
   SaveStringToFile(ExpandConstant('{app}\InstallCount.txt'), IntToStr(InstallCount), False);
-end;
-
-procedure URLLabelOnClick(Sender: TObject);
-var
-  ErrorCode: Integer;
-begin
-  ShellExec('open', '{#DonateUrl}', '', '', SW_SHOWNORMAL, ewNoWait, ErrorCode);
-end;
-
-procedure InitializeWizard;
-var
-  URLLabel: TNewStaticText;
-begin
-  URLLabel := TNewStaticText.Create(WizardForm);
-  URLLabel.Caption := 'Donate';
-  URLLabel.Cursor := crHand;
-  URLLabel.Parent := WizardForm;
-  URLLabel.Font.Style := URLLabel.Font.Style + [fsUnderline];
-  URLLabel.Font.Color := clBlue;
-  URLLabel.Top := WizardForm.ClientHeight - URLLabel.Height - 30;
-  URLLabel.Left := ScaleX(20)
-  URLLabel.Anchors := [akLeft, akBottom]
-  URLLabel.OnClick := @URLLabelOnClick;
 end;
 
 procedure CurStepChanged(CurStep: TSetupStep);
@@ -240,7 +132,7 @@ begin
     begin
       if FileExists(ExeConfig) then
       begin
-        FileCopy(ExeConfig, ExpandConstant('{app}\SyncTrayzor.exe.config'), false);
+        CopyFile(ExeConfig, ExpandConstant('{app}\SyncTrayzor.exe.config'), false);
       end
       else
       begin
@@ -262,23 +154,6 @@ begin
       Result := True;
       Exit;
     end;
-end;
-
-function PrepareToInstall(var NeedsRestart: Boolean): String;
-begin
-  // 'NeedsRestart' only has an effect if we return a non-empty string, thus aborting the installation.
-  // If the installers indicate that they want a restart, this should be done at the end of installation.
-  // Therefore we set the global 'restartRequired' if a restart is needed, and return this from NeedRestart()
-
-  if not CmdLineParamGiven('/SkipDotNetInstall') and DotNetIsMissing() then
-  begin
-    Result := InstallDotNet();
-  end;
-end;
-
-function NeedRestart(): Boolean;
-begin
-  Result := GlobalRestartRequired;
 end;
 
 function ShouldStartSyncTrayzor(): Boolean;

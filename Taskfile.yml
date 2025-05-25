@@ -42,3 +42,5 @@ tasks:
          - task: build
            vars:
               variant: "Installed"
+         - powershell -ExecutionPolicy Bypass -File scripts/build-inno-setup.ps1
+      platforms: [windows]
