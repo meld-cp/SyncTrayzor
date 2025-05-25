@@ -27,9 +27,9 @@ namespace SyncTrayzor.Services
 
         private readonly IConfigurationProvider configurationProvider;
 
-        public ProcessStartProvider(IAssemblyProvider assemblyProvider, IConfigurationProvider configurationProvider)
+        public ProcessStartProvider(IConfigurationProvider configurationProvider)
         {
-            processRunnerPath = Path.Combine(Path.GetDirectoryName(assemblyProvider.Location), processRunner);
+            processRunnerPath = Path.Combine(Path.GetDirectoryName(Environment.ProcessPath!)!, processRunner);
             this.configurationProvider = configurationProvider;
         }
 

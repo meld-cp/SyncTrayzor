@@ -47,7 +47,6 @@ namespace SyncTrayzor.Services.UpdateManagement
         private readonly IUpdateCheckerFactory updateCheckerFactory;
         private readonly IProcessStartProvider processStartProvider;
         private readonly IUpdatePromptProvider updatePromptProvider;
-        private readonly IAssemblyProvider assemblyProvider;
         private readonly Func<IUpdateVariantHandler> updateVariantHandlerFactory;
 
         private readonly object promptTimerLock = new();
@@ -83,7 +82,6 @@ namespace SyncTrayzor.Services.UpdateManagement
             IUpdateCheckerFactory updateCheckerFactory,
             IProcessStartProvider processStartProvider,
             IUpdatePromptProvider updatePromptProvider,
-            IAssemblyProvider assemblyProvider,
             Func<IUpdateVariantHandler> updateVariantHandlerFactory)
         {
             this.applicationState = applicationState;
@@ -92,7 +90,6 @@ namespace SyncTrayzor.Services.UpdateManagement
             this.updateCheckerFactory = updateCheckerFactory;
             this.processStartProvider = processStartProvider;
             this.updatePromptProvider = updatePromptProvider;
-            this.assemblyProvider = assemblyProvider;
             this.updateVariantHandlerFactory = updateVariantHandlerFactory;
 
             promptTimer = new DispatcherTimer();
@@ -282,7 +279,7 @@ namespace SyncTrayzor.Services.UpdateManagement
 
         private string PathToRestartApplication()
         {
-            var path = $"\"{assemblyProvider.Location}\"";
+            var path = $"\"{Environment.ProcessPath!}\"";
             if (!applicationState.HasMainWindow)
                 path += " -minimized";
 

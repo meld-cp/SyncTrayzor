@@ -19,7 +19,6 @@ namespace SyncTrayzor.Services.UpdateManagement
         private readonly IProcessStartProvider processStartProvider;
         private readonly IFilesystemProvider filesystem;
         private readonly IApplicationPathsProvider pathsProvider;
-        private readonly IAssemblyProvider assemblyProvider;
         private readonly IApplicationState applicationState;
 
         private string extractedZipPath;
@@ -34,14 +33,12 @@ namespace SyncTrayzor.Services.UpdateManagement
             IProcessStartProvider processStartProvider,
             IFilesystemProvider filesystem,
             IApplicationPathsProvider pathsProvider,
-            IAssemblyProvider assemblyProvider,
             IApplicationState applicationState)
         {
             this.updateDownloader = updateDownloader;
             this.processStartProvider = processStartProvider;
             this.filesystem = filesystem;
             this.pathsProvider = pathsProvider;
-            this.assemblyProvider = assemblyProvider;
             this.applicationState = applicationState;
         }
 
@@ -96,7 +93,7 @@ namespace SyncTrayzor.Services.UpdateManagement
 
             // pathToRestartApplication IS ALREADY QUOTED: it's `"C:\Foo\Bar.exe"` or `"C:\Foo\Bar.exe" --minimized`. Portable installer
             // knows to look for either 4 or 5 arguments to take account of the fact that pathToRestartApplication may contain two bits 
-            var args = $"\"{Path.GetDirectoryName(assemblyProvider.Location)}\" \"{extractedZipPath}\" {pid} {pathToRestartApplication}";
+            var args = $"\"{Path.GetDirectoryName(Environment.ProcessPath!)}\" \"{extractedZipPath}\" {pid} {pathToRestartApplication}";
 
             processStartProvider.StartDetached(destPortableInstaller, args);
 

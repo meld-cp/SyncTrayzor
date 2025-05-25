@@ -407,7 +407,7 @@ namespace SyncTrayzor.Pages.Settings
                     MessageBoxButton.YesNo, MessageBoxImage.Question);
                 if (result == MessageBoxResult.Yes)
                 {
-                    processStartProvider.StartDetached(assemblyProvider.Location);
+                    processStartProvider.StartDetached(Environment.ProcessPath!);
                     applicationState.Shutdown();
                 }
             }

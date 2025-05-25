@@ -16,9 +16,9 @@ namespace SyncTrayzor.Services
         private readonly Dictionary<string, string> specials;
         private readonly string basePath;
 
-        public PathTransformer(IAssemblyProvider assemblyProvider)
+        public PathTransformer()
         {
-            basePath = Path.GetDirectoryName(assemblyProvider.Location);
+            basePath = Path.GetDirectoryName(Environment.ProcessPath!);
 
             specials = new Dictionary<string, string>()
             {

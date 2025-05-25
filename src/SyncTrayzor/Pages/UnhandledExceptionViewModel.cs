@@ -37,7 +37,7 @@ namespace SyncTrayzor.Pages
                 $"Version: {assemblyProvider.FullVersion}; Variant: {AppSettings.Instance.Variant}; Arch: {assemblyProvider.ProcessorArchitecture}");
             sb.AppendLine();
 
-            sb.Append($"Path: {assemblyProvider.Location}");
+            sb.Append($"Path: {Environment.ProcessPath!}");
             sb.AppendLine();
 
             sb.AppendLine(Exception.ToString());

@@ -39,8 +39,6 @@ namespace SyncTrayzor.Services
         private static readonly Regex keyRegex = new("^" + applicationName + @"(?: \((\d+)\))?$");
         private readonly string keyName;
 
-        private readonly IAssemblyProvider assemblyProvider;
-
         public bool IsEnabled { get; set; }
 
         private bool _canRead;
@@ -49,9 +47,8 @@ namespace SyncTrayzor.Services
         private bool _canWrite;
         public bool CanWrite => IsEnabled && _canWrite;
 
-        public AutostartProvider(IAssemblyProvider assemblyProvider)
+        public AutostartProvider()
         {
-            this.assemblyProvider = assemblyProvider;
 
             // Default
             IsEnabled = true;
@@ -141,7 +138,7 @@ namespace SyncTrayzor.Services
                             numbersSeen.Add(Int32.Parse(numberValue));
 
                         // See if this one points to our application
-                        if (key.GetValue(entry) is string keyValue && keyValue.StartsWith($"\"{assemblyProvider.Location}\""))
+                        if (key.GetValue(entry) is string keyValue && keyValue.StartsWith($"\"{Environment.ProcessPath!}\""))
                         {
                             foundKey = entry;
                             break;
@@ -211,7 +208,7 @@ namespace SyncTrayzor.Services
 
             if (config.AutoStart)
             {
-                var path = $"\"{assemblyProvider.Location}\"{(config.StartMinimized ? " -minimized" : "")}";
+                var path = $"\"{Environment.ProcessPath!}\"{(config.StartMinimized ? " -minimized" : "")}";
                 logger.Debug("Autostart path: {0}", path);
                 registryKey.SetValue(keyName, path);
             }

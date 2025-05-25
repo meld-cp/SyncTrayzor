@@ -22,7 +22,7 @@ namespace SyncTrayzor.Services.Ipc
 
         public IIpcCommsClient TryCreateClient()
         {
-            var ourLocation = assemblyProvider.Location;
+            var ourLocation = Environment.ProcessPath!;
             var ourProcess = Process.GetCurrentProcess();
             var processes = Process.GetProcessesByName("SyncTrayzor");
             logger.Debug("Checking for other SyncTrayzor processes");
@@ -31,14 +31,15 @@ namespace SyncTrayzor.Services.Ipc
                 try
                 {
                     // Only care if the process came from our session: allow multiple instances under different users
-                    if (String.Equals(process.MainModule.FileName, ourLocation, StringComparison.OrdinalIgnoreCase) && process.SessionId == ourProcess.SessionId && process.Id != ourProcess.Id)
+                    if (String.Equals(process.MainModule?.FileName, ourLocation, StringComparison.OrdinalIgnoreCase) && process.SessionId == ourProcess.SessionId && process.Id != ourProcess.Id)
                     {
-                        logger.Info("Found process with ID {0} and location {1}", process.Id, process.MainModule.FileName);
+                        logger.Info("Found process with ID {0} and location {1}", process.Id, process.MainModule?.FileName);
                         return new IpcCommsClient(process.Id);
                     }
-                    else if (process.Id != ourProcess.Id)
+
+                    if (process.Id != ourProcess.Id)
                     {
-                        logger.Debug("Found process with ID {0} and location {1}, but it's a different exe (we are {2})", process.Id, process.MainModule.FileName, ourLocation);
+                        logger.Debug("Found process with ID {0} and location {1}, but it's a different exe (we are {2})", process.Id, process.MainModule?.FileName, ourLocation);
                     }
                 }
                 catch (Exception e)
