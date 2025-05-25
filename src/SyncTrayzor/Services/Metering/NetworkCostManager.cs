@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Net;
 using System.Threading.Tasks;
-using System.Windows;
 using Windows.Networking.Connectivity;
 using NLog;
 
@@ -32,8 +31,7 @@ namespace SyncTrayzor.Services.Metering
         public async Task<bool> IsConnectionMetered(IPAddress address)
         {
             var tcs = new TaskCompletionSource<bool>();
-            // Must be run on UI thread, as this is a non-threadsafe COM API
-            await Application.Current.Dispatcher.InvokeAsync(async () =>
+            await Task.Run(async () =>
             {
                 try
                 {

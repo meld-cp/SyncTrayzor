@@ -140,7 +140,9 @@ public static class NetworkUtils
         {
             if (networkAdapter?.NetworkAdapterId == networkInterfaceGuid)
             {
-                return await networkAdapter.GetConnectedProfileAsync();
+                return await Task
+                    .Run(async () => await networkAdapter.GetConnectedProfileAsync().AsTask().ConfigureAwait(false))
+                    .ConfigureAwait(false);
             }
         }
 
