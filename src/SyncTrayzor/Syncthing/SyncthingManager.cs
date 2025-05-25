@@ -46,6 +46,7 @@ namespace SyncTrayzor.Syncthing
         ISyncthingDeviceManager Devices { get; }
         ISyncthingTransferHistory TransferHistory { get; }
         ISyncthingCapabilities Capabilities { get; }
+        bool DoSyncthingUpgrade { get; set; }
 
         Task StartAsync();
         Task StopAsync();
@@ -103,6 +104,7 @@ namespace SyncTrayzor.Syncthing
         private SystemInfo systemInfo;
 
         public bool IsDataLoaded { get; private set; }
+        public bool DoSyncthingUpgrade { get; set; }
         public event EventHandler DataLoaded;
         public event EventHandler<SyncthingStateChangedEventArgs> StateChanged;
         public event EventHandler<MessageLoggedEventArgs> MessageLogged;
@@ -420,6 +422,12 @@ namespace SyncTrayzor.Syncthing
             processRunner.DenyUpgrade = SyncthingDenyUpgrade;
             processRunner.SyncthingPriorityLevel = SyncthingPriorityLevel;
             processRunner.HideDeviceIds = SyncthingHideDeviceIds;
+
+            if (DoSyncthingUpgrade)
+            {
+                processRunner.UpgradeSyncthing();
+                DoSyncthingUpgrade = false;
+            }
 
             var isRestart = (State == SyncthingState.Restarting);
             SetState(SyncthingState.Starting);

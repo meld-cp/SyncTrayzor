@@ -75,6 +75,7 @@ namespace SyncTrayzor.Services
             conflictFileWatcher.FolderExistenceCheckingInterval = TimeSpan.FromMilliseconds(AppSettings.Instance.DirectoryWatcherFolderExistenceCheckMilliseconds);
 
             syncthingManager.SyncthingConnectTimeout = TimeSpan.FromSeconds(AppSettings.Instance.SyncthingConnectTimeoutSeconds);
+            syncthingManager.DoSyncthingUpgrade = configurationProvider.SyncthingInstalled;
 
             updateManager.UpdateCheckApiUrl = AppSettings.Instance.UpdateApiUrl;
 

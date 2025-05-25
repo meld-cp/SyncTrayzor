@@ -27,6 +27,7 @@ namespace SyncTrayzor.Services.Config
 
         bool HadToCreateConfiguration { get; }
         bool WasUpgraded { get; }
+        bool SyncthingInstalled { get; }
 
         void Initialize(Configuration defaultConfiguration);
         Configuration Load();
@@ -56,6 +57,7 @@ namespace SyncTrayzor.Services.Config
 
         public bool HadToCreateConfiguration { get; private set; }
         public bool WasUpgraded { get; private set; }
+        public bool SyncthingInstalled { get; private set; }
 
         public ConfigurationProvider(IApplicationPathsProvider paths, IFilesystemProvider filesystemProvider, IPathTransformer pathTransformer)
         {
@@ -131,6 +133,7 @@ namespace SyncTrayzor.Services.Config
                     filesystem.CreateDirectory(expandedSyncthingPathDir);
 
                 filesystem.Copy(paths.SyncthingBackupPath, expandedSyncthingPath);
+                SyncthingInstalled = true;
             }
 
             if (updateConfigInstallCount)
