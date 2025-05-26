@@ -29,12 +29,13 @@
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <UseWindowsForms>true</UseWindowsForms>
+    <UseWindowsForms>false</UseWindowsForms>
     <UseWPF>true</UseWPF>
     <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
     <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
     <UseCurrentRuntimeIdentifier Condition="'$(UseCurrentRuntimeIdentifier)' == ''">true</UseCurrentRuntimeIdentifier>
     <SelfContained Condition="'$(SelfContained)' == ''">true</SelfContained>
+    <Optimize>true</Optimize>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>Icons\default.ico</ApplicationIcon>
@@ -122,9 +123,6 @@
   <ItemGroup>
     <PackageReference Include="BouncyCastle.Cryptography">
       <Version>2.6.1</Version>
-    </PackageReference>
-    <PackageReference Include="CefSharp.Common.NETCore">
-      <Version>136.1.40</Version>
     </PackageReference>
     <PackageReference Include="CefSharp.Wpf.NETCore">
       <Version>136.1.40</Version>
