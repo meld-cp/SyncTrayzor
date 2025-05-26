@@ -8,7 +8,6 @@
 #define AppPublisher "SyncTrayzor"
 #define AppURL "https://github.com/GermanCoding/SyncTrayzor"
 #define AppDataFolder "SyncTrayzor"
-#define RunRegKey "Software\Microsoft\Windows\CurrentVersion\Run"
 
 [Setup]
 AppId={{#AppId}
@@ -20,7 +19,7 @@ AppPublisher={#AppPublisher}
 AppPublisherURL={#AppURL}
 AppSupportURL={#AppURL}
 AppUpdatesURL={#AppURL}
-DefaultDirName={commonpf}\{#AppName}
+DefaultDirName={autopf}\{#AppName}
 DefaultGroupName={#AppName}
 AllowNoIcons=yes
 OutputDir="."
@@ -31,6 +30,7 @@ Compression=lzma2/max
 ;Compression=None
 SolidCompression=yes
 PrivilegesRequired=admin
+PrivilegesRequiredOverridesAllowed=dialog
 CloseApplications=yes
 RestartApplications=no
 ; If we try and close CefSharp.BrowserSubprocess.exe we'll fail - it doesn't respond well
@@ -63,7 +63,7 @@ Source: "{#AppBin}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs
 [Icons]
 Name: "{group}\{#AppName}"; Filename: "{app}\{#AppExeName}"
 Name: "{group}\{cm:UninstallProgram,{#AppName}}"; Filename: "{uninstallexe}"
-Name: "{commondesktop}\{#AppName}"; Filename: "{app}\{#AppExeName}"; Tasks: desktopicon
+Name: "{autodesktop}\{#AppName}"; Filename: "{app}\{#AppExeName}"; Tasks: desktopicon
 
 [Run]
 Filename: "{app}\{#AppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(AppName, '&', '&&')}}"; Flags: nowait postinstall; Parameters: {code:SyncTrayzorStartFlags}; Check: ShouldStartSyncTrayzor

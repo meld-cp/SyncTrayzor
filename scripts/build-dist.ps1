@@ -29,4 +29,20 @@ if (Test-Path $mergedDir) {
 }
 New-Item -ItemType Directory -Path $mergedDir | Out-Null
 Copy-Item "$publishDir\*" $mergedDir -Recurse -Force
-Copy-Item $syncthingExe $mergedDir -Force
+
+$additionalFiles = @(
+    $syncthingExe,
+    # Also include VC++ runtime files for systems that do not have it
+    "C:\Windows\System32\msvcp140.dll",
+    "C:\Windows\System32\vcruntime140.dll",
+    "C:\Windows\System32\vcruntime140_1.dll"
+)
+foreach ($file in $additionalFiles) {
+    if (Test-Path $file) {
+        Copy-Item $file $mergedDir -Force
+    }
+    else {
+        Write-Error "File not found: $file"
+        exit 1
+    }
+}
