@@ -35,3 +35,12 @@ jobs:
       with:
         name: SyncTrayzorPortable-${{ env.arch }}
         path: ./dist/
+
+    - name: Build SyncTrayzor Installer
+      run: task build-installer
+
+    - name: Upload installer dist
+      uses: actions/upload-artifact@v4
+      with:
+        name: SyncTrayzorSetup-${{ env.arch }}.exe
+        path: ./installer/SyncTrayzorSetup-${{ env.arch }}.exe
