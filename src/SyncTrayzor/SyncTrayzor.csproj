@@ -12,6 +12,7 @@
   </ItemGroup>
   <PropertyGroup>
     <TargetFramework>net8.0-windows10.0.17763.0</TargetFramework>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
     <OutputType>WinExe</OutputType>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
@@ -33,9 +34,11 @@
     <UseWPF>true</UseWPF>
     <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
     <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
-    <UseCurrentRuntimeIdentifier Condition="'$(UseCurrentRuntimeIdentifier)' == ''">true</UseCurrentRuntimeIdentifier>
     <SelfContained Condition="'$(SelfContained)' == ''">true</SelfContained>
     <Optimize>true</Optimize>
+    <!-- Hack to a) use the current processor architecture b) forcing a windows runtime, such that build on Linux works -->
+    <RuntimeIdentifier>win-$([System.String]::Copy('$(NETCoreSdkRuntimeIdentifier)').Split('-')[1])</RuntimeIdentifier>
+    <RuntimeIdentifiers>win-x64;win-arm64</RuntimeIdentifiers>
   </PropertyGroup>
   <PropertyGroup>
     <AssemblyName>SyncTrayzor</AssemblyName>
