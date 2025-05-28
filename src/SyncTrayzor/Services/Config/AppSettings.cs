@@ -34,10 +34,10 @@ namespace SyncTrayzor.Services.Config
         }
 
         public string UpdateApiUrl { get; set; } = "http://synctrayzor.antonymale.co.uk/version-check";
-        public string HomepageUrl { get; set; } = "http://github.com/canton7/SyncTrayzor";
+        public string HomepageUrl { get; set; } = "http://github.com/GermanCoding/SyncTrayzor";
         public int DirectoryWatcherBackoffMilliseconds { get; set; } = 2000;
         public int DirectoryWatcherFolderExistenceCheckMilliseconds { get; set; } = 3000;
-        public string IssuesUrl { get; set; } = "http://github.com/canton7/SyncTrayzor/issues";
+        public string IssuesUrl { get; set; } = "http://github.com/GermanCoding/SyncTrayzor/issues";
         public bool EnableAutostartOnFirstStart { get; set; } = false;
         public int CefRemoteDebuggingPort { get; set; } = 0;
         public SyncTrayzorVariant Variant { get; set; } = SyncTrayzorVariant.Portable;

@@ -1,5 +1,30 @@
-Changelog
-=========
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
+
+### Added
+
+- Support for syncthing v2
+- Upgrade syncthing on first run, if no syncthing binary is found
+- Native builds for Windows on ARM64
+- Build all artifacts in GitHub Actions
+
+### Changed
+
+- Move the project from .NET Framework to .NET Core 8
+- Modernize all dependencies
+- Rewrite the "pause metered devices" feature without relying on obscure third-party DLLs (without source code)
+
+### Removed
+
+- Support for Windows Vista/7/8. Now requires Windows 10 or newer
+- No longer offers 32-bit builds. All versions are 64-bit only
+
 
 v1.1.19
 -------

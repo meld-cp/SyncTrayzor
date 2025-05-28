@@ -15,24 +15,3 @@ If you make use of these, I kindly ask that you consider sending a small amount 
 Donations are handled by the Syncthing Foundation, whose accounts are public.
 
 [Donate to Syncthing](https://syncthing.net/donations/).
-
-
-SyncTrayzor Charity Fundraiser
-------------------------------
-
-I've put a lot of my free time into writing and maintaining SyncTrayzor.
-If you use it and appreciate it, I'd be very grateful if you could show your thanks by 
-donating a small amount (the price of a beer) to charity.
-
-I've been running charity fundraisers for many years, and very kind people from all over the world have helped raise thousands for people who really need it, which is absolutely amazing.
-
-Please consider [donating to the current appeal](https://synctrayzor.antonymale.co.uk/fundraiser).
-
-
-Buy me a beer
--------------
-
-If you want to buy me a coffee (or beer!), you'll absolutely make my day.
-Thank you!
-
-I'm on [Ko-fi](https://ko-fi.com/canton7) or [PayPal](https://www.paypal.com/donate?hosted_button_id=92FADFBYS42MU).

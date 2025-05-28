@@ -1,13 +1,9 @@
 
-SyncTrayzor [![Build status](https://ci.appveyor.com/api/projects/status/pwa4mpy4066okxyu?svg=true)](https://ci.appveyor.com/project/canton7/synctrayzor)
+SyncTrayzor [![Build](https://github.com/GermanCoding/SyncTrayzor/actions/workflows/dotnet-build.yml/badge.svg)](https://github.com/GermanCoding/SyncTrayzor/actions/workflows/dotnet-build.yml)
 ===========
 
-⚠️ SyncTrayzor is unmaintained ⚠️
----------------------------
-
-I stopped using Syncthing some years ago, and I'm afraid I don't have the time to maintain it. Sorry.
-
-It looks like Syncthing 2.0 makes backwards-incompatible changes, which break SyncTrayzor. If you feel like forking it, please do. Otherwise, I can recommend [Syncthing Tray](https://github.com/Martchus/syncthingtray).
+> [!NOTE]
+> This is SyncTrayzor v2, a continuation of the (discontinued) original SyncTrayzor by @canton7 (Antony Male)
 
 
 Quick Links
@@ -45,28 +41,19 @@ Features include:
 Installation
 ------------
 
-SyncTrayzor is packaged as both an installer, standalone zip, and chocolatey package. It will run on Windows Vista or newer.
+SyncTrayzor is packaged as both an installer and standalone zip. It will run on Windows 10 or newer.
 
 ### Installer
 
-[Download `SyncTrayzorSetup-x64.exe` or `SyncTrayzorSetup-x86.exe`](https://github.com/canton7/SyncTrayzor/releases/latest) and run it.
+[Download `SyncTrayzorSetup-x64.exe` or `SyncTrayzorSetup-arm64.exe`](https://github.com/GermanCoding/SyncTrayzor/releases/latest) and run it.
 If you already have SyncTrayzor installed, this will update it.
+
+Please note that 32-bit builds are no longer offered. If you still have a 32-bit SyncTrayzor install, you should uninstall it first.
 
 ### Standalone
 
-First, you'll need .net 4.7.2. [Download the offline](https://support.microsoft.com/en-gb/help/4054530/microsoft-net-framework-4-7-2-offline-installer-for-windows) or [web installer](https://support.microsoft.com/en-gb/help/4054531/microsoft-net-framework-4-7-2-web-installer-for-windows) if you don't have it installed already.
-
-[Download `SyncTrayzorPortable-x64.zip` or `SyncTrayzorPortable-x86.zip`](https://github.com/canton7/SyncTrayzor/releases/latest).
+[Download `SyncTrayzorPortable-x64.zip` or `SyncTrayzorPortable-arm64.zip`](https://github.com/GermanCoding/SyncTrayzor/releases/latest).
 Unzip, and run `SyncTrayzor.exe`. If you're updating, you'll need to copy the `data` folder across from your previous standalone installation.
-
-
-### Chocolatey
-
-The installed version of SyncTrayzor is also [available on Chocolatey](https://chocolatey.org/packages/synctrayzor).
-
-```
-C:\> choco install synctrayzor
-```
 
 Something went wrong!
 ---------------------
@@ -76,16 +63,16 @@ Syncthing is the file synchronization program, which has a web interface.
 SyncTrayzor is the tray utility, looks like a normal Windows program, and has menus and suchlike, and a big area where Syncthing's web interface is displayed.
 
  - If you're having problems connecting to other devices, your files aren't synchronizing, or you're getting error messages in the console area, [raise an issue with Syncthing](https://github.com/syncthing/syncthing/issues/new) or [post on the Syncthing forums](https://forum.syncthing.net).
- - If SyncTrayzor isn't talking to Syncthing, you're getting error dialogs, it's not auto-starting, etc, [raise an issue with SyncTrayzor](https://github.com/canton7/SyncTrayzor/issues/new).
- - If you're not sure, raise an issue here and I'll redirect you if appropriate.
+ - If SyncTrayzor isn't talking to Syncthing, you're getting error dialogs, it's not auto-starting, etc, [raise an issue with SyncTrayzor](https://github.com/GermanCoding/SyncTrayzor/issues/new).
+ - If you're not sure, open a new discussion topic and someone will guide you to an appropiate place.
 
 
 Contributing
 ------------
 
-Multi-lingual? SyncTrayzor needs you! Please read [Localization](https://github.com/canton7/SyncTrayzor/wiki/Localization).
+Multi-lingual? SyncTrayzor needs you! Please read [Localization](https://github.com/GermanCoding/SyncTrayzor/wiki/Localization).
 
-Want to make a contribution? Fantastic, and thank you! Please read [Contributing](https://github.com/canton7/SyncTrayzor/wiki/Contributing) first.
+Want to make a contribution? Fantastic, and thank you! Please read [Contributing](https://github.com/GermanCoding/SyncTrayzor/wiki/Contributing) first.
 
 
 Find Syncthing/SyncTrayzor useful? Please donate!
@@ -111,7 +98,7 @@ How can I be sure that I'm not downloading a virus?
 
 You can be paranoid and build everything from source (after auditing the source), or you can trust that I'm a good person who's trusted by the Syncthing developers.
 
-You can verify that this GitHub account hasn't been compromised and is releasing malicious downloads by following the steps in the [Security README](https://github.com/canton7/SyncTrayzor/tree/master/security).
+You can verify that this GitHub account hasn't been compromised and is releasing malicious downloads by following the steps in the [Security README](https://github.com/GermanCoding/SyncTrayzor/tree/master/security).
 This process also lets you verify that Syncthing's developers trust me to release non-malicious software.
 
 
@@ -131,7 +118,7 @@ Good question. The answer depends on whether you installed SyncTrayzor using the
 
 ### Installed
 
-The Installed version of SyncTrayzor will install itself into `C:\Program Files\SyncTrayzor` or `C:\Program Files (x86)\SyncTrayzor` for the 64-bit and 32-bit version respectively.
+The Installed version of SyncTrayzor will install itself into `C:\Program Files\SyncTrayzor` or `%LocalAppData%\Programs\SyncTrayzor` for all-users or current-user version respectively.
 
 By default, SyncTrayzor will put its own configuration in `C:\Users\<You>\AppData\Roaming\SyncTrayzor`, and let Syncthing use its default folder for its database, which is `C:\Users\<You>\AppData\Local\Syncthing`.
 It will also create a registry key at `HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run\SyncTrayzor` the first time that it is run, which will let it start when you log in.
@@ -190,8 +177,8 @@ SyncTrayzor keeps two copies of syncthing.exe.
 The copy that is executed is at `C:\Users\<You>\AppData\Roaming\SyncTrayzor\syncthing.exe`.
 This one is writable by the user, allowing Syncthing to auto-upgrade.
 
-There's also a backup copy in `C:\Program Files\SyncTrayzor\syncthing.exe`.
-This one is copied to `C:\Users\<You>\AppData\Roaming\SyncTrayzor\syncthing.exe` if that one does not exist (SyncTrayzor has never been run before for that user, for example).
+There's also a backup copy in SyncTrayzors main install directory.
+This one is copied to `C:\Users\<You>\AppData\Roaming\SyncTrayzor\syncthing.exe` if that one does not exist (SyncTrayzor has never been run before for that user, for example). SyncTrayzor will attempt to upgrade this version when copying it.
 
 If you want to manually upgrade (e.g. to a beta version) you should download Syncthing from [the releases page](https://github.com/syncthing/syncthing/releases), and replace the `syncthing.exe` in `C:\Users\<You>\AppData\Roaming\SyncTrayzor`.
 
@@ -208,9 +195,11 @@ If you want to manually upgrade (e.g. to a beta version) you should download Syn
 Building from Source
 --------------------
 
-You'll need Visual Studio 2019.
-Clone/download the repository, open `src\SyncTrayzor.sln`, and compile.
-You'll also need to [download syncthing.exe](https://github.com/syncthing/syncthing/releases) and place it in the `bin\x86\Debug`, `bin\x64\Debug`, `bin\x86\Release`, or `bin\x64\Release` folder as appropriate.
+You'll need the [VC++ redist](https://aka.ms/vs/17/release/vc_redist.x64.exe) (2019+ release) installed. Most Windows machines have it already. Next, you need to install the [.NET SDK](https://dotnet.microsoft.com/en-us/download), currently 8.0 LTS. Some IDEs, like Visual Studio Code or JetBrains Rider can also help you in setting this up.
+
+Clone/download the repository, open `src\SyncTrayzor.sln` in your IDE, and compile. If you've compiled .NET programs before, this should be familiar.
+
+You'll also need to [download syncthing.exe](https://github.com/syncthing/syncthing/releases) and place it in the binary output folder as appropriate (SyncTrayzor will guide you to the exact location in an error message, if required).
 
 
 Notes for System Administrators
