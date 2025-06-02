@@ -23,7 +23,7 @@ if (Test-Path $publishDir) {
     Remove-Item $publishDir -Recurse -Force
 }
 
-dotnet build -c Release -p:DebugType=None -p:DebugSymbols=false -p:AppConfigVariant=$Variant src/SyncTrayzor/SyncTrayzor.csproj
+dotnet build -c Release -p:DebugType=None -p:DebugSymbols=false -p:SelfContained=true -p:AppConfigVariant=$Variant src/SyncTrayzor/SyncTrayzor.csproj
 if ($LASTEXITCODE -ne 0) {
     Write-Error "Failed to build SyncTrayzor. Exiting."
     exit $LASTEXITCODE

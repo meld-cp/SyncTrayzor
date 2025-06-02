@@ -20,7 +20,7 @@
     <UseWPF>true</UseWPF>
     <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
     <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
-    <SelfContained Condition="'$(SelfContained)' == ''">true</SelfContained>
+    <SelfContained Condition="'$(SelfContained)' == ''">false</SelfContained>
     <Optimize>true</Optimize>
     <!-- Hack to a) use the current processor architecture b) forcing a windows runtime, such that build on Linux works -->
     <RuntimeIdentifier>win-$([System.String]::Copy('$(NETCoreSdkRuntimeIdentifier)').Split('-')[1])</RuntimeIdentifier>

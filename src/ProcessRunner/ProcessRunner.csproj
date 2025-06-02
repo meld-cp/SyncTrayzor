@@ -6,7 +6,7 @@
         <AssemblyTitle>SyncTrayzor ProcessRunner</AssemblyTitle>
         <Product>SyncTrayzor</Product>
         <Copyright>Copyright © Antony Male 2015</Copyright>
-        <SelfContained Condition="'$(SelfContained)' == ''">true</SelfContained>
+        <SelfContained Condition="'$(SelfContained)' == ''">false</SelfContained>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="Mono.Options" Version="6.12.0.148"/>
