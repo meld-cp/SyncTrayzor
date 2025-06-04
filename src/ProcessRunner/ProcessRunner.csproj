@@ -7,8 +7,15 @@
         <Product>SyncTrayzor</Product>
         <Copyright>Copyright © Antony Male 2015</Copyright>
         <SelfContained Condition="'$(SelfContained)' == ''">false</SelfContained>
+        <PublishSingleFile>true</PublishSingleFile>
+        <PublishTrimmed>true</PublishTrimmed>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="Mono.Options" Version="6.12.0.148"/>
+    </ItemGroup>
+    <ItemGroup>
+        <Compile Include="..\SyncTrayzor\Utils\StringExtensions.cs">
+            <Link>StringExtensions.cs</Link>
+        </Compile>
     </ItemGroup>
 </Project>
