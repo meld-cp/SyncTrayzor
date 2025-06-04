@@ -145,25 +145,25 @@ namespace SyncTrayzor.Services.UpdateManagement
             {
                 var webClient = new HttpClient();
 
-                using (var downloadFileHandle = filesystemProvider.Open(downloadPath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None))
-                using (var downloadStream = await webClient.GetStreamAsync(url))
+                await using var downloadFileHandle = filesystemProvider.Open(downloadPath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
+                using var responseMessage = await webClient.GetAsync(url);
+                var responseLength = responseMessage.Content.Headers.ContentLength ?? 1;
+                await using var downloadStream = await responseMessage.Content.ReadAsStreamAsync();
+                var previousDownloadProgressString = String.Empty;
+
+                var progress = new Progress<CopyToAsyncProgress>(p =>
                 {
-                    var responseLength = downloadStream.Length;
-                    var previousDownloadProgressString = String.Empty;
-
-                    var progress = new Progress<CopyToAsyncProgress>(p =>
+                    var downloadProgressString = String.Format("Downloaded {0}/{1} ({2}%)",
+                        FormatUtils.BytesToHuman(p.BytesRead), FormatUtils.BytesToHuman(responseLength),
+                        (p.BytesRead * 100) / responseLength);
+                    if (downloadProgressString != previousDownloadProgressString)
                     {
-                        var downloadProgressString = String.Format("Downloaded {0}/{1} ({2}%)",
-                            FormatUtils.BytesToHuman(p.BytesRead), FormatUtils.BytesToHuman(responseLength), (p.BytesRead * 100) / responseLength);
-                        if (downloadProgressString != previousDownloadProgressString)
-                        {
-                            logger.Debug(downloadProgressString);
-                            previousDownloadProgressString = downloadProgressString;
-                        }
-                    });
+                        logger.Debug(downloadProgressString);
+                        previousDownloadProgressString = downloadProgressString;
+                    }
+                });
 
-                    await downloadStream.CopyToAsync(downloadFileHandle, progress);
-                }
+                await downloadStream.CopyToAsync(downloadFileHandle, progress);
             }
             catch (IOException e)
             {
