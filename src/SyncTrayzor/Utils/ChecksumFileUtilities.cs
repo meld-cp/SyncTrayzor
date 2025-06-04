@@ -24,6 +24,7 @@ namespace SyncTrayzor.Utils
             var formattedHash = FormatHash(hash);
 
             using var streamWriter = new StreamWriter(checksumFile, Encoding.ASCII, 256, true);
+            streamWriter.NewLine = "\n";
             streamWriter.Write(formattedHash);
             streamWriter.Write("  ");
             streamWriter.Write(filenameToChecksum.Trim());

@@ -3,7 +3,7 @@
 version: "3"
 
 vars:
-   DOWNLOAD_SYNCTHING_VERSION: "v2.0.0-rc.16"
+   DOWNLOAD_SYNCTHING_VERSION: "v2.0.0-rc.19"
 
 tasks:
    download-syncthing:
@@ -46,3 +46,9 @@ tasks:
               variant: "Installed"
          - powershell -ExecutionPolicy Bypass -File scripts/build-inno-setup.ps1
       platforms: [windows]
+   sign-release:
+      desc: "Sign release files in ./release folder"
+      cmds:
+         - powershell -ExecutionPolicy Bypass -File scripts/sign-release.ps1
+      platforms: [windows]
+      run: once
