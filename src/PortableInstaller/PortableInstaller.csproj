@@ -6,6 +6,8 @@
     <AssemblyTitle>PortableInstaller</AssemblyTitle>
     <Product>PortableInstaller</Product>
     <Copyright>Copyright ©  2015</Copyright>
+    <PublishSingleFile>true</PublishSingleFile>
+    <PublishTrimmed>true</PublishTrimmed>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\SyncTrayzor\Utils\RecycleBinDeleter.cs">

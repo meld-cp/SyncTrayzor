@@ -36,6 +36,8 @@ tasks:
          - task: build
            vars:
               variant: "Portable"
+         - powershell -ExecutionPolicy Bypass -File scripts/build-portable.ps1
+      platforms: [windows]
    build-installer:
       desc: "Build SyncTrayzor with installer"
       cmds:

@@ -13,7 +13,7 @@ $dotnetArch = switch ($arch) {
     default { throw "Unknown architecture: $arch" }
 }
 $syncthingExe = ".\syncthing\syncthing.exe"
-$publishDir = ".\src\SyncTrayzor\bin\Release\$dotnetTargetSyncTrayzor\$dotnetArch\"
+$publishDir = ".\src\SyncTrayzor\bin\Release\$dotnetTargetSyncTrayzor\$dotnetArch\publish"
 $mergedDir = ".\dist"
 
 Write-Host "Building SyncTrayzor for $Variant"
@@ -23,7 +23,7 @@ if (Test-Path $publishDir) {
     Remove-Item $publishDir -Recurse -Force
 }
 
-dotnet build -c Release -p:DebugType=None -p:DebugSymbols=false -p:SelfContained=true -p:AppConfigVariant=$Variant src/SyncTrayzor/SyncTrayzor.csproj
+dotnet publish -c Release -p:DebugType=None -p:DebugSymbols=false -p:SelfContained=true -p:AppConfigVariant=$Variant src/SyncTrayzor/SyncTrayzor.csproj
 if ($LASTEXITCODE -ne 0) {
     Write-Error "Failed to build SyncTrayzor. Exiting."
     exit $LASTEXITCODE
