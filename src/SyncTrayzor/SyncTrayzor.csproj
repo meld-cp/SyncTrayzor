@@ -78,9 +78,6 @@
         <EmbeddedResource Include="Resources\Licenses\FluentValidation.txt"/>
     </ItemGroup>
     <ItemGroup>
-        <EmbeddedResource Include="Resources\Licenses\LongPath.txt"/>
-    </ItemGroup>
-    <ItemGroup>
         <EmbeddedResource Include="Resources\Licenses\SmartFormat.txt"/>
     </ItemGroup>
     <ItemGroup>

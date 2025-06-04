@@ -100,15 +100,6 @@ namespace SyncTrayzor.Pages
                 },
                 new ThirdPartyComponent()
                 {
-                    Name = "LongPath",
-                    Description = "Drop-in library to support long paths in .NET",
-                    Homepage = "https://github.com/peteraritchie/LongPath",
-                    License = "LGPLv3",
-                    Notes = "Required for long path support (since .NET sucks here)",
-                    LicenseText = LoadLicense("LongPath.txt")
-                },
-                new ThirdPartyComponent()
-                {
                     Name = "SmartFormat.NET",
                     Description = "An extensible .NET replacement for String.Format",
                     Homepage = "https://github.com/scottrippey/SmartFormat.NET",

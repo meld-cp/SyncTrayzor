@@ -16,7 +16,7 @@ namespace SyncTrayzor.Services
     public class DonationManager : PropertyChangedBase, IDonationManager
     {
         // Not in the app.config, in case some sysadmin wants to change it
-        private const string donateUrl = "https://synctrayzor.antonymale.co.uk/donate";
+        private const string donateUrl = "https://github.com/GermanCoding/SyncTrayzor";
 
         private readonly IConfigurationProvider configurationProvider;
         private readonly IProcessStartProvider processStartProvider;
