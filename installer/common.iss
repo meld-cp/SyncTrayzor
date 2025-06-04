@@ -8,6 +8,7 @@
 #define AppPublisher "SyncTrayzor"
 #define AppURL "https://github.com/GermanCoding/SyncTrayzor"
 #define AppDataFolder "SyncTrayzor"
+#define SyncthingFolder "Syncthing"
 
 [Setup]
 AppId={{#AppId}
@@ -22,7 +23,7 @@ AppUpdatesURL={#AppURL}
 DefaultDirName={autopf}\{#AppName}
 DefaultGroupName={#AppName}
 AllowNoIcons=yes
-OutputDir="."
+OutputDir="..\release\"
 OutputBaseFilename={#AppName}Setup-{#Arch}
 SetupIconFile={#AppSrc}\Icons\default.ico
 WizardSmallImageFile=icon.bmp
@@ -132,7 +133,7 @@ begin
     begin
       if FileExists(ExeConfig) then
       begin
-        CopyFile(ExeConfig, ExpandConstant('{app}\SyncTrayzor.exe.config'), false);
+        CopyFile(ExeConfig, ExpandConstant('{app}\SyncTrayzor.dll.config'), false);
       end
       else
       begin
@@ -177,7 +178,20 @@ var
   keyValueNames: TArrayOfString;
   keyValue: String;
   i: Integer;
+  mres : integer;
 begin
+  case CurUninstallStep of
+      usPostUninstall:
+        begin
+          mres := MsgBox('Remove all syncthing configuration, metadata, folders, device ID? This cannot be undone.', mbConfirmation, MB_YESNO or MB_DEFBUTTON2)
+            if mres = IDYES then
+            begin
+              DelTree(ExpandConstant('{userappdata}\{#AppDataFolder}'), True, True, True);
+              DelTree(ExpandConstant('{localappdata}\{#AppDataFolder}'), True, True, True);
+              DelTree(ExpandConstant('{localappdata}\{#SyncthingFolder}'), True, True, True);
+            end;
+       end;
+   end;
   if CurUninstallStep = usPostUninstall then
   begin
     if RegGetValueNames(HKEY_CURRENT_USER, 'SOFTWARE\Microsoft\Windows\CurrentVersion\Run', keyValueNames) then
@@ -205,8 +219,4 @@ Filename: "{app}\SyncTrayzor.exe"; Parameters: "--shutdown"; RunOnceId: "Shutdow
 [UninstallDelete]
 Type: files; Name: "{app}\ProcessRunner.exe.old"
 Type: files; Name: "{app}\InstallCount.txt"
-; Not sure why this gets left behind, but it does. Clean it up...
-Type: filesandordirs; Name: "{app}\locales"
-Type: filesandordirs; Name: "{userappdata}\{#AppDataFolder}"
-Type: filesandordirs; Name: "{localappdata}\{#AppDataFolder}"
 
