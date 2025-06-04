@@ -3,6 +3,7 @@ name: Build
 on:
   push:
     branches: [ "main" ]
+    tags: [ "v*" ]
   pull_request:
     branches: [ "main" ]
 jobs:
@@ -33,8 +34,8 @@ jobs:
     - name: Upload portable dist
       uses: actions/upload-artifact@v4
       with:
-        name: SyncTrayzorPortable-${{ env.arch }}
-        path: ./dist/
+        name: SyncTrayzorPortable-${{ env.arch }}.zip
+        path: ./release/SyncTrayzorPortable-${{ env.arch }}.zip
 
     - name: Build SyncTrayzor Installer
       run: task build-installer
@@ -43,4 +44,74 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: SyncTrayzorSetup-${{ env.arch }}.exe
-        path: ./installer/SyncTrayzorSetup-${{ env.arch }}.exe
+        path: ./release/SyncTrayzorSetup-${{ env.arch }}.exe
+  release:
+    if: github.ref_type == 'tag'
+    needs: build
+    runs-on: windows-latest
+    permissions:
+      contents: write
+      discussions: write
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download all build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: "${{ github.workspace }}/release"
+          merge-multiple: true
+
+      - name: Install Task
+        uses: arduino/setup-task@v2
+
+      - name: Write private key to file
+        run: |
+          cat << EOF > synctrayzor_private_key.asc
+          ${{ secrets.SYNCTRAYZOR_PRIVATE_KEY }}
+          EOF
+        shell: bash
+
+      - name: Sign artifacts
+        run: task sign-release
+        env:
+          SYNCTRAYZOR_PRIVATE_KEY: "${{ github.workspace }}\\synctrayzor_private_key.asc"
+          SYNCTRAYZOR_PRIVATE_KEY_PASSPHRASE: "${{ secrets.SYNCTRAYZOR_PRIVATE_KEY_PASSPHRASE }}"
+
+      - name: Upload signature file
+        uses: actions/upload-artifact@v4
+        with:
+          name: sha512sum.txt.asc
+          path: release/sha512sum.txt.asc
+
+      - name: Get version from tag
+        id: tag_name
+        run: |
+          echo "current_version=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+        shell: bash
+
+      - name: Get Changelog Entry
+        id: changelog_reader
+        uses: mindsers/changelog-reader-action@v2
+        with:
+          validation_level: warn
+          version: ${{ steps.tag_name.outputs.current_version }}
+          path: ./CHANGELOG.md
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            release/**
+          name: Release ${{ steps.changelog_reader.outputs.version }}
+          body: ${{ steps.changelog_reader.outputs.changes }}
+          prerelease: ${{ steps.changelog_reader.outputs.status == 'prereleased' }}
+          draft: ${{ steps.changelog_reader.outputs.status == 'unreleased' }}
+          discussion_category_name: "Releases"
+          preserve_order: true
+          fail_on_unmatched_files: true
+          append_body: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
