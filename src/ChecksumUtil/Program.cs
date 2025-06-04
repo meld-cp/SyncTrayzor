@@ -123,6 +123,7 @@ namespace ChecksumUtil
         {
             Console.WriteLine("Usage : ChecksumUtil.exe create checksumfile algorithm privatekey passphrase inputfile [inputfile ...]");
             Console.WriteLine("        ChecksumUtil.exe verify checksumfile algorithm certificate inputfile [inputfile ...]");
+            Environment.Exit(2);
         }
     }
 }
