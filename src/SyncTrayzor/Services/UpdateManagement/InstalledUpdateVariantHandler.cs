@@ -54,7 +54,7 @@ namespace SyncTrayzor.Services.UpdateManagement
             if (installerPath == null)
                 throw new InvalidOperationException("TryHandleUpdateAvailableAsync returned false: cannot call AutoInstall");
 
-            processStartProvider.StartElevatedDetached(installerPath, "/SILENT", pathToRestartApplication);
+            processStartProvider.StartDetached(installerPath, "/SILENT", pathToRestartApplication);
         }
     }
 }
