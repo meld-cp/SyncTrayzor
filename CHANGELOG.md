@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2.0.0-beta.1] - 2025-06-04
+## [2.0.0-beta.2] - 2025-06-07
 
 ### Added
 
@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Native builds for Windows on ARM64 (UNTESTED)
 - Build all artifacts in GitHub Actions
 - Installer can now install in current-user mode (no administrative privileges required)
+- (beta.2) Allow the activity popup window to stay open (optional, new setting)
 
 ### Changed
 
@@ -29,7 +30,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - No longer offers 32-bit builds. All versions are 64-bit only
 
 
-v1.1.19
+## [1.1] - Meta Release
+
+### Changed
+
+Versions prior to 2.0 did not follow the [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) format.
+
+
+v1.1.29
 -------
 
  - Don't crash in rare cases trying to detect if Intel Xe Graphics in use (#626)
