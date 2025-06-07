@@ -70,6 +70,7 @@ namespace SyncTrayzor.Pages.Settings
         public SettingItem<bool> ShowSynchronizedBalloonEvenIfNothingDownloaded { get; }
         public SettingItem<bool> ShowDeviceConnectivityBalloons { get; }
         public SettingItem<bool> ShowDeviceOrFolderRejectedBalloons { get; }
+        public SettingItem<bool> KeepActivityPopupOpen { get; }
 
         public BindableCollection<LabelledValue<IconAnimationMode>> IconAnimationModes { get; }
         public SettingItem<IconAnimationMode> IconAnimationMode { get; }
@@ -141,6 +142,7 @@ namespace SyncTrayzor.Pages.Settings
             ShowSynchronizedBalloonEvenIfNothingDownloaded = CreateBasicSettingItem(x => x.ShowSynchronizedBalloonEvenIfNothingDownloaded);
             ShowDeviceConnectivityBalloons = CreateBasicSettingItem(x => x.ShowDeviceConnectivityBalloons);
             ShowDeviceOrFolderRejectedBalloons = CreateBasicSettingItem(x => x.ShowDeviceOrFolderRejectedBalloons);
+            KeepActivityPopupOpen = CreateBasicSettingItem(x => x.KeepActivityPopupOpen);
 
             IconAnimationModes = new BindableCollection<LabelledValue<IconAnimationMode>>()
             {

@@ -24,6 +24,7 @@ namespace SyncTrayzor.NotifyIcon
 
         public bool Visible { get; set; }
         public bool MainWindowVisible { get; set; }
+        public bool KeepActivityPopupOpen { get; set; }
         public BindableCollection<FolderViewModel> Folders { get; private set; }
         public FileTransfersTrayViewModel FileTransfersViewModel { get; private set; }
 
@@ -73,7 +74,9 @@ namespace SyncTrayzor.NotifyIcon
             this.alertsManager.AlertsStateChanged += AlertsStateChanged;
 
             this.configurationProvider.ConfigurationChanged += ConfigurationChanged;
-            iconAnimationmode = this.configurationProvider.Load().IconAnimationMode;
+            var configuration = this.configurationProvider.Load();
+            iconAnimationmode = configuration.IconAnimationMode;
+            KeepActivityPopupOpen = configuration.KeepActivityPopupOpen;
         }
 
         private void StateChanged(object sender, SyncthingStateChangedEventArgs e)
@@ -117,6 +120,7 @@ namespace SyncTrayzor.NotifyIcon
         private void ConfigurationChanged(object sender, ConfigurationChangedEventArgs e)
         {
             iconAnimationmode = e.NewConfiguration.IconAnimationMode;
+            KeepActivityPopupOpen = e.NewConfiguration.KeepActivityPopupOpen;
             // Reset, just in case
             SyncthingSyncing = false;
         }

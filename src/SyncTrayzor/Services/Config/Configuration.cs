@@ -28,6 +28,7 @@ namespace SyncTrayzor.Services.Config
         public bool ShowDeviceConnectivityBalloons { get; set; }
         public bool ShowDeviceOrFolderRejectedBalloons { get; set; }
         public bool ShowSynchronizedBalloonEvenIfNothingDownloaded { get; set; }
+        public bool KeepActivityPopupOpen { get; set; }
         public string SyncthingAddress { get; set; }
         public bool StartSyncthingAutomatically { get; set; }
 
@@ -110,6 +111,7 @@ namespace SyncTrayzor.Services.Config
             OpenFolderCommand = "explorer.exe \"{0}\"";
             ShowFileInFolderCommand = "explorer.exe /select, \"{0}\"";
             LogLevel = LogLevel.Info;
+            KeepActivityPopupOpen = false;
         }
 
         public Configuration(Configuration other)
@@ -148,6 +150,7 @@ namespace SyncTrayzor.Services.Config
             OpenFolderCommand = other.OpenFolderCommand;
             ShowFileInFolderCommand = other.ShowFileInFolderCommand;
             LogLevel = other.LogLevel;
+            KeepActivityPopupOpen = other.KeepActivityPopupOpen;
         }
 
         public override string ToString()
@@ -166,7 +169,8 @@ namespace SyncTrayzor.Services.Config
                 $"EnableConflictFileMonitoring={EnableConflictFileMonitoring} " +
                 $"ConflictResolverDeletesToRecycleBin={ConflictResolverDeletesToRecycleBin} PauseDevicesOnMeteredNetworks={PauseDevicesOnMeteredNetworks} " +
                 $"HaveDonated={HaveDonated} IconAnimationMode={IconAnimationMode} OpenFolderCommand={OpenFolderCommand} ShowFileInFolderCommand={ShowFileInFolderCommand}" +
-                $"LogLevel={LogLevel}>";
+                $"LogLevel={LogLevel}" +
+                $"KeepActivityPopupOpen={KeepActivityPopupOpen}>";
         }
     }
 }

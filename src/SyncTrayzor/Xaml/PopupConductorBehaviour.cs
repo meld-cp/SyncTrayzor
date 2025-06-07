@@ -2,6 +2,7 @@
 using System;
 using System.Windows;
 using System.Windows.Controls.Primitives;
+using System.Windows.Input;
 
 namespace SyncTrayzor.Xaml
 {
@@ -20,12 +21,14 @@ namespace SyncTrayzor.Xaml
         {
             AssociatedObject.Opened += Opened;
             AssociatedObject.Closed += Closed;
+            AssociatedObject.PreviewMouseUp += ManualClose;
         }
 
         protected override void DetachHandlers()
         {
             AssociatedObject.Opened -= Opened;
             AssociatedObject.Closed -= Closed;
+            AssociatedObject.PreviewMouseUp -= ManualClose;
         }
 
         private void Opened(object sender, EventArgs e)
@@ -38,6 +41,14 @@ namespace SyncTrayzor.Xaml
         {
             if (DataContext is IScreenState screenState)
                 screenState.Close();
+        }
+
+        private void ManualClose(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton == MouseButton.Right)
+            {
+                AssociatedObject.IsOpen = false;
+            }
         }
     }
 }
