@@ -229,7 +229,7 @@ namespace SyncTrayzor.Syncthing.TransferHistory
         {
             var folderId = e.FolderId;
 
-            if (e.PrevSyncState == FolderSyncState.Syncing)
+            if (e.SyncState == FolderSyncState.Idle)
             {
                 List<FileTransfer> transferredList = null;
                 List<FileTransfer> completedFileTransfers; // Those that Syncthing didn't tell us had completed
