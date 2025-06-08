@@ -8,6 +8,8 @@ on:
     branches: [ "main" ]
 jobs:
   build:
+    permissions:
+      contents: read
     strategy:
       matrix:
         os: [windows-latest, windows-11-arm]
