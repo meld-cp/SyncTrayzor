@@ -15,3 +15,8 @@ If you make use of these, I kindly ask that you consider sending a small amount 
 Donations are handled by the Syncthing Foundation, whose accounts are public.
 
 [Donate to Syncthing](https://syncthing.net/donations/).
+
+SyncTrayzor
+-----------
+
+If you wish to donate to me directly, I have a [GitHub sponsors page](https://github.com/sponsors/GermanCoding). Note that I am not directly involved with Syncthing development (nor do I receive funding from them), but only SyncTrayzor development.
