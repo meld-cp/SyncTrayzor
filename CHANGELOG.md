@@ -5,7 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2.0.0-beta.2] - 2025-06-07
+## [2.0.0-beta.3] - 2025-06-08
+
+> [!CAUTION]
+> This beta is primarily built for syncthing v2. If you uninstall SyncTrayzor v1 and install v2, your existing syncthing (if any) will be upgraded to syncthing v2.
+
+> [!WARNING]
+> This is a beta release with potential bugs. You can run the portable release side by side with an existing SyncTrayzor install.
+
+> [!IMPORTANT]
+> Installing SyncTrayzor v2 will overwrite any existing v1 installation. However, the installation directory is not cleaned, which results in a mix of v1 and v2 files. The new uninstall behaviour does not work properly if v1 is upgraded to v2, due to uninstallers being merged.
+
+> [!IMPORTANT]
+> The auto-upgrade mechanism will not automatically upgrade to a newer beta. Auto-upgrades are only for release versions.
 
 ### Added
 
@@ -15,6 +27,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Build all artifacts in GitHub Actions
 - Installer can now install in current-user mode (no administrative privileges required)
 - (beta.2) Allow the activity popup window to stay open (optional, new setting)
+
+### Fixed
+
+- (beta.3) Fix bugs with file transfer detection introduced in beta.1
 
 ### Changed
 
