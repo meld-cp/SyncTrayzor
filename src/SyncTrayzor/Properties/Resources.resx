@@ -158,7 +158,7 @@
     <comment>'Save' button shown on various dialogs</comment>
   </data>
   <data name="ShellView_Menu_File" xml:space="preserve">
-    <value>_File</value>
+    <value>File</value>
   </data>
   <data name="ShellView_Menu_File_Exit" xml:space="preserve">
     <value>_Exit</value>
@@ -167,13 +167,13 @@
     <value>_Settings</value>
   </data>
   <data name="ShellView_Menu_Help" xml:space="preserve">
-    <value>_Help</value>
+    <value>Help</value>
   </data>
   <data name="ShellView_Menu_Help_About" xml:space="preserve">
     <value>_About</value>
   </data>
   <data name="ShellView_Menu_Syncthing" xml:space="preserve">
-    <value>_Syncthing</value>
+    <value>Syncthing</value>
   </data>
   <data name="ShellView_Menu_Syncthing_KillAll" xml:space="preserve">
     <value>Kill _all Syncthing processes</value>
@@ -182,7 +182,7 @@
     <value>_Open in external browser</value>
   </data>
   <data name="ShellView_Menu_Syncthing_Refresh" xml:space="preserve">
-    <value>_Refresh browser</value>
+    <value>Refresh browser</value>
   </data>
   <data name="ShellView_Menu_Syncthing_Start" xml:space="preserve">
     <value>_Start</value>
@@ -375,7 +375,7 @@ Details on each component, and its license text, are shown below.</value>
     <value>Finished Syncing</value>
   </data>
   <data name="TrayIcon_Menu_CloseToTray" xml:space="preserve">
-    <value>_Close to Tray</value>
+    <value>Close to Tray</value>
     <comment>Menu option available when right-clicking the tray icon. Instructs SyncTrayzor to minimize itself to the tray</comment>
   </data>
   <data name="TrayIcon_Menu_Exit" xml:space="preserve">
@@ -506,7 +506,7 @@ SyncTrayzor is going to have to close. Sorry about that</value>
     <value>_View</value>
   </data>
   <data name="ShellView_Menu_View_SyncthingConsole" xml:space="preserve">
-    <value>Syncthing _Console</value>
+    <value>Syncthing Console</value>
   </data>
   <data name="NewVersionAlertView_Button_Install" xml:space="preserve">
     <value>Install Now</value>
@@ -515,7 +515,7 @@ SyncTrayzor is going to have to close. Sorry about that</value>
     <value>View Changelog</value>
   </data>
   <data name="ShellView_Menu_Zoom" xml:space="preserve">
-    <value>_Zoom Browser</value>
+    <value>Zoom Browser</value>
   </data>
   <data name="ShellView_Menu_Zoom_In" xml:space="preserve">
     <value>Zoom _In</value>
@@ -524,7 +524,7 @@ SyncTrayzor is going to have to close. Sorry about that</value>
     <value>Zoom _Out</value>
   </data>
   <data name="ShellView_Menu_Zoom_Reset" xml:space="preserve">
-    <value>_Reset</value>
+    <value>Reset</value>
   </data>
   <data name="SettingsView_Validation_SyncthingEnvironmentalVariablesMustHaveFormat" xml:space="preserve">
     <value>Must be in the format 'VAR=value' or 'VAR="val1 val2"'</value>
@@ -992,7 +992,7 @@ Please donate to my charity fundraising campaign.</value>
     <value>Syncthing Custom Path</value>
   </data>
   <data name="TrayIcon_Menu_RescanAllFolders" xml:space="preserve">
-    <value>_Rescan All Folders</value>
+    <value>Rescan All Folders</value>
     <comment>Menu option available when right-clicking the tray icon. Allows the user to re-scan all folders</comment>
   </data>
   <data name="BarAlertsView_IntelXeGraphics_AlertText" xml:space="preserve">
