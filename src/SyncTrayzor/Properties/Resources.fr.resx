@@ -1,110 +1,52 @@
-<?xml version="1.0" encoding="utf-8"?>
-<root>
-  <!-- 
-    Microsoft ResX Schema 
-    
-    Version 2.0
-    
-    The primary goals of this format is to allow a simple XML format 
-    that is mostly human readable. The generation and parsing of the 
-    various data types are done through the TypeConverter classes 
-    associated with the data types.
-    
-    Example:
-    
-    ... ado.net/XML headers & schema ...
-    <resheader name="resmimetype">text/microsoft-resx</resheader>
-    <resheader name="version">2.0</resheader>
-    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
-    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
-    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
-    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
-    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
-        <value>[base64 mime encoded serialized .NET Framework object]</value>
-    </data>
-    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
-        <comment>This is a comment</comment>
-    </data>
-                
-    There are any number of "resheader" rows that contain simple 
-    name/value pairs.
-    
-    Each data row contains a name, and value. The row also contains a 
-    type or mimetype. Type corresponds to a .NET class that support 
-    text/value conversion through the TypeConverter architecture. 
-    Classes that don't support this are serialized and stored with the 
-    mimetype set.
-    
-    The mimetype is used for serialized objects, and tells the 
-    ResXResourceReader how to depersist the object. This is currently not 
-    extensible. For a given mimetype the value must be set accordingly:
-    
-    Note - application/x-microsoft.net.object.binary.base64 is the format 
-    that the ResXResourceWriter will generate, however the reader can 
-    read any of the formats listed below.
-    
-    mimetype: application/x-microsoft.net.object.binary.base64
-    value   : The object must be serialized with 
-            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
-            : and then encoded with base64 encoding.
-    
-    mimetype: application/x-microsoft.net.object.soap.base64
-    value   : The object must be serialized with 
-            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
-            : and then encoded with base64 encoding.
-
-    mimetype: application/x-microsoft.net.object.bytearray.base64
-    value   : The object must be serialized into a byte array 
-            : using a System.ComponentModel.TypeConverter
-            : and then encoded with base64 encoding.
-    -->
-  <xsd:schema xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" id="root">
-    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
-    <xsd:element msdata:IsDataSet="true" name="root">
-      <xsd:complexType>
-        <xsd:choice maxOccurs="unbounded">
-          <xsd:element name="metadata">
-            <xsd:complexType>
-              <xsd:sequence>
-                <xsd:element minOccurs="0" name="value" type="xsd:string" />
-              </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" />
-              <xsd:attribute name="type" type="xsd:string" />
-              <xsd:attribute name="mimetype" type="xsd:string" />
-              <xsd:attribute ref="xml:space" />
-            </xsd:complexType>
-          </xsd:element>
-          <xsd:element name="assembly">
-            <xsd:complexType>
-              <xsd:attribute name="alias" type="xsd:string" />
-              <xsd:attribute name="name" type="xsd:string" />
-            </xsd:complexType>
-          </xsd:element>
-          <xsd:element name="data">
-            <xsd:complexType>
-              <xsd:sequence>
-                <xsd:element msdata:Ordinal="1" minOccurs="0" name="value" type="xsd:string" />
-                <xsd:element msdata:Ordinal="2" minOccurs="0" name="comment" type="xsd:string" />
-              </xsd:sequence>
-              <xsd:attribute msdata:Ordinal="1" name="name" type="xsd:string" use="required" />
-              <xsd:attribute msdata:Ordinal="3" name="type" type="xsd:string" />
-              <xsd:attribute msdata:Ordinal="4" name="mimetype" type="xsd:string" />
-              <xsd:attribute ref="xml:space" />
-            </xsd:complexType>
-          </xsd:element>
-          <xsd:element name="resheader">
-            <xsd:complexType>
-              <xsd:sequence>
-                <xsd:element msdata:Ordinal="1" minOccurs="0" name="value" type="xsd:string" />
-              </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" />
-            </xsd:complexType>
-          </xsd:element>
-        </xsd:choice>
-      </xsd:complexType>
-    </xsd:element>
-  </xsd:schema>
+<?xml version='1.0' encoding='utf-8'?>
+<root xmlns:ns1="urn:schemas-microsoft-com:xml-msdata" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  
+  <xs:schema id="root">
+    <xs:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xs:element ns1:IsDataSet="true" name="root">
+      <xs:complexType>
+        <xs:choice maxOccurs="unbounded">
+          <xs:element name="metadata">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element minOccurs="0" name="value" type="xsd:string" />
+              </xs:sequence>
+              <xs:attribute name="name" type="xsd:string" use="required" />
+              <xs:attribute name="type" type="xsd:string" />
+              <xs:attribute name="mimetype" type="xsd:string" />
+              <xs:attribute ref="xml:space" />
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="assembly">
+            <xs:complexType>
+              <xs:attribute name="alias" type="xsd:string" />
+              <xs:attribute name="name" type="xsd:string" />
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="data">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ns1:Ordinal="1" minOccurs="0" name="value" type="xsd:string" />
+                <xs:element ns1:Ordinal="2" minOccurs="0" name="comment" type="xsd:string" />
+              </xs:sequence>
+              <xs:attribute ns1:Ordinal="1" name="name" type="xsd:string" use="required" />
+              <xs:attribute ns1:Ordinal="3" name="type" type="xsd:string" />
+              <xs:attribute ns1:Ordinal="4" name="mimetype" type="xsd:string" />
+              <xs:attribute ref="xml:space" />
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="resheader">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ns1:Ordinal="1" minOccurs="0" name="value" type="xsd:string" />
+              </xs:sequence>
+              <xs:attribute name="name" type="xsd:string" use="required" />
+            </xs:complexType>
+          </xs:element>
+        </xs:choice>
+      </xs:complexType>
+    </xs:element>
+  </xs:schema>
   <resheader name="resmimetype">
     <value>text/microsoft-resx</value>
   </resheader>
@@ -295,9 +237,6 @@ N'hésitez pas à faire un don.</value>
   <data name="ConsoleView_ClearButton" xml:space="preserve">
     <value>Vider</value>
   </data>
-  <data name="ConsoleView_PauseButton" xml:space="preserve">
-    <value>Pause</value>
-  </data>
   <data name="ConsoleView_ResumeButton" xml:space="preserve">
     <value>Reprendre</value>
   </data>
@@ -414,10 +353,6 @@ Chemin complet : {1}</value>
     <value>Non</value>
     <comment>'No' button shown on various dialogs</comment>
   </data>
-  <data name="Generic_Dialog_OK" xml:space="preserve">
-    <value>OK</value>
-    <comment>'OK' button shown on various dialogs</comment>
-  </data>
   <data name="Generic_Dialog_Save" xml:space="preserve">
     <value>Enregistrer</value>
     <comment>'Save' button shown on various dialogs</comment>
@@ -503,17 +438,9 @@ Chemin complet : {1}</value>
     <value>Niveau de log :</value>
     <comment>Label shown before SyncTrayzor logging level ComboBox</comment>
   </data>
-  <data name="SettingsView_Logging_LogLevel_Debug" xml:space="preserve">
-    <value>Debug</value>
-    <comment>Name for the Debug log level (which provides lots of debug info)</comment>
-  </data>
   <data name="SettingsView_Logging_LogLevel_Info" xml:space="preserve">
     <value>Info (par défaut)</value>
     <comment>Name for the Info log level</comment>
-  </data>
-  <data name="SettingsView_Logging_LogLevel_Trace" xml:space="preserve">
-    <value>Trace</value>
-    <comment>Name for the Trace log level (which provides the most debug info)</comment>
   </data>
   <data name="SettingsView_Logging_ShowSyncTrayzorLog" xml:space="preserve">
     <value>Montrer les fichiers journaux de SyncTrayzor</value>
@@ -568,14 +495,6 @@ Voulez-vous redémarrer Syncthing ?</value>
   <data name="SettingsView_Section_StartOnLogin" xml:space="preserve">
     <value>Démarrer à l'ouverture de session</value>
     <comment>Section header for settings to do with automatically starting SyncTrayzor when the user logs in</comment>
-  </data>
-  <data name="SettingsView_Section_SyncTrayzor" xml:space="preserve">
-    <value>SyncTrayzor</value>
-    <comment>Section header for settings to do with configuring SyncTrayzor</comment>
-  </data>
-  <data name="SettingsView_Section_Syncthing" xml:space="preserve">
-    <value>Syncthing</value>
-    <comment>Section header for settings to do with configuring Syncthing</comment>
   </data>
   <data name="SettingsView_Section_TrayIcon" xml:space="preserve">
     <value>Icône de la zone de notification</value>
@@ -655,14 +574,6 @@ Voulez-vous redémarrer Syncthing ?</value>
   <data name="SettingsView_Tab_Logging" xml:space="preserve">
     <value>Journalisation</value>
   </data>
-  <data name="SettingsView_Tab_SyncTrayzor" xml:space="preserve">
-    <value>SyncTrayzor</value>
-    <comment>'SyncTrayzor' settings tab</comment>
-  </data>
-  <data name="SettingsView_Tab_Syncthing" xml:space="preserve">
-    <value>Syncthing</value>
-    <comment>'Syncthing' settings tab</comment>
-  </data>
   <data name="SettingsView_Title" xml:space="preserve">
     <value>Paramètres</value>
     <comment>Title of the 'settings' dialog</comment>
@@ -715,9 +626,6 @@ Notifications : Une notification sera affichée à chaque fois que des fichiers 
   <data name="SettingsView_WatchedFolders_Header_Folder" xml:space="preserve">
     <value>Dossier</value>
   </data>
-  <data name="SettingsView_WatchedFolders_Header_Notifications" xml:space="preserve">
-    <value>Notifications</value>
-  </data>
   <data name="SettingsView_WatchedFolders_Header_Watched" xml:space="preserve">
     <value>Surveillé</value>
   </data>
@@ -748,9 +656,6 @@ Notifications : Une notification sera affichée à chaque fois que des fichiers 
   </data>
   <data name="ShellView_Menu_Help_About" xml:space="preserve">
     <value>_A propos</value>
-  </data>
-  <data name="ShellView_Menu_Syncthing" xml:space="preserve">
-    <value>_Syncthing</value>
   </data>
   <data name="ShellView_Menu_Syncthing_KillAll" xml:space="preserve">
     <value>Arrêter _tous les processus Syncthing</value>
@@ -890,11 +795,6 @@ Les détails de chaque composant ainsi que l'énoncé de la licence correspondan
     <comment>Content of the balloon message shown when a folder finished synchronization
 
 {0}:The name of the folder which finished synchronizing</comment>
-  </data>
-  <data name="TrayIcon_Balloon_FinishedSyncing_Multiple" xml:space="preserve">
-    <value>{0}: {1:list:{}|; }</value>
-    <comment>{0}: Folder that finished syncing
-{1}: List of things that happened. Can be a single TrayIcon_Balloon_FinishedSyncing_UpdatedFile or TrayIcon_Balloon_FinishedSyncing_UpdatedFileWithFailures, a single TrayIcon_Balloon_FinishedSyncing_DeletedFile or TrayIcon_Balloon_FinishedSyncing_DeletedFileWithFailures, or one of each (e.g. output might be 'MyFolder: Updated 2 files', 'MyFolder: Updated 1 file; Deleted 2 files', or 'MyFolder: Updated 2 files (1 failure); Deleted 2 files')</comment>
   </data>
   <data name="TrayIcon_Balloon_FinishedSyncing_Title" xml:space="preserve">
     <value>Synchronisation terminée</value>

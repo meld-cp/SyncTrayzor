@@ -1,110 +1,52 @@
-<?xml version="1.0" encoding="utf-8"?>
-<root>
-  <!-- 
-    Microsoft ResX Schema 
-    
-    Version 2.0
-    
-    The primary goals of this format is to allow a simple XML format 
-    that is mostly human readable. The generation and parsing of the 
-    various data types are done through the TypeConverter classes 
-    associated with the data types.
-    
-    Example:
-    
-    ... ado.net/XML headers & schema ...
-    <resheader name="resmimetype">text/microsoft-resx</resheader>
-    <resheader name="version">2.0</resheader>
-    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
-    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
-    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
-    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
-    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
-        <value>[base64 mime encoded serialized .NET Framework object]</value>
-    </data>
-    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
-        <comment>This is a comment</comment>
-    </data>
-                
-    There are any number of "resheader" rows that contain simple 
-    name/value pairs.
-    
-    Each data row contains a name, and value. The row also contains a 
-    type or mimetype. Type corresponds to a .NET class that support 
-    text/value conversion through the TypeConverter architecture. 
-    Classes that don't support this are serialized and stored with the 
-    mimetype set.
-    
-    The mimetype is used for serialized objects, and tells the 
-    ResXResourceReader how to depersist the object. This is currently not 
-    extensible. For a given mimetype the value must be set accordingly:
-    
-    Note - application/x-microsoft.net.object.binary.base64 is the format 
-    that the ResXResourceWriter will generate, however the reader can 
-    read any of the formats listed below.
-    
-    mimetype: application/x-microsoft.net.object.binary.base64
-    value   : The object must be serialized with 
-            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
-            : and then encoded with base64 encoding.
-    
-    mimetype: application/x-microsoft.net.object.soap.base64
-    value   : The object must be serialized with 
-            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
-            : and then encoded with base64 encoding.
-
-    mimetype: application/x-microsoft.net.object.bytearray.base64
-    value   : The object must be serialized into a byte array 
-            : using a System.ComponentModel.TypeConverter
-            : and then encoded with base64 encoding.
-    -->
-  <xsd:schema xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" id="root">
-    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
-    <xsd:element msdata:IsDataSet="true" name="root">
-      <xsd:complexType>
-        <xsd:choice maxOccurs="unbounded">
-          <xsd:element name="metadata">
-            <xsd:complexType>
-              <xsd:sequence>
-                <xsd:element minOccurs="0" name="value" type="xsd:string" />
-              </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" />
-              <xsd:attribute name="type" type="xsd:string" />
-              <xsd:attribute name="mimetype" type="xsd:string" />
-              <xsd:attribute ref="xml:space" />
-            </xsd:complexType>
-          </xsd:element>
-          <xsd:element name="assembly">
-            <xsd:complexType>
-              <xsd:attribute name="alias" type="xsd:string" />
-              <xsd:attribute name="name" type="xsd:string" />
-            </xsd:complexType>
-          </xsd:element>
-          <xsd:element name="data">
-            <xsd:complexType>
-              <xsd:sequence>
-                <xsd:element msdata:Ordinal="1" minOccurs="0" name="value" type="xsd:string" />
-                <xsd:element msdata:Ordinal="2" minOccurs="0" name="comment" type="xsd:string" />
-              </xsd:sequence>
-              <xsd:attribute msdata:Ordinal="1" name="name" type="xsd:string" use="required" />
-              <xsd:attribute msdata:Ordinal="3" name="type" type="xsd:string" />
-              <xsd:attribute msdata:Ordinal="4" name="mimetype" type="xsd:string" />
-              <xsd:attribute ref="xml:space" />
-            </xsd:complexType>
-          </xsd:element>
-          <xsd:element name="resheader">
-            <xsd:complexType>
-              <xsd:sequence>
-                <xsd:element msdata:Ordinal="1" minOccurs="0" name="value" type="xsd:string" />
-              </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" />
-            </xsd:complexType>
-          </xsd:element>
-        </xsd:choice>
-      </xsd:complexType>
-    </xsd:element>
-  </xsd:schema>
+<?xml version='1.0' encoding='utf-8'?>
+<root xmlns:ns1="urn:schemas-microsoft-com:xml-msdata" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  
+  <xs:schema id="root">
+    <xs:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xs:element ns1:IsDataSet="true" name="root">
+      <xs:complexType>
+        <xs:choice maxOccurs="unbounded">
+          <xs:element name="metadata">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element minOccurs="0" name="value" type="xsd:string" />
+              </xs:sequence>
+              <xs:attribute name="name" type="xsd:string" use="required" />
+              <xs:attribute name="type" type="xsd:string" />
+              <xs:attribute name="mimetype" type="xsd:string" />
+              <xs:attribute ref="xml:space" />
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="assembly">
+            <xs:complexType>
+              <xs:attribute name="alias" type="xsd:string" />
+              <xs:attribute name="name" type="xsd:string" />
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="data">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ns1:Ordinal="1" minOccurs="0" name="value" type="xsd:string" />
+                <xs:element ns1:Ordinal="2" minOccurs="0" name="comment" type="xsd:string" />
+              </xs:sequence>
+              <xs:attribute ns1:Ordinal="1" name="name" type="xsd:string" use="required" />
+              <xs:attribute ns1:Ordinal="3" name="type" type="xsd:string" />
+              <xs:attribute ns1:Ordinal="4" name="mimetype" type="xsd:string" />
+              <xs:attribute ref="xml:space" />
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="resheader">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ns1:Ordinal="1" minOccurs="0" name="value" type="xsd:string" />
+              </xs:sequence>
+              <xs:attribute name="name" type="xsd:string" use="required" />
+            </xs:complexType>
+          </xs:element>
+        </xs:choice>
+      </xs:complexType>
+    </xs:element>
+  </xs:schema>
   <resheader name="resmimetype">
     <value>text/microsoft-resx</value>
   </resheader>
@@ -180,13 +122,6 @@
     <value>Моля, вижте Syncthing GUI или конзолата за допълнителна информация.</value>
     <comment>Text shown to the right of BarAlertsView_FailedTransfer_AlertText, in non-bold text</comment>
   </data>
-  <data name="BarAlertsView_IntelXeGraphics_AlertText" xml:space="preserve">
-    <value>The area below may be blank when using Intel Xe graphics cards. Please disable hardware rendering under File -⁠&gt; Settings if you encounter this.</value>
-    <comment>Warning shown at the top of a page if Intel Xe graphics are detected</comment>
-  </data>
-  <data name="BarAlertsView_IntelXeGraphics_DismissLink" xml:space="preserve">
-    <value>Dismiss</value>
-  </data>
   <data name="BarAlertsView_PausedDevicesFromMetering_AlertText" xml:space="preserve">
     <value>Следното {0:p:устройство е сложено|устройства са сложени} на пауза, защото {0:p:е|са} свързани в мрежа, която отчита размера на обменените данни: {0:list:{}|, }.</value>
     <comment>{0}: List of paused devices</comment>
@@ -251,10 +186,6 @@
     <value>Последна промяна</value>
     <comment>Header shown above the 'Last Modified' column. This is used both in the main body (to show when the original file in the conflict was last modified), and above each version of the conflict</comment>
   </data>
-  <data name="ConflictResolutionView_Header_ModifiedBy" xml:space="preserve">
-    <value>Modified By</value>
-    <comment>Header shown above the 'Modified by' entry, which contains the name of the device which last modified the file, and is shown when the user selects a conflict</comment>
-  </data>
   <data name="ConflictResolutionView_Header_OriginalFile" xml:space="preserve">
     <value>Оригинален файл</value>
     <comment>Header shown above the 'Original File' entry, which contains the name of the original file in the conflict, and is shown when the user selects a conflict</comment>
@@ -317,18 +248,6 @@
     <value>Сигрени ли сте?</value>
     <comment>Title for the dialog shown when the user clicks on ShellView_Menu_Syncthing_KillAll</comment>
   </data>
-  <data name="Dialog_FailedToStartSyncthing_Message" xml:space="preserve">
-    <value>Failed to start Syncthing.
-
-Please read the log to determine the cause.
-
-If "FATAL: Cannot open database" appears, please close any other open instances of Syncthing. If SyncTrayzor crashed previously, there may still be zombie Syncthing processes alive. Please use the menu option "Syncthing -&gt; Kill all Syncthing processes" to stop them, then use "Syncthing -&gt; Start" to start Syncthing again.</value>
-    <comment>Content of the dialog shown when Syncthing couldn't be started (and exited with an error). Instructs the user on how to proceed.
-
-"FATAL: Cannot Open Database" should remain in English
-
-The menu option "Syncthing -&gt;Kill all Syncthing processes" corresponds to ShellView_Menu_Syncthing_KillAll, while "Syncthing -&gt;Start" corresponds to ShellView_Menu_Syncthing_Start</comment>
-  </data>
   <data name="Dialog_FailedToStartSyncthing_Title" xml:space="preserve">
     <value>Неуспешно стартиране на Syncthing</value>
     <comment>Title of the dialog shown when Syncthing couldn't be started (and exited with an error)</comment>
@@ -384,9 +303,6 @@ The menu option "Syncthing -&gt;Kill all Syncthing processes" corresponds to She
   <data name="FileTransfersTrayView_InConnectionRate" xml:space="preserve">
     <value>Приемане: {0}/сек</value>
     <comment>{0}: a value such as '1.2kb'</comment>
-  </data>
-  <data name="FileTransfersTrayView_NothingToShow" xml:space="preserve">
-    <value>No recent file downloads</value>
   </data>
   <data name="FileTransfersTrayView_OutConnectionRate" xml:space="preserve">
     <value>Изпращане: {0}/сек</value>
@@ -473,9 +389,6 @@ The menu option "Syncthing -&gt;Kill all Syncthing processes" corresponds to She
   </data>
   <data name="SettingsView_Alerts_Description" xml:space="preserve">
     <value>Уведомленията ще бъдат показани в горното поле на SyncTrayzor и ще добавят триъгълен знак за внимание в иконата на програмта.</value>
-  </data>
-  <data name="SettingsView_Alerts_SeeFolders" xml:space="preserve">
-    <value>Disable balloon messages entirely on the 'Folders' tab</value>
   </data>
   <data name="SettingsView_AnimateTrayIcon" xml:space="preserve">
     <value>Анимирай иконата в tray-a:</value>
@@ -567,14 +480,6 @@ The menu option "Syncthing -&gt;Kill all Syncthing processes" corresponds to She
     <value>Стартирай при вписване</value>
     <comment>Section header for settings to do with automatically starting SyncTrayzor when the user logs in</comment>
   </data>
-  <data name="SettingsView_Section_SyncTrayzor" xml:space="preserve">
-    <value>SyncTrayzor</value>
-    <comment>Section header for settings to do with configuring SyncTrayzor</comment>
-  </data>
-  <data name="SettingsView_Section_Syncthing" xml:space="preserve">
-    <value>Syncthing</value>
-    <comment>Section header for settings to do with configuring Syncthing</comment>
-  </data>
   <data name="SettingsView_Section_TrayIcon" xml:space="preserve">
     <value>Tray икона</value>
   </data>
@@ -652,14 +557,6 @@ The menu option "Syncthing -&gt;Kill all Syncthing processes" corresponds to She
   </data>
   <data name="SettingsView_Tab_Logging" xml:space="preserve">
     <value>Логове</value>
-  </data>
-  <data name="SettingsView_Tab_SyncTrayzor" xml:space="preserve">
-    <value>SyncTrayzor</value>
-    <comment>'SyncTrayzor' settings tab</comment>
-  </data>
-  <data name="SettingsView_Tab_Syncthing" xml:space="preserve">
-    <value>Syncthing</value>
-    <comment>'Syncthing' settings tab</comment>
   </data>
   <data name="SettingsView_Title" xml:space="preserve">
     <value>Настройки</value>
@@ -746,9 +643,6 @@ The menu option "Syncthing -&gt;Kill all Syncthing processes" corresponds to She
   </data>
   <data name="ShellView_Menu_Help_About" xml:space="preserve">
     <value>_За програмата</value>
-  </data>
-  <data name="ShellView_Menu_Syncthing" xml:space="preserve">
-    <value>_Syncthing</value>
   </data>
   <data name="ShellView_Menu_Syncthing_KillAll" xml:space="preserve">
     <value>Спри _всички Syncthing процеси</value>
@@ -889,11 +783,6 @@ The menu option "Syncthing -&gt;Kill all Syncthing processes" corresponds to She
 
 {0}:The name of the folder which finished synchronizing</comment>
   </data>
-  <data name="TrayIcon_Balloon_FinishedSyncing_Multiple" xml:space="preserve">
-    <value>{0}: {1:list:{}|; }</value>
-    <comment>{0}: Folder that finished syncing
-{1}: List of things that happened. Can be a single TrayIcon_Balloon_FinishedSyncing_UpdatedFile or TrayIcon_Balloon_FinishedSyncing_UpdatedFileWithFailures, a single TrayIcon_Balloon_FinishedSyncing_DeletedFile or TrayIcon_Balloon_FinishedSyncing_DeletedFileWithFailures, or one of each (e.g. output might be 'MyFolder: Updated 2 files', 'MyFolder: Updated 1 file; Deleted 2 files', or 'MyFolder: Updated 2 files (1 failure); Deleted 2 files')</comment>
-  </data>
   <data name="TrayIcon_Balloon_FinishedSyncing_Title" xml:space="preserve">
     <value>Приключена синхронизация</value>
   </data>
@@ -931,10 +820,6 @@ The menu option "Syncthing -&gt;Kill all Syncthing processes" corresponds to She
   <data name="TrayIcon_Menu_OpenFolder" xml:space="preserve">
     <value>Отваряне на _Папка</value>
     <comment>Menu option available when right-clicking the tray icon. Is a header for a list of folders, each of which can be clicked to open it in Explorer</comment>
-  </data>
-  <data name="TrayIcon_Menu_RescanAllFolders" xml:space="preserve">
-    <value>_Rescan All Folders</value>
-    <comment>Menu option available when right-clicking the tray icon. Allows the user to re-scan all folders</comment>
   </data>
   <data name="TrayIcon_Menu_RestartSyncthing" xml:space="preserve">
     <value>_Рестартирване на Syncthing</value>
