@@ -161,34 +161,34 @@
     <value>File</value>
   </data>
   <data name="ShellView_Menu_File_Exit" xml:space="preserve">
-    <value>_Exit</value>
+    <value>Exit</value>
   </data>
   <data name="ShellView_Menu_File_Settings" xml:space="preserve">
-    <value>_Settings</value>
+    <value>Settings</value>
   </data>
   <data name="ShellView_Menu_Help" xml:space="preserve">
     <value>Help</value>
   </data>
   <data name="ShellView_Menu_Help_About" xml:space="preserve">
-    <value>_About</value>
+    <value>About</value>
   </data>
   <data name="ShellView_Menu_Syncthing" xml:space="preserve">
     <value>Syncthing</value>
   </data>
   <data name="ShellView_Menu_Syncthing_KillAll" xml:space="preserve">
-    <value>Kill _all Syncthing processes</value>
+    <value>Kill all Syncthing processes</value>
   </data>
   <data name="ShellView_Menu_Syncthing_OpenExternal" xml:space="preserve">
-    <value>_Open in external browser</value>
+    <value>Open in external browser</value>
   </data>
   <data name="ShellView_Menu_Syncthing_Refresh" xml:space="preserve">
     <value>Refresh browser</value>
   </data>
   <data name="ShellView_Menu_Syncthing_Start" xml:space="preserve">
-    <value>_Start</value>
+    <value>Start</value>
   </data>
   <data name="ShellView_Menu_Syncthing_Stop" xml:space="preserve">
-    <value>S_top</value>
+    <value>Stop</value>
   </data>
   <data name="NewVersionAlertView_Button_DontRemind" xml:space="preserve">
     <value>Don't Remind Me Again</value>
@@ -379,11 +379,11 @@ Details on each component, and its license text, are shown below.</value>
     <comment>Menu option available when right-clicking the tray icon. Instructs SyncTrayzor to minimize itself to the tray</comment>
   </data>
   <data name="TrayIcon_Menu_Exit" xml:space="preserve">
-    <value>_Exit</value>
+    <value>Exit</value>
     <comment>Menu option available when right-clicking the tray icon. Instructs SyncTrayzor to exit</comment>
   </data>
   <data name="TrayIcon_Menu_Restore" xml:space="preserve">
-    <value>_Open SyncTrayzor</value>
+    <value>Open SyncTrayzor</value>
     <comment>Menu option available when right-clicking the tray icon. Instructs SyncTrayzor to restore itself from the tray, and be visible to the user</comment>
   </data>
   <data name="TrayIcon_Menu_Settings" xml:space="preserve">
@@ -391,11 +391,11 @@ Details on each component, and its license text, are shown below.</value>
     <comment>Menu option available when right-clicking the tray icon. Instructs SyncTrayzor to show the Settings dialog</comment>
   </data>
   <data name="TrayIcon_Menu_StartSyncthing" xml:space="preserve">
-    <value>_Start Syncthing</value>
+    <value>Start Syncthing</value>
     <comment>Menu option available when right-clicking the tray icon. Instructs SyncTrayzor to start Syncthing. Only available if Syncthing isn't running</comment>
   </data>
   <data name="TrayIcon_Menu_StopSyncthing" xml:space="preserve">
-    <value>S_top Syncthing</value>
+    <value>Stop Syncthing</value>
     <comment>Menu option available when right-clicking the tray icon. Instructs SyncTrayzor to stop Syncthing. Only available if Syncthing is running</comment>
   </data>
   <data name="UnhandledExceptionView_IntroMessage" xml:space="preserve">
@@ -467,10 +467,10 @@ SyncTrayzor is going to have to close. Sorry about that</value>
     <comment>Title of tray icon balloon when another device disconnected</comment>
   </data>
   <data name="ShellView_Menu_Syncthing_Restart" xml:space="preserve">
-    <value>R_estart</value>
+    <value>Restart</value>
   </data>
   <data name="TrayIcon_Menu_RestartSyncthing" xml:space="preserve">
-    <value>_Restart Syncthing</value>
+    <value>Restart Syncthing</value>
     <comment>Menu option available when right-clicking the tray icon. Instructs SyncTrayzor to restart</comment>
   </data>
   <data name="SettingsView_Tab_Syncthing" xml:space="preserve">
@@ -488,7 +488,7 @@ SyncTrayzor is going to have to close. Sorry about that</value>
     <value>Stop Syncthing from auto-upgrading. This is useful if a new version of Syncthing breaks compatibility with SyncTrayzor. You will need to downgrade the syncthing.exe file in SyncTrayzor's config folder</value>
   </data>
   <data name="TrayIcon_Menu_OpenFolder" xml:space="preserve">
-    <value>Open _Folder</value>
+    <value>Open Folder</value>
     <comment>Menu option available when right-clicking the tray icon. Is a header for a list of folders, each of which can be clicked to open it in Explorer</comment>
   </data>
   <data name="ViewerView_OpenFolder" xml:space="preserve">
@@ -503,7 +503,7 @@ SyncTrayzor is going to have to close. Sorry about that</value>
     <value>Use my computer's language, where available</value>
   </data>
   <data name="ShellView_Menu_View" xml:space="preserve">
-    <value>_View</value>
+    <value>View</value>
   </data>
   <data name="ShellView_Menu_View_SyncthingConsole" xml:space="preserve">
     <value>Syncthing Console</value>
@@ -518,10 +518,10 @@ SyncTrayzor is going to have to close. Sorry about that</value>
     <value>Zoom Browser</value>
   </data>
   <data name="ShellView_Menu_Zoom_In" xml:space="preserve">
-    <value>Zoom _In</value>
+    <value>Zoom In</value>
   </data>
   <data name="ShellView_Menu_Zoom_Out" xml:space="preserve">
-    <value>Zoom _Out</value>
+    <value>Zoom Out</value>
   </data>
   <data name="ShellView_Menu_Zoom_Reset" xml:space="preserve">
     <value>Reset</value>
@@ -542,13 +542,13 @@ SyncTrayzor is going to have to close. Sorry about that</value>
     <value>Syncthing didn't start correctly</value>
   </data>
   <data name="Generic_Copy" xml:space="preserve">
-    <value>_Copy</value>
+    <value>Copy</value>
   </data>
   <data name="Generic_Cut" xml:space="preserve">
-    <value>Cu_t</value>
+    <value>Cut</value>
   </data>
   <data name="Generic_Paste" xml:space="preserve">
-    <value>_Paste</value>
+    <value>Paste</value>
   </data>
   <data name="FileTranfersTrayView_Header_Downloading" xml:space="preserve">
     <value>Downloading</value>
@@ -799,7 +799,7 @@ Do you want to restart SyncTrayzor now?</value>
     <comment>Shown in the title bar of the Conflict Resolver window</comment>
   </data>
   <data name="ShellView_Menu_File_ConflictResolver" xml:space="preserve">
-    <value>_Conflict Resolver</value>
+    <value>Conflict Resolver</value>
   </data>
   <data name="ConflictResolutionView_Dialog_Failed_Message" xml:space="preserve">
     <value>Resolving this conflict failed: {0}</value>
@@ -1004,5 +1004,6 @@ Please donate to my charity fundraising campaign.</value>
   </data>
   <data name="SettingsView_KeepActivityPopupOpen" xml:space="preserve">
     <value>Keep activity popup open (right-click the popup to close)</value>
+    <comment>Description for checkbox in settings menu</comment>
   </data>
 </root>
