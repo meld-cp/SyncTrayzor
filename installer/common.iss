@@ -8,6 +8,9 @@
 #define AppPublisher "SyncTrayzor"
 #define AppURL "https://github.com/GermanCoding/SyncTrayzor"
 #define AppDataFolder "SyncTrayzor"
+#define V1AppData   "{userappdata}\SyncTrayzor"
+#define LegacyX86AppId "{c9bab27b-d754-4b62-ad8c-3509e1cac15c}"
+#define BackupStamp "_v1_backup"
 #define SyncthingFolder "Syncthing"
 
 [Setup]
@@ -70,6 +73,20 @@ Name: "{autodesktop}\{#AppName}"; Filename: "{app}\{#AppExeName}"; Tasks: deskto
 Filename: "{app}\{#AppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(AppName, '&', '&&')}}"; Flags: nowait postinstall; Parameters: {code:SyncTrayzorStartFlags}; Check: ShouldStartSyncTrayzor
 
 [Code]
+// -------------------------------------------------------------------
+// GLOBALS
+// -------------------------------------------------------------------
+var
+  OldVersionDetected: Boolean;
+  OldVersion      : string;
+  OldUninstString    : string;
+  OldInstallDir   : string;
+  BackupDir       : string;
+
+  InfoPage : TWizardPage;
+  PgLabel : TNewStaticText;
+  PgCheckbox : TNewCheckBox;
+
 procedure BumpInstallCount;
 var
   FileContents: AnsiString;
@@ -209,6 +226,162 @@ begin
           end;
         end
       end;
+    end;
+  end;
+end;
+
+// -------------------------------------------------------------------
+// v1 DETECTION  -----------------------------------------------------
+// -------------------------------------------------------------------
+function DetectV1(): Boolean;
+var
+  RootKey, UninstPath: string;
+  OldPackedVersion: Int64;
+begin
+  Result := False;
+
+  RootKey     := 'Software\Microsoft\Windows\CurrentVersion\Uninstall\';
+  UninstPath  := RootKey + '{#AppId}' + '_is1';
+
+  if RegQueryStringValue(HKLM, UninstPath, 'DisplayVersion', OldVersion) then
+  begin
+    if not StrToVersion(OldVersion, OldPackedVersion) then
+      begin
+        Log('Invalid version format: ' + OldVersion);
+        Result := False;
+        exit;
+      end;
+
+    Result := ComparePackedVersion(OldPackedVersion, PackVersionComponents(2,0,0,0)) < 0;
+    RegQueryStringValue(HKLM, UninstPath, 'QuietUninstallString', OldUninstString);
+    RegQueryStringValue(HKLM, UninstPath, 'InstallLocation', OldInstallDir);
+  end;
+end;
+
+function EnsureNoLegacyX86(): Boolean;
+var
+  RootKey, UninstPath, OldInstallDirX86: string;
+begin
+  Result := True;
+
+  RootKey     := 'SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\';
+  UninstPath  := RootKey + '{#LegacyX86AppId}' + '_is1';
+
+  if RegQueryStringValue(HKLM, UninstPath, 'InstallLocation', OldInstallDirX86) then
+  begin
+     SuppressibleMsgBox('Found an old 32-bit version of SyncTrayzor already installed. You must uninstall it before installing the 64-bit version. Installed at: '+OldInstallDirX86, mbError, MB_OK, IDOK);
+     Result := False;
+  end;
+end;
+
+// -------------------------------------------------------------------
+// APPDATA BACKUP  ----------------------------------------------------
+// -------------------------------------------------------------------
+procedure RecursiveCopy(const SrcDir, DstDir: string);
+var
+  FindRec: TFindRec;
+begin
+  if DirExists(SrcDir) then
+  begin
+    ForceDirectories(DstDir);
+    if FindFirst(AddBackslash(SrcDir) + '*', FindRec) then
+    begin
+      try
+        repeat
+          if (FindRec.Name <> '.') and (FindRec.Name <> '..') then
+          begin
+            if (FindRec.Attributes and FILE_ATTRIBUTE_DIRECTORY) <> 0 then
+              RecursiveCopy(AddBackslash(SrcDir) + FindRec.Name,
+                            AddBackslash(DstDir) + FindRec.Name)
+            else
+              CopyFile(AddBackslash(SrcDir) + FindRec.Name,
+                       AddBackslash(DstDir) + FindRec.Name, False);
+          end;
+        until not FindNext(FindRec);
+      finally
+        FindClose(FindRec);
+      end;
+    end;
+  end;
+end;
+
+procedure BackupAppData();
+begin
+  BackupDir := ExpandConstant('{tmp}') + '\' + '{#AppId}' + '{#BackupStamp}';
+  RecursiveCopy(ExpandConstant('{#V1AppData}'), BackupDir);
+end;
+
+procedure RestoreAppData();
+begin
+  if DirExists(BackupDir) then
+    RecursiveCopy(BackupDir, ExpandConstant('{#V1AppData}'));
+end;
+
+// -------------------------------------------------------------------
+// WIZARD EVENT HOOKS  ------------------------------------------------
+// -------------------------------------------------------------------
+function InitializeSetup(): Boolean;
+begin
+  Result := True;
+  if not EnsureNoLegacyX86() then
+  begin
+    Result := False;
+  end;
+end;
+
+procedure InitializeWizard();
+begin
+  OldVersionDetected := DetectV1();
+  Log('SyncTrayzor v1 installed: ' + IntToStr(Integer(OldVersionDetected)));
+
+  if OldVersionDetected then
+  begin
+    // Extra page inserted between Welcome and License
+    InfoPage := CreateCustomPage(wpWelcome, '{#AppName} upgrade',
+      'A previous version of SyncTrayzor (' + OldVersion + ') was found. ' +
+      'It will be removed automatically before the new version is installed.');
+
+    PgLabel := TNewStaticText.Create(InfoPage);
+    PgLabel.Parent := InfoPage.Surface;
+    PgLabel.Caption :=
+      '• Your settings will be preserved unless you tick the box below.'#13#10 +
+      '• If you decide to start fresh, SyncTrayzor will upgrade you to syncthing v2.'#13#10 +
+      '• Please wait – the uninstaller may take a moment.';
+
+    PgCheckbox := TNewCheckBox.Create(InfoPage);
+    PgCheckbox.Parent := InfoPage.Surface;
+    PgCheckbox.Top := PgLabel.Top + PgLabel.Height + 8;
+    PgCheckbox.Width := InfoPage.SurfaceWidth - 2 * PgCheckbox.Left;
+    PgCheckbox.Caption := 'Start fresh - DELETE previous SyncTrayzor configuration and old syncthing.exe!';
+    PgCheckbox.Checked := False;
+  end;
+end;
+
+function NextButtonClick(CurPageID: Integer): Boolean;
+var
+  ResultCode: Integer;
+begin
+  Result := True;  // allow page switch unless we veto
+
+  if Assigned(InfoPage) and (CurPageID = InfoPage.ID) and OldVersionDetected then
+  begin
+    // 1) Backup
+    if not PgCheckbox.Checked then
+      BackupAppData();
+
+    // 2) Run uninstaller
+    if (Exec('>', OldUninstString, '', SW_SHOWNORMAL, ewWaitUntilTerminated, ResultCode)) then
+    begin
+      // 3) Restore
+      if not PgCheckbox.Checked then
+        RestoreAppData();
+    end
+    else
+    begin
+      MsgBox('Could not launch the previous uninstaller (' +
+             OldUninstString + '): ' + SysErrorMessage(ResultCode) + '.'#13#10'Setup cannot continue.',
+             mbError, MB_OK);
+      Result := False;  // stay on page
     end;
   end;
 end;
