@@ -30,7 +30,7 @@ jobs:
     - name: Install Task
       uses: arduino/setup-task@v2
       with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
       
     - name: Build SyncTrayzor (Portable)
       run: task build-portable
