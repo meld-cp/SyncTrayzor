@@ -17,7 +17,7 @@ using System.Windows.Threading;
 
 namespace SyncTrayzor.Pages.Tray
 {
-    public class FileTransferViewModel : PropertyChangedBase
+    public class FileTransferViewModel : PropertyChangedBase, IDisposable
     {
         public readonly FileTransfer FileTransfer;
         private readonly DispatcherTimer completedTimeAgoUpdateTimer;
@@ -45,13 +45,15 @@ namespace SyncTrayzor.Pages.Tray
         public string ProgressString { get; private set; }
         public float ProgressPercent { get; private set; }
 
+        private bool disposed;
+
         public FileTransferViewModel(FileTransfer fileTransfer)
         {
             completedTimeAgoUpdateTimer = new DispatcherTimer()
             {
                 Interval = TimeSpan.FromMinutes(1),
             };
-            completedTimeAgoUpdateTimer.Tick += (o, e) => NotifyOfPropertyChange(() => CompletedTimeAgo);
+            completedTimeAgoUpdateTimer.Tick += Tick;
             completedTimeAgoUpdateTimer.Start();
 
             FileTransfer = fileTransfer;
@@ -60,10 +62,12 @@ namespace SyncTrayzor.Pages.Tray
             Folder = FileTransfer.Folder;
             using (var icon = ShellTools.GetIcon(FileTransfer.Path, FileTransfer.ItemType != ItemChangedItemType.Dir))
             {
-                var bs = Imaging.CreateBitmapSourceFromHIcon(icon.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+                var bs = Imaging.CreateBitmapSourceFromHIcon(icon.Handle, Int32Rect.Empty,
+                    BitmapSizeOptions.FromEmptyOptions());
                 bs.Freeze();
                 Icon = bs;
             }
+
             WasDeleted = FileTransfer.ActionType == ItemChangedActionType.Delete;
 
             UpdateState();
@@ -98,6 +102,31 @@ namespace SyncTrayzor.Pages.Tray
             }
 
             Error = FileTransfer.Error;
+        }
+
+        private void Tick(Object sender, EventArgs e)
+        {
+            NotifyOfPropertyChange(() => CompletedTimeAgo);
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposed)
+                return;
+
+            if (disposing)
+            {
+                completedTimeAgoUpdateTimer.Stop();
+                completedTimeAgoUpdateTimer.Tick -= Tick;
+            }
+
+            disposed = true;
         }
     }
 }

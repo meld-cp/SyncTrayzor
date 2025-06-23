@@ -12,7 +12,8 @@ namespace SyncTrayzor.Pages.Tray
 {
     public class FileTransfersTrayViewModel : Screen, IDisposable
     {
-        private const int initialCompletedTransfersToDisplay = 100;
+        // Same as the queue limit in SyncthingTransferHistory
+        private const int CompletedTransfersToDisplay = 100;
 
         private readonly ISyncthingManager syncthingManager;
         private readonly IProcessStartProvider processStartProvider;
@@ -30,7 +31,8 @@ namespace SyncTrayzor.Pages.Tray
 
         public bool AnyTransfers => HasCompletedTransfers || HasInProgressTransfers;
 
-        public FileTransfersTrayViewModel(ISyncthingManager syncthingManager, IProcessStartProvider processStartProvider, NetworkGraphViewModel networkGraph)
+        public FileTransfersTrayViewModel(ISyncthingManager syncthingManager,
+            IProcessStartProvider processStartProvider, NetworkGraphViewModel networkGraph)
         {
             this.syncthingManager = syncthingManager;
             this.processStartProvider = processStartProvider;
@@ -43,18 +45,27 @@ namespace SyncTrayzor.Pages.Tray
             CompletedTransfers = new BindableCollection<FileTransferViewModel>();
             InProgressTransfers = new BindableCollection<FileTransferViewModel>();
 
-            CompletedTransfers.CollectionChanged += (o, e) => { NotifyOfPropertyChange(() => HasCompletedTransfers); NotifyOfPropertyChange(() => AnyTransfers); };
-            InProgressTransfers.CollectionChanged += (o, e) => { NotifyOfPropertyChange(() => HasInProgressTransfers); NotifyOfPropertyChange(() => AnyTransfers); };
+            CompletedTransfers.CollectionChanged += (o, e) =>
+            {
+                NotifyOfPropertyChange(() => HasCompletedTransfers);
+                NotifyOfPropertyChange(() => AnyTransfers);
+            };
+            InProgressTransfers.CollectionChanged += (o, e) =>
+            {
+                NotifyOfPropertyChange(() => HasInProgressTransfers);
+                NotifyOfPropertyChange(() => AnyTransfers);
+            };
         }
 
         protected override void OnActivate()
         {
-            foreach (var completedTransfer in syncthingManager.TransferHistory.CompletedTransfers.Take(initialCompletedTransfersToDisplay).Reverse())
+            foreach (var completedTransfer in syncthingManager.TransferHistory.CompletedTransfers.Reverse())
             {
-                CompletedTransfers.Add(new FileTransferViewModel(completedTransfer));
+                AddCompletedTransfer(new FileTransferViewModel(completedTransfer));
             }
 
-            foreach (var inProgressTranser in syncthingManager.TransferHistory.InProgressTransfers.Where(x => x.Status == FileTransferStatus.InProgress).Reverse())
+            foreach (var inProgressTranser in syncthingManager.TransferHistory.InProgressTransfers
+                         .Where(x => x.Status == FileTransferStatus.InProgress).Reverse())
             {
                 InProgressTransfers.Add(new FileTransferViewModel(inProgressTranser));
             }
@@ -73,6 +84,11 @@ namespace SyncTrayzor.Pages.Tray
 
             syncthingManager.TotalConnectionStatsChanged -= TotalConnectionStatsChanged;
 
+            foreach (var fileTransferViewModel in CompletedTransfers)
+            {
+                fileTransferViewModel.Dispose();
+            }
+
             CompletedTransfers.Clear();
             InProgressTransfers.Clear();
         }
@@ -83,7 +99,7 @@ namespace SyncTrayzor.Pages.Tray
             if (transferVm == null)
             {
                 if (e.FileTransfer.Status == FileTransferStatus.Completed)
-                    CompletedTransfers.Insert(0, new FileTransferViewModel(e.FileTransfer));
+                    AddCompletedTransfer(new FileTransferViewModel(e.FileTransfer));
                 else if (e.FileTransfer.Status == FileTransferStatus.InProgress)
                     InProgressTransfers.Insert(0, new FileTransferViewModel(e.FileTransfer));
                 // We don't care about 'starting' transfers
@@ -95,7 +111,7 @@ namespace SyncTrayzor.Pages.Tray
                 if (e.FileTransfer.Status == FileTransferStatus.Completed)
                 {
                     InProgressTransfers.Remove(transferVm);
-                    CompletedTransfers.Insert(0, transferVm);
+                    AddCompletedTransfer(transferVm);
                 }
             }
         }
@@ -134,6 +150,18 @@ namespace SyncTrayzor.Pages.Tray
                 OutConnectionRate = FormatUtils.BytesToHuman(outBytesPerSecond.Value, 1);
         }
 
+        public void AddCompletedTransfer(FileTransferViewModel newItem)
+        {
+            while (CompletedTransfers.Count >= CompletedTransfersToDisplay)
+            {
+                var last = CompletedTransfers.Last();
+                last.Dispose();
+                CompletedTransfers.Remove(last);
+            }
+
+            CompletedTransfers.Insert(0, newItem);
+        }
+
         public void ItemClicked(FileTransferViewModel fileTransferVm)
         {
             var fileTransfer = fileTransferVm.FileTransfer;
@@ -142,9 +170,11 @@ namespace SyncTrayzor.Pages.Tray
             if (fileTransfer.ActionType == ItemChangedActionType.Update)
             {
                 if (fileTransfer.ItemType == ItemChangedItemType.File)
-                    processStartProvider.ShowFileInExplorer(Path.Combine(fileTransferVm.Folder.Path, fileTransfer.Path));
+                    processStartProvider.ShowFileInExplorer(Path.Combine(fileTransferVm.Folder.Path,
+                        fileTransfer.Path));
                 else if (fileTransfer.ItemType == ItemChangedItemType.Dir)
-                    processStartProvider.ShowFolderInExplorer(Path.Combine(fileTransferVm.Folder.Path, fileTransfer.Path));
+                    processStartProvider.ShowFolderInExplorer(Path.Combine(fileTransferVm.Folder.Path,
+                        fileTransfer.Path));
             }
         }
 
