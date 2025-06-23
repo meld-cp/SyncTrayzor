@@ -12,7 +12,6 @@ namespace SyncTrayzor.Services
         private static readonly TimeSpan pollInterval = TimeSpan.FromMinutes(5);
 
         private readonly Timer timer;
-        private readonly Process process;
 
         public bool Enabled
         {
@@ -22,8 +21,6 @@ namespace SyncTrayzor.Services
 
         public MemoryUsageLogger()
         {
-            process = Process.GetCurrentProcess();
-
             timer = new Timer()
             {
                 AutoReset = true,
@@ -31,9 +28,31 @@ namespace SyncTrayzor.Services
             };
             timer.Elapsed += (o, e) =>
             {
-                logger.Info("Working Set: {0}. Private Memory Size: {1}. GC Total Memory: {2}",
-                    FormatUtils.BytesToHuman(process.WorkingSet64), FormatUtils.BytesToHuman(process.PrivateMemorySize64),
-                    FormatUtils.BytesToHuman(GC.GetTotalMemory(true)));
+                var process = Process.GetCurrentProcess();
+                var workingSet = process.WorkingSet64;
+                var privateBytes = process.PrivateMemorySize64;
+
+                var gcInfo = GC.GetGCMemoryInfo();
+
+                var heapSize = gcInfo.HeapSizeBytes;
+                var fragmented = gcInfo.FragmentedBytes;
+                var committed = gcInfo.TotalCommittedBytes;
+                var pendingFinalizers = gcInfo.FinalizationPendingCount;
+
+                // Number of collection runs since process start
+                var gen0Collections = GC.CollectionCount(0);
+                var gen1Collections = GC.CollectionCount(1);
+                var gen2Collections = GC.CollectionCount(2);
+
+                logger.Info(
+                    "WS {WorkingSet} | Private {Private} | Heap {Heap} (frag {Frag}) | Commit {Commit} | Pending Finalizers {Pending} | GC collection counts 0:{Gen0} 1:{Gen1} 2:{Gen2}",
+                    FormatUtils.BytesToHuman(workingSet),
+                    FormatUtils.BytesToHuman(privateBytes),
+                    FormatUtils.BytesToHuman(heapSize),
+                    FormatUtils.BytesToHuman(fragmented),
+                    FormatUtils.BytesToHuman(committed),
+                    pendingFinalizers,
+                    gen0Collections, gen1Collections, gen2Collections);
             };
         }
     }
