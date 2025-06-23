@@ -29,6 +29,8 @@ jobs:
         
     - name: Install Task
       uses: arduino/setup-task@v2
+      with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
       
     - name: Build SyncTrayzor (Portable)
       run: task build-portable
@@ -68,6 +70,8 @@ jobs:
 
       - name: Install Task
         uses: arduino/setup-task@v2
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Write private key to file
         run: |
