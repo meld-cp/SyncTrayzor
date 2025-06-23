@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2.0.0-beta.4] - 2025-06-14
+## [2.0.0-beta.5] - 2025-06-23
 
 > [!CAUTION]
 > This beta is primarily built for syncthing v2. If you uninstall SyncTrayzor v1 and install v2, your existing syncthing (if any) will be upgraded to syncthing v2.
@@ -28,11 +28,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - (beta.3) Fix bugs with file transfer detection introduced in beta.1
+- (beta.5) Fix memory leak when the activity popup window is open
 
 ### Changed
 
 - Move the project from .NET Framework to .NET Core 8
 - Modernize all dependencies
+- Syncthing API updates for recent syncthing versions (including v2)
 - Rewrite the "pause metered devices" feature without relying on obscure third-party DLLs (without source code)
 - Installer now asks whether to remove syncthing configuration + database upon uninstall
 - New maintainer is now @GermanCoding
