@@ -161,13 +161,13 @@
     <value>Gelişmiş</value>
   </data>
   <data name="SettingsView_Section_StartOnLogin" xml:space="preserve">
-    <value>Oturum açmada başlat</value>
+    <value>Oturum Açmada Başlat</value>
   </data>
   <data name="SettingsView_Section_SyncTrayzor" xml:space="preserve">
     <value>SyncTrayzor</value>
   </data>
   <data name="SettingsView_StartMinimized" xml:space="preserve">
-    <value>Simge Durumunda Başlat</value>
+    <value>Simge Durumunda başlat</value>
   </data>
   <data name="SettingsView_StartOnLogin_PermissionDenied" xml:space="preserve">
     <value>İzin reddedildi. Bu ayarları değiştirmek için lütfen Synctrayzor'u Yönetici olarak başlatın.</value>
@@ -506,7 +506,7 @@ Tam Yol: {1}</value>
     <value>Klasörde Göster</value>
   </data>
   <data name="AboutView_Donate_Link" xml:space="preserve">
-    <value>Şimdi bağış yapın</value>
+    <value>Şimdi bağış yap</value>
   </data>
   <data name="AboutView_Donate_Text" xml:space="preserve">
     <value>SyncTrayzor'u yararlı buldunuz mu?
@@ -654,7 +654,7 @@ Lütfen hayır kurumu bağış toplama kampanyama bağış yapın.</value>
     <value>Klasörü Aç</value>
   </data>
   <data name="ShellView_Menu_View" xml:space="preserve">
-    <value>Görüntüle</value>
+    <value>Görünüm</value>
   </data>
   <data name="SettingsView_UseComputerCulture" xml:space="preserve">
     <value>Kullanılabilir olduğunda bilgisayarımın dilini kullan</value>
