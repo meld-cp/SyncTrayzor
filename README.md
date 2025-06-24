@@ -1,5 +1,5 @@
 
-SyncTrayzor [![Build](https://github.com/GermanCoding/SyncTrayzor/actions/workflows/dotnet-build.yml/badge.svg)](https://github.com/GermanCoding/SyncTrayzor/actions/workflows/dotnet-build.yml) [![Translation status](https://hosted.weblate.org/widget/syncthing/synctrayzor/svg-badge.svg)](https://hosted.weblate.org/engage/syncthing/)
+SyncTrayzor [![Build](https://github.com/GermanCoding/SyncTrayzor/actions/workflows/dotnet-build.yml/badge.svg)](https://github.com/GermanCoding/SyncTrayzor/actions/workflows/dotnet-build.yml) [![Translation status](https://hosted.weblate.org/widget/syncthing/synctrayzor/synctrayzor/svg-badge.svg)](https://hosted.weblate.org/engage/syncthing/)
 ===========
 
 > [!NOTE]
