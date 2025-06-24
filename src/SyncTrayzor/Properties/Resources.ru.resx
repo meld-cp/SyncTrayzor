@@ -139,22 +139,22 @@
     <value>Выберите нужную версию, остальные будут удалены.</value>
   </data>
   <data name="ConflictResolutionView_ChooseNewestConflict_Button" xml:space="preserve">
-    <value>Выбрать Последний Конфликт</value>
+    <value>Выбрать последний конфликт</value>
   </data>
   <data name="ConflictResolutionView_ChooseNewestConflict_Text" xml:space="preserve">
     <value>Выбирает конфликт, который был создан совсем недавно</value>
   </data>
   <data name="ConflictResolutionView_ChooseNewest_Button" xml:space="preserve">
-    <value>Выбрать Последний</value>
+    <value>Выбрать последний</value>
   </data>
   <data name="ConflictResolutionView_ChooseNewest_Text" xml:space="preserve">
-    <value>Выбирает оригинальный файл если его изменение последнее или конфликт возникающий наиболее часто</value>
+    <value>Выбирает 'Оригинальный' файл, если его дата последнего изменения является самой новой, или конфликт, который был создан совсем недавно</value>
   </data>
   <data name="ConflictResolutionView_ChooseOriginal_Button" xml:space="preserve">
-    <value>Выберите Оригинал</value>
+    <value>Выбрать оригинал</value>
   </data>
   <data name="ConflictResolutionView_ChooseOriginal_Text" xml:space="preserve">
-    <value>Возьмите оригинальный файл из каждого конфликта и удалите все конфликтующие файлы</value>
+    <value>Выбирает 'Оригинальный' файл из каждого конфликта, и удаляет все конфликтующие файлы</value>
   </data>
   <data name="ConflictResolutionView_DeleteToRecycleBin" xml:space="preserve">
     <value>Удалять файлы в Корзину</value>
@@ -208,7 +208,7 @@
     <comment>Text shown next to the 'Scanning' progress bar at the top of the page, when scanning is in progress</comment>
   </data>
   <data name="ConflictResolutionView_SelectMultiple" xml:space="preserve">
-    <value>Используйте клавиши Shift / Ctrl для выделения нескольких объектов </value>
+    <value>Используйте Shift / Ctrl для выделения нескольких элементов</value>
   </data>
   <data name="ConflictResolutionView_Status_NoConflicts" xml:space="preserve">
     <value>Конфликтов нет. Отличная работа!</value>
@@ -227,7 +227,7 @@
     <comment>Shown in the title bar of the Conflict Resolver window</comment>
   </data>
   <data name="ConfliectResolutionView_ChooseMultipleDescription" xml:space="preserve">
-    <value>Вы выбрали {0} конфликтов. Выберите как хотите решить их. Старые версии будут удалены.</value>
+    <value>Вы выбрали {0} конфликтов. Выберите как хотите решить их. Другие версии будут удалены.</value>
   </data>
   <data name="ConsoleView_ClearButton" xml:space="preserve">
     <value>Очистить</value>
@@ -319,10 +319,10 @@
 Полный путь: {1}</value>
   </data>
   <data name="Generic_Copy" xml:space="preserve">
-    <value>_Копировать</value>
+    <value>Копировать</value>
   </data>
   <data name="Generic_Cut" xml:space="preserve">
-    <value>_Вырезать</value>
+    <value>Вырезать</value>
   </data>
   <data name="Generic_Dialog_Cancel" xml:space="preserve">
     <value>Отмена</value>
@@ -345,7 +345,7 @@
     <comment>'Yes' button shown on various dialogs</comment>
   </data>
   <data name="Generic_Paste" xml:space="preserve">
-    <value>В_ставить</value>
+    <value>Вставить</value>
   </data>
   <data name="NewVersionAlertView_Button_DontRemind" xml:space="preserve">
     <value>Не напоминать больше</value>
@@ -524,7 +524,7 @@
     <value>Если задан переопределяет путь по умолчанию к база данных и конфигурационным файлам Syncthing</value>
   </data>
   <data name="SettingsView_SyncthingCustomPath" xml:space="preserve">
-    <value>Пользовательский путь Syncthing </value>
+    <value>Пользовательский путь Syncthing</value>
   </data>
   <data name="SettingsView_SyncthingDenyUpgrade" xml:space="preserve">
     <value>Остановить автообновления Syncthing</value>
@@ -628,7 +628,7 @@
     <value>Файл</value>
   </data>
   <data name="ShellView_Menu_File_ConflictResolver" xml:space="preserve">
-    <value>_Разрешение конфликтов</value>
+    <value>Разрешение конфликтов</value>
   </data>
   <data name="ShellView_Menu_File_Exit" xml:space="preserve">
     <value>Выход</value>
@@ -652,7 +652,7 @@
     <value>Обновить браузер</value>
   </data>
   <data name="ShellView_Menu_Syncthing_Restart" xml:space="preserve">
-    <value>_Перезапустить</value>
+    <value>Перезапустить</value>
   </data>
   <data name="ShellView_Menu_Syncthing_Start" xml:space="preserve">
     <value>Запустить</value>
@@ -661,22 +661,22 @@
     <value>Стоп</value>
   </data>
   <data name="ShellView_Menu_View" xml:space="preserve">
-    <value>_Вид</value>
+    <value>Вид</value>
   </data>
   <data name="ShellView_Menu_View_SyncthingConsole" xml:space="preserve">
-    <value>_Консоль Syncthing </value>
+    <value>Консоль Syncthing</value>
   </data>
   <data name="ShellView_Menu_Zoom" xml:space="preserve">
-    <value>_Масштаб браузера</value>
+    <value>Масштаб браузера</value>
   </data>
   <data name="ShellView_Menu_Zoom_In" xml:space="preserve">
-    <value>У_величить</value>
+    <value>Увеличить</value>
   </data>
   <data name="ShellView_Menu_Zoom_Out" xml:space="preserve">
-    <value>У_меньшить</value>
+    <value>Уменьшить</value>
   </data>
   <data name="ShellView_Menu_Zoom_Reset" xml:space="preserve">
-    <value>_Сбросить</value>
+    <value>Сбросить</value>
   </data>
   <data name="ThirdPartyComponentsView_ComponentDescriptionLabel" xml:space="preserve">
     <value>Описание:</value>
@@ -816,15 +816,15 @@
     <comment>Menu option available when right-clicking the tray icon. Instructs SyncTrayzor to exit</comment>
   </data>
   <data name="TrayIcon_Menu_OpenFolder" xml:space="preserve">
-    <value>Открыть _Папку</value>
+    <value>Открыть Папку</value>
     <comment>Menu option available when right-clicking the tray icon. Is a header for a list of folders, each of which can be clicked to open it in Explorer</comment>
   </data>
   <data name="TrayIcon_Menu_RescanAllFolders" xml:space="preserve">
-    <value>_Повторное сканирование всех папок</value>
+    <value>Повторное сканирование всех папок</value>
     <comment>Menu option available when right-clicking the tray icon. Allows the user to re-scan all folders</comment>
   </data>
   <data name="TrayIcon_Menu_RestartSyncthing" xml:space="preserve">
-    <value>_Перезапустить Syncthing</value>
+    <value>Перезапустить Syncthing</value>
     <comment>Menu option available when right-clicking the tray icon. Instructs SyncTrayzor to restart</comment>
   </data>
   <data name="TrayIcon_Menu_Restore" xml:space="preserve">
@@ -836,11 +836,11 @@
     <comment>Menu option available when right-clicking the tray icon. Instructs SyncTrayzor to show the Settings dialog</comment>
   </data>
   <data name="TrayIcon_Menu_StartSyncthing" xml:space="preserve">
-    <value>_Запустить Syncthing</value>
+    <value>Запустить Syncthing</value>
     <comment>Menu option available when right-clicking the tray icon. Instructs SyncTrayzor to start Syncthing. Only available if Syncthing isn't running</comment>
   </data>
   <data name="TrayIcon_Menu_StopSyncthing" xml:space="preserve">
-    <value>_Остановить Syncthing</value>
+    <value>Остановить Syncthing</value>
     <comment>Menu option available when right-clicking the tray icon. Instructs SyncTrayzor to stop Syncthing. Only available if Syncthing is running</comment>
   </data>
   <data name="UnhandledExceptionView_IntroMessage" xml:space="preserve">
@@ -886,5 +886,26 @@ SyncTrayzor закрывается. Извините.</value>
   <data name="ViewerView_SyncthingStopped" xml:space="preserve">
     <value>Syncthing Остановлен</value>
     <comment>Text shown in the centre of the screen when Syncthing is stopped</comment>
+  </data>
+  <data name="SettingsView_Alerts_SeeFolders" xml:space="preserve">
+    <value>Полностью отключить всплывающие сообщения на вкладке "Папки"</value>
+  </data>
+  <data name="SettingsView_WatchedFolderEnabledInSyncthing" xml:space="preserve">
+    <value>Вы включили отслеживания файловой системы для одной или нескольких папок в Syncthing, и поэтому соответствующие отслеживания в SyncTrayzor были отключены.</value>
+  </data>
+  <data name="BarAlertsView_IntelXeGraphics_AlertText" xml:space="preserve">
+    <value>При использовании графических карт Intel Xe поле ниже может быть пустым. Пожалуйста, отключите аппаратный рендеринг в меню Файл -&gt; Настройки, если вы столкнетесь с этим.</value>
+  </data>
+  <data name="Generic_Dialog_OK" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="FileTransfersTrayView_NothingToShow" xml:space="preserve">
+    <value>Нет недавно загруженных файлов</value>
+  </data>
+  <data name="SettingsView_KeepActivityPopupOpen" xml:space="preserve">
+    <value>Держать всплывающее окно активности открытым (щелкните его правой кнопкой мыши, чтобы закрыть)</value>
+  </data>
+  <data name="TrayIcon_Balloon_FinishedSyncing_Multiple" xml:space="preserve">
+    <value>{0}: {1:list:{}|; }</value>
   </data>
 </root>
