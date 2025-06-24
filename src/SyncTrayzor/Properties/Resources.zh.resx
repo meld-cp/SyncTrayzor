@@ -923,7 +923,7 @@ SyncTrayzor 将不得不关闭。很抱歉</value>
     <value>Syncthing</value>
   </data>
   <data name="TrayIcon_Balloon_FinishedSyncing_Multiple" xml:space="preserve">
-    <value>{0}：{1:list:{}|；}</value>
+    <value>{0}: {1:list:{}|; }</value>
   </data>
   <data name="SettingsView_Section_SyncTrayzor" xml:space="preserve">
     <value>SyncTrayzor</value>
