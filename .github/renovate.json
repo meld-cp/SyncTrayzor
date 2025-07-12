@@ -12,5 +12,6 @@
   "prHourlyLimit": 0,
   "schedule": [
     "* * 1 * *"
-  ]
+  ],
+  "abandonmentThreshold": "3 years"
 }
