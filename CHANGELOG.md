@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2.0.0-beta.5] - 2025-06-23
+## [2.0.0-beta.6] - 2025-08-07
 
 > [!CAUTION]
 > This beta is primarily built for syncthing v2. If you uninstall SyncTrayzor v1 and install v2, your existing syncthing (if any) will be upgraded to syncthing v2.
@@ -40,6 +40,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - New maintainer is now @GermanCoding
 - (beta.4) Translation updates
 - (beta.4) The installer now safely upgrades existing (64-bit) SyncTrayzor v1 installs to v2
+- (beta.6) Support new "deleted files can win conflicts" conflict handling in syncthing v2
 
 ### Removed
 
