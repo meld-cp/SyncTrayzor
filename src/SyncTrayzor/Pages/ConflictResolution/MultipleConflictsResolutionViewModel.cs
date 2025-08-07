@@ -1,4 +1,5 @@
-﻿using Stylet;
+﻿using System;
+using Stylet;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -23,7 +24,7 @@ namespace SyncTrayzor.Pages.ConflictResolution
             foreach(var conflict in Conflicts)
             {
                 var newestOption = conflict.ConflictOptions.MaxBy(x => x.DateCreated);
-                if (newestOption.DateCreated > conflict.LastModified)
+                if (newestOption.DateCreated > (conflict.LastModified ?? DateTime.MinValue))
                     Delegate.ChooseConflictFile(conflict, newestOption);
                 else
                     Delegate.ChooseOriginal(conflict);

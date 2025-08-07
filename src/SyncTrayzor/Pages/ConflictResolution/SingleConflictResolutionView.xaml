@@ -38,7 +38,7 @@
             <TextBlock Grid.Row="0" Grid.Column="1" Style="{StaticResource Header}" Text="{l:Loc ConflictResolutionView_Header_LastModified}"/>
             <TextBlock Grid.Row="0" Grid.Column="2" Style="{StaticResource Header}" Text="{l:Loc ConflictResolutionView_Header_Size}"/>
 
-            <TextBlock Grid.Row="1" Grid.Column="0" Style="{StaticResource Value}" Text="{Binding Conflict.FileName}"/>
+            <TextBlock Grid.Row="1" Grid.Column="0" Style="{StaticResource Value}" Text="{Binding Conflict.DisplayName}"/>
             <TextBlock Grid.Row="1" Grid.Column="1" Style="{StaticResource Value}" Text="{Binding Conflict.LastModified}"/>
             <TextBlock Grid.Row="1" Grid.Column="2" Style="{StaticResource Value}" Text="{Binding Conflict.Size}"/>
             

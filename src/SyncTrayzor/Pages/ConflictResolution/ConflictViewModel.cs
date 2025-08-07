@@ -8,6 +8,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Media;
 using System.Windows.Interop;
 using System.Windows;
+using SyncTrayzor.Localization;
 
 namespace SyncTrayzor.Pages.ConflictResolution
 {
@@ -19,7 +20,10 @@ namespace SyncTrayzor.Pages.ConflictResolution
 
         public string FileName => Path.GetFileName(ConflictSet.File.FilePath);
 
-        public DateTime LastModified => ConflictSet.File.LastModified;
+        public string DisplayName =>
+            Deleted ? Localizer.Translate("ConflictResolutionView_FileName_FileDeleted") : FileName;
+
+        public DateTime? LastModified => ConflictSet.File.LastModified;
 
         public string Folder => Path.GetDirectoryName(ConflictSet.File.FilePath);
 
@@ -31,23 +35,29 @@ namespace SyncTrayzor.Pages.ConflictResolution
 
         public ImageSource Icon { get; }
 
-        public string Size => FormatUtils.BytesToHuman(ConflictSet.File.SizeBytes, 1);
+        public string Size => ConflictSet.File.SizeBytes is null
+            ? "???"
+            : FormatUtils.BytesToHuman((double)ConflictSet.File.SizeBytes, 1);
+
+        public bool Deleted => ConflictSet.File.Deleted;
 
         public bool IsSelected { get; set; }
-        
 
         public ConflictViewModel(ConflictSet conflictSet, string folderName)
         {
             ConflictSet = conflictSet;
             FolderLabel = folderName;
 
-            ConflictOptions = new BindableCollection<ConflictOptionViewModel>(ConflictSet.Conflicts.Select(x => new ConflictOptionViewModel(x)));
+            ConflictOptions =
+                new BindableCollection<ConflictOptionViewModel>(
+                    ConflictSet.Conflicts.Select(x => new ConflictOptionViewModel(x)));
 
-            // These bindings aren't called lazilly, so don't bother being lazy
+            // These bindings aren't called lazily, so don't bother being lazy
             using var icon = ShellTools.GetIcon(ConflictSet.File.FilePath, isFile: true);
             if (icon != null)
             {
-                var bs = Imaging.CreateBitmapSourceFromHIcon(icon.Handle, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+                var bs = Imaging.CreateBitmapSourceFromHIcon(icon.Handle, Int32Rect.Empty,
+                    BitmapSizeOptions.FromEmptyOptions());
                 bs.Freeze();
                 Icon = bs;
             }

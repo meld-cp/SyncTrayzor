@@ -154,7 +154,7 @@ namespace SyncTrayzor.Services.Conflicts
             {
                 foreach (var conflictedFile in conflictFileOptions)
                 {
-                    if (conflictFileManager.TryFindBaseFileForConflictFile(conflictedFile, out var parsedConflictFileInfo))
+                    if (conflictFileManager.TryParseConflictFile(conflictedFile, out var parsedConflictFileInfo))
                     {
                         conflictFiles.Add(parsedConflictFileInfo.OriginalPath);
                     }

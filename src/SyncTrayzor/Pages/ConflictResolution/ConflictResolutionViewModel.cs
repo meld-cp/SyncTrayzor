@@ -216,7 +216,8 @@ namespace SyncTrayzor.Pages.ConflictResolution
 
         public void ShowFileInFolder(ConflictViewModel conflict)
         {
-            processStartProvider.ShowFileInExplorer(conflict.FilePath);
+            var filePath = conflict.Deleted ? conflict.ConflictSet.Conflicts.First().FilePath : conflict.FilePath;
+            processStartProvider.ShowFileInExplorer(filePath);
         }
 
         public void Close()

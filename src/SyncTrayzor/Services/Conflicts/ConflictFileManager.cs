@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -15,14 +16,16 @@ namespace SyncTrayzor.Services.Conflicts
     public class ConflictFile
     {
         public string FilePath { get; }
-        public DateTime LastModified { get; }
-        public long SizeBytes { get; }
+        public DateTime? LastModified { get; }
+        public long? SizeBytes { get; }
+        public bool Deleted { get; }
 
-        public ConflictFile(string filePath, DateTime lastModified, long sizeBytes)
+        public ConflictFile(string filePath, DateTime? lastModified, long? sizeBytes, bool deleted)
         {
             FilePath = filePath;
             LastModified = lastModified;
             SizeBytes = sizeBytes;
+            Deleted = deleted;
         }
 
         public override string ToString()
@@ -38,9 +41,9 @@ namespace SyncTrayzor.Services.Conflicts
 
         public DateTime Created { get; }
         public long SizeBytes { get; }
-        public Device Device { get; }
+        public Device? Device { get; }
 
-        public ConflictOption(string filePath, DateTime lastModified, DateTime created, long sizeBytes, Device device)
+        public ConflictOption(string filePath, DateTime lastModified, DateTime created, long sizeBytes, Device? device)
         {
             FilePath = filePath;
             LastModified = lastModified;
@@ -72,14 +75,17 @@ namespace SyncTrayzor.Services.Conflicts
         public string FilePath { get; }
         public string OriginalPath { get; }
         public DateTime Created { get; }
-        public string ShortDeviceId { get; }
+        public string? ShortDeviceId { get; }
+        public bool BaseFileDeleted { get; }
 
-        public ParsedConflictFileInfo(string filePath, string originalPath, DateTime created, string shortDeviceId)
+        public ParsedConflictFileInfo(string filePath, string originalPath, DateTime created, string? shortDeviceId,
+            bool baseFileDeleted)
         {
             FilePath = filePath;
             OriginalPath = originalPath;
             Created = created;
             ShortDeviceId = shortDeviceId;
+            BaseFileDeleted = baseFileDeleted;
         }
     }
 
@@ -89,7 +95,7 @@ namespace SyncTrayzor.Services.Conflicts
 
         IObservable<ConflictSet> FindConflicts(string basePath);
         void ResolveConflict(ConflictSet conflictSet, string chosenFilePath, bool deleteToRecycleBin);
-        bool TryFindBaseFileForConflictFile(string filePath, out ParsedConflictFileInfo parsedConflictFileInfo);
+        bool TryParseConflictFile(string filePath, out ParsedConflictFileInfo parsedConflictFileInfo);
         bool IsPathIgnored(string path);
         bool IsFileIgnored(string path);
     }
@@ -102,7 +108,9 @@ namespace SyncTrayzor.Services.Conflicts
         private const string syncthingSpecialFileMarker = "~syncthing~";
 
         private static readonly Regex conflictRegex =
-            new(@"^(?<prefix>.*).sync-conflict-(?<year>\d{4})(?<month>\d{2})(?<day>\d{2})-(?<hours>\d{2})(?<mins>\d{2})(?<secs>\d{2})(-(?<device>[a-zA-Z0-9]+))?(?<suffix>.*)(?<extension>\..*)$");
+            new(
+                @"^(?<prefix>.*).sync-conflict-(?<year>\d{4})(?<month>\d{2})(?<day>\d{2})-(?<hours>\d{2})(?<mins>\d{2})(?<secs>\d{2})(-(?<device>[a-zA-Z0-9]+))?(?<suffix>.*)(?<extension>\..*)$");
+
         private static readonly Logger logger = LogManager.GetCurrentClassLogger();
         private const int maxSearchDepth = 255; // Loosely based on the max path length (a bit over)
 
@@ -147,7 +155,8 @@ namespace SyncTrayzor.Services.Conflicts
             return Path.GetFileName(path).Contains(syncthingSpecialFileMarker);
         }
 
-        private void FindConflictsImpl(string basePath, IObserver<ConflictSet> observer, CancellationToken cancellationToken)
+        private void FindConflictsImpl(string basePath, IObserver<ConflictSet> observer,
+            CancellationToken cancellationToken)
         {
             // We may find may conflict files for each conflict, and we need to group them.
             // We can't relay on the order returns by EnumerateFiles either, so it's hard to tell when we've spotted
@@ -169,13 +178,14 @@ namespace SyncTrayzor.Services.Conflicts
 
                 TryFilesystemEnumeration(() =>
                 {
-                    foreach (var filePath in filesystemProvider.EnumerateFiles(directory, conflictPattern, System.IO.SearchOption.TopDirectoryOnly))
+                    foreach (var filePath in filesystemProvider.EnumerateFiles(directory, conflictPattern,
+                                 System.IO.SearchOption.TopDirectoryOnly))
                     {
                         if (IsFileIgnored(filePath))
                             continue;
 
                         // We may not be able to parse it properly (conflictPattern is pretty basic), or it might not exist, or...
-                        if (!TryFindBaseFileForConflictFile(filePath, out var conflictFileInfo))
+                        if (!TryParseConflictFile(filePath, out var conflictFileInfo))
                             continue;
 
                         if (!conflictLookup.TryGetValue(conflictFileInfo.OriginalPath, out var existingConflicts))
@@ -183,6 +193,7 @@ namespace SyncTrayzor.Services.Conflicts
                             existingConflicts = new List<ParsedConflictFileInfo>();
                             conflictLookup.Add(conflictFileInfo.OriginalPath, existingConflicts);
                         }
+
                         existingConflicts.Add(conflictFileInfo);
 
                         cancellationToken.ThrowIfCancellationRequested();
@@ -194,19 +205,34 @@ namespace SyncTrayzor.Services.Conflicts
                     // The file can have disappeared between us finding it, and this
                     try
                     {
-                        var file = new ConflictFile(kvp.Key, filesystemProvider.GetLastWriteTime(kvp.Key), filesystemProvider.GetFileSize(kvp.Key));
+                        var baseFileDeleted = kvp.Value.Any(conflictinfo => conflictinfo.BaseFileDeleted);
+                        ConflictFile file;
+                        if (baseFileDeleted)
+                        {
+                            file = new ConflictFile(kvp.Key, null, null, true);
+                        }
+                        else
+                        {
+                            file = new ConflictFile(kvp.Key, filesystemProvider.GetLastWriteTime(kvp.Key),
+                                filesystemProvider.GetFileSize(kvp.Key), false);
+                        }
+
                         var devices = syncthingManager.Devices.FetchDevices();
                         var conflicts = kvp.Value.Select(x =>
                         {
-                            var device = x.ShortDeviceId == null ? null : devices.FirstOrDefault(d => d.ShortDeviceId == x.ShortDeviceId);
-                            return new ConflictOption(x.FilePath, filesystemProvider.GetLastWriteTime(x.FilePath), x.Created, filesystemProvider.GetFileSize(x.FilePath), device);
+                            var device = x.ShortDeviceId == null
+                                ? null
+                                : devices.FirstOrDefault(d => d.ShortDeviceId == x.ShortDeviceId);
+                            return new ConflictOption(x.FilePath, filesystemProvider.GetLastWriteTime(x.FilePath),
+                                x.Created, filesystemProvider.GetFileSize(x.FilePath), device);
                         }).ToList();
                         observer.OnNext(new ConflictSet(file, conflicts));
                         cancellationToken.ThrowIfCancellationRequested();
                     }
                     catch (Exception e)
                     {
-                        logger.Error(e, $"Error while trying to access {kvp.Key}, maybe it was deleted since we scanned it?");
+                        logger.Error(e,
+                            $"Error while trying to access {kvp.Key}, maybe it was deleted since we scanned it?");
                     }
                 }
 
@@ -214,7 +240,8 @@ namespace SyncTrayzor.Services.Conflicts
                 {
                     TryFilesystemEnumeration(() =>
                     {
-                        foreach (var subDirectory in filesystemProvider.EnumerateDirectories(directory, "*", System.IO.SearchOption.TopDirectoryOnly))
+                        foreach (var subDirectory in filesystemProvider.EnumerateDirectories(directory, "*",
+                                     System.IO.SearchOption.TopDirectoryOnly))
                         {
                             if (IsPathIgnored(subDirectory))
                                 continue;
@@ -227,7 +254,8 @@ namespace SyncTrayzor.Services.Conflicts
                 }
                 else
                 {
-                    logger.Warn($"Max search depth of {maxSearchDepth} exceeded with path {directory}. Not proceeding further.");
+                    logger.Warn(
+                        $"Max search depth of {maxSearchDepth} exceeded with path {directory}. Not proceeding further.");
                 }
             }
         }
@@ -249,7 +277,7 @@ namespace SyncTrayzor.Services.Conflicts
             }
         }
 
-        public bool TryFindBaseFileForConflictFile(string filePath, out ParsedConflictFileInfo parsedConflictFileInfo)
+        public bool TryParseConflictFile(string filePath, out ParsedConflictFileInfo parsedConflictFileInfo)
         {
             var directory = Path.GetDirectoryName(filePath);
             var fileName = Path.GetFileName(filePath);
@@ -257,7 +285,7 @@ namespace SyncTrayzor.Services.Conflicts
             var parsed = conflictRegex.Match(fileName);
             if (!parsed.Success)
             {
-                parsedConflictFileInfo = default(ParsedConflictFileInfo);
+                parsedConflictFileInfo = default;
                 return false;
             }
 
@@ -295,16 +323,22 @@ namespace SyncTrayzor.Services.Conflicts
                 var withSuffix = Path.Combine(directory, prefix + suffix + extension);
                 if (filesystemProvider.FileExists(withSuffix))
                 {
-                    parsedConflictFileInfo = new ParsedConflictFileInfo(filePath, withSuffix, dateCreated, device);
+                    parsedConflictFileInfo = new ParsedConflictFileInfo(filePath, withSuffix, dateCreated, device, false);
                     return true;
                 }
 
                 var withoutSuffix = Path.Combine(directory, prefix + extension);
                 if (filesystemProvider.FileExists(withoutSuffix))
                 {
-                    parsedConflictFileInfo = new ParsedConflictFileInfo(filePath, withoutSuffix, dateCreated, device);
-                    return true;
+                    parsedConflictFileInfo = new ParsedConflictFileInfo(filePath, withoutSuffix, dateCreated, device, false);
                 }
+                else
+                {
+                    // This looks like a conflict file whose base file was deleted
+                    parsedConflictFileInfo = new ParsedConflictFileInfo(filePath, withoutSuffix, dateCreated, device, true);
+                }
+
+                return true;
             }
             catch (Exception e)
             {
@@ -312,13 +346,13 @@ namespace SyncTrayzor.Services.Conflicts
                 logger.Error(e, $"Failed to look for base file for conflict file {filePath}: {e.Message}");
             }
 
-            parsedConflictFileInfo = default(ParsedConflictFileInfo);
+            parsedConflictFileInfo = default;
             return false;
         }
 
         public void ResolveConflict(ConflictSet conflictSet, string chosenFilePath, bool deleteToRecycleBin)
         {
-            if (chosenFilePath != conflictSet.File.FilePath && !conflictSet.Conflicts.Any(x => x.FilePath == chosenFilePath))
+            if (chosenFilePath != conflictSet.File.FilePath && conflictSet.Conflicts.All(x => x.FilePath != chosenFilePath))
                 throw new ArgumentException("chosenPath does not exist inside conflictSet");
 
             if (chosenFilePath == conflictSet.File.FilePath)
