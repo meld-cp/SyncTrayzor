@@ -4,7 +4,7 @@
         xmlns:s="https://github.com/canton7/Stylet"
         xmlns:l="clr-namespace:SyncTrayzor.Localization"
         Height="400" 
-        Width="250" MinWidth="250"
+        Width="290" MinWidth="290"
         WindowStyle="None" SizeToContent="Height"
         ShowInTaskbar="False"
         FlowDirection="{x:Static l:Localizer.FlowDirection}">
