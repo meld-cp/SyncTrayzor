@@ -283,7 +283,7 @@ namespace SyncTrayzor.Services.Conflicts
             var fileName = Path.GetFileName(filePath);
 
             var parsed = conflictRegex.Match(fileName);
-            if (!parsed.Success)
+            if (!parsed.Success || directory == null)
             {
                 parsedConflictFileInfo = default;
                 return false;

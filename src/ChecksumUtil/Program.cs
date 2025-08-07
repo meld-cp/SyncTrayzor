@@ -58,12 +58,13 @@ namespace ChecksumUtil
 
             using (var checksumFileTemp = new MemoryStream())
             {
-                using (var hashAlgorithm = HashAlgorithm.Create(algorithmName))
+                using (var hashAlgorithm = GetHashAlgorithm(algorithmName))
                 {
                     foreach (var inputFileName in inputFileNames)
                     {
                         using var inputFile = File.OpenRead(inputFileName);
-                        ChecksumFileUtilities.WriteChecksumToFile(hashAlgorithm, checksumFileTemp, Path.GetFileName(inputFileName), inputFile);
+                        ChecksumFileUtilities.WriteChecksumToFile(hashAlgorithm, checksumFileTemp,
+                            Path.GetFileName(inputFileName), inputFile);
                     }
                 }
 
@@ -72,7 +73,8 @@ namespace ChecksumUtil
                 using (var checksumFile = File.Create(checksumFileName))
                 using (var privateKey = File.OpenRead(privateKeyName))
                 {
-                    PgpClearsignUtilities.SignFile(checksumFileTemp, checksumFile, privateKey, passphrase.ToCharArray());
+                    PgpClearsignUtilities.SignFile(checksumFileTemp, checksumFile, privateKey,
+                        passphrase.ToCharArray());
                 }
             }
 
@@ -103,12 +105,13 @@ namespace ChecksumUtil
                     if (!passed)
                         throw new Exception("Signature verification failed");
 
-                    using (var hashAlgorithm = HashAlgorithm.Create(algorithmName))
+                    using (var hashAlgorithm = GetHashAlgorithm(algorithmName))
                     {
                         foreach (var inputFileName in inputFileNames)
                         {
                             using var inputFile = File.OpenRead(inputFileName);
-                            var valid = ChecksumFileUtilities.ValidateChecksum(hashAlgorithm, cleartext, Path.GetFileName(inputFileName), inputFile);
+                            var valid = ChecksumFileUtilities.ValidateChecksum(hashAlgorithm, cleartext,
+                                Path.GetFileName(inputFileName), inputFile);
                             if (!valid)
                                 throw new Exception($"File {inputFileName} failed checksum");
                         }
@@ -121,9 +124,29 @@ namespace ChecksumUtil
 
         private static void ShowHelp()
         {
-            Console.WriteLine("Usage : ChecksumUtil.exe create checksumfile algorithm privatekey passphrase inputfile [inputfile ...]");
-            Console.WriteLine("        ChecksumUtil.exe verify checksumfile algorithm certificate inputfile [inputfile ...]");
+            Console.WriteLine(
+                "Usage : ChecksumUtil.exe create checksumfile algorithm privatekey passphrase inputfile [inputfile ...]");
+            Console.WriteLine(
+                "        ChecksumUtil.exe verify checksumfile algorithm certificate inputfile [inputfile ...]");
             Environment.Exit(2);
+        }
+
+        private static HashAlgorithm GetHashAlgorithm(string algorithmName)
+        {
+            switch (algorithmName.ToLower())
+            {
+                case "sha256":
+                case "sha-256":
+                    return SHA256.Create();
+                case "sha384":
+                case "sha-384":
+                    return SHA384.Create();
+                case "sha512":
+                case "sha-512":
+                    return SHA512.Create();
+                default:
+                    throw new ArgumentException($"Unknown algorithm: {algorithmName}");
+            }
         }
     }
 }
