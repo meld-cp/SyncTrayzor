@@ -143,7 +143,7 @@ Doneer dan aan mijn inzamelingsactie voor het goede doel.</value>
     <value>Kies de versie van het bestand dat u wilt bewaren. De andere versies worden verwijderd.</value>
   </data>
   <data name="ConflictResolutionView_ChooseNewestConflict_Button" xml:space="preserve">
-    <value>NIeuwste conflict kiezen</value>
+    <value>Nieuwste conflict kiezen</value>
   </data>
   <data name="ConflictResolutionView_ChooseNewestConflict_Text" xml:space="preserve">
     <value>Kiest het conflict dat het meest recent aangemaakt is</value>
@@ -263,7 +263,7 @@ Hierbij is het risico dat de database van Syncthing beschadigd zou kunnen raken.
 
 Lees het logboek om de oorzaak te achterhalen.
 
-Indien "FATAL: Cannot open database" verschijnt, sluit dan alle andere Syncthing-processen. Indien SyncTrayzor eerder gecrasht is zal er nog een Synchthing-proces actief zijn. Gebruik de menu-optie "Syncthing -&gt; Alle Syncthing-processen vernietigen" om deze te stoppen, en gebruik dan "Syncthing -&gt; Starten" om Syncthing weer te starten.</value>
+Indien "FATAL: Cannot open database" verschijnt, sluit dan alle andere Syncthing-processen. Indien SyncTrayzor eerder gecrasht is zal er nog een Syncthing-proces actief zijn. Gebruik de menu-optie "Syncthing -&gt; Alle Syncthing-processen vernietigen" om deze te stoppen, en gebruik dan "Syncthing -&gt; Starten" om Syncthing weer te starten.</value>
     <comment>Content of the dialog shown when Syncthing couldn't be started (and exited with an error). Instructs the user on how to proceed.
 
 "FATAL: Cannot Open Database" should remain in English
@@ -323,14 +323,14 @@ Pas uw instellingen/whitelists aan om '{1}' toe te staan om uit te voeren</value
     <comment>Header for section containing files that were recently downloaded or deleted</comment>
   </data>
   <data name="FileTransfersTrayView_InConnectionRate" xml:space="preserve">
-    <value>Inkomend: {0}/s</value>
+    <value>In: {0}/s</value>
     <comment>{0}: a value such as '1.2kb'</comment>
   </data>
   <data name="FileTransfersTrayView_NothingToShow" xml:space="preserve">
     <value>Geen recente downloads van bestanden</value>
   </data>
   <data name="FileTransfersTrayView_OutConnectionRate" xml:space="preserve">
-    <value>Uitgaand: {0}/s</value>
+    <value>Uit: {0}/s</value>
     <comment>{0}: a value such as '1.2kb'</comment>
   </data>
   <data name="FileTransfersTrayView_PathDetails" xml:space="preserve">
@@ -338,10 +338,10 @@ Pas uw instellingen/whitelists aan om '{1}' toe te staan om uit te voeren</value
 Volledig pad: {1}</value>
   </data>
   <data name="Generic_Copy" xml:space="preserve">
-    <value>_Kopiëren</value>
+    <value>Kopiëren</value>
   </data>
   <data name="Generic_Cut" xml:space="preserve">
-    <value>Knippe_n</value>
+    <value>Knippen</value>
   </data>
   <data name="Generic_Dialog_Cancel" xml:space="preserve">
     <value>Annuleren</value>
@@ -368,7 +368,7 @@ Volledig pad: {1}</value>
     <comment>'Yes' button shown on various dialogs</comment>
   </data>
   <data name="Generic_Paste" xml:space="preserve">
-    <value>_Plakken</value>
+    <value>Plakken</value>
   </data>
   <data name="NewVersionAlertView_Button_DontRemind" xml:space="preserve">
     <value>Niet meer herinneren</value>
@@ -404,7 +404,7 @@ Volledig pad: {1}</value>
     <value>Wijzigingslogboek weergeven</value>
   </data>
   <data name="NewVersionInstalledView_Message" xml:space="preserve">
-    <value>SyncTrayzor-versie {0} is met succes geïnstalleerd</value>
+    <value>SyncTrayzor-versie {0} is met succes geïnstalleerd.</value>
   </data>
   <data name="NewVersionInstalledView_Title" xml:space="preserve">
     <value>SyncTrayzor bijgewerkt</value>
@@ -550,8 +550,7 @@ Wilt u SyncThing nu opnieuw starten?</value>
     <value>Automatisch bijwerken van Syncthing stoppen</value>
   </data>
   <data name="SettingsView_SyncthingDenyUpgrade_ToolTip" xml:space="preserve">
-    <value>Automatisch bijwerken van Syncthing stoppen. Dit is handig als een nieuwe versie van Syncthing de compatibiliteit breekt met SyncTrayzor. 
-U zult het syncthing.exe-bestand in de SyncTrayzor-configuratiemap handmatig moeten downgraden.</value>
+    <value>Automatisch bijwerken van Syncthing stoppen. Dit is handig als een nieuwe versie van Syncthing de compatibiliteit breekt met SyncTrayzor. U zult het syncthing.exe-bestand in de SyncTrayzor-configuratiemap handmatig moeten downgraden.</value>
   </data>
   <data name="SettingsView_SyncthingEnvironmentalVariables" xml:space="preserve">
     <value>Syncthing-omgevingsvariabelen:</value>
@@ -640,7 +639,7 @@ Meldingen: u zult 'gesynchroniseerd'-ballonnetjes te zien krijgen wanneer bestan
     <value>Opgevolgd</value>
   </data>
   <data name="SettingsView_WatchedFolders_Unavailable" xml:space="preserve">
-    <value>Geen mappen beschikbaar. Start Syncthing.</value>
+    <value>Geen mappen beschikbaar. Start Syncthing</value>
   </data>
   <data name="Settings_SyncthingCommandLineFlags" xml:space="preserve">
     <value>Syncthing-opdrachtregelvlaggen</value>
@@ -650,55 +649,55 @@ Meldingen: u zult 'gesynchroniseerd'-ballonnetjes te zien krijgen wanneer bestan
     <comment>Shown in the top right of the menu bar, if the user hasn't yet donated</comment>
   </data>
   <data name="ShellView_Menu_File" xml:space="preserve">
-    <value>_Bestand</value>
+    <value>Bestand</value>
   </data>
   <data name="ShellView_Menu_File_ConflictResolver" xml:space="preserve">
-    <value>_Conflictoplosser</value>
+    <value>Conflictoplosser</value>
   </data>
   <data name="ShellView_Menu_File_Exit" xml:space="preserve">
-    <value>_Afsluiten</value>
+    <value>Afsluiten</value>
   </data>
   <data name="ShellView_Menu_File_Settings" xml:space="preserve">
-    <value>_Instellingen</value>
+    <value>Instellingen</value>
   </data>
   <data name="ShellView_Menu_Help_About" xml:space="preserve">
-    <value>_Over</value>
+    <value>Over</value>
   </data>
   <data name="ShellView_Menu_Syncthing_KillAll" xml:space="preserve">
-    <value>_Alle Syncthing-processen vernietigen</value>
+    <value>Alle Syncthing-processen vernietigen</value>
   </data>
   <data name="ShellView_Menu_Syncthing_OpenExternal" xml:space="preserve">
-    <value>In externe browser _openen</value>
+    <value>In externe browser openen</value>
   </data>
   <data name="ShellView_Menu_Syncthing_Refresh" xml:space="preserve">
-    <value>Browser _vernieuwen</value>
+    <value>Browser vernieuwen</value>
   </data>
   <data name="ShellView_Menu_Syncthing_Restart" xml:space="preserve">
-    <value>Opni_euw starten</value>
+    <value>Opnieuw starten</value>
   </data>
   <data name="ShellView_Menu_Syncthing_Start" xml:space="preserve">
-    <value>_Starten</value>
+    <value>Starten</value>
   </data>
   <data name="ShellView_Menu_Syncthing_Stop" xml:space="preserve">
-    <value>S_toppen</value>
+    <value>Stoppen</value>
   </data>
   <data name="ShellView_Menu_View" xml:space="preserve">
-    <value>Weerga_ve</value>
+    <value>Weergave</value>
   </data>
   <data name="ShellView_Menu_View_SyncthingConsole" xml:space="preserve">
-    <value>Syncthing-_console</value>
+    <value>Syncthing-console</value>
   </data>
   <data name="ShellView_Menu_Zoom" xml:space="preserve">
-    <value>Browser _zoomen</value>
+    <value>Browser zoomen</value>
   </data>
   <data name="ShellView_Menu_Zoom_In" xml:space="preserve">
-    <value>_Inzoomen</value>
+    <value>Inzoomen</value>
   </data>
   <data name="ShellView_Menu_Zoom_Out" xml:space="preserve">
-    <value>_Uitzoomen</value>
+    <value>Uitzoomen</value>
   </data>
   <data name="ShellView_Menu_Zoom_Reset" xml:space="preserve">
-    <value>He_rstellen</value>
+    <value>Herstellen</value>
   </data>
   <data name="ThirdPartyComponentsView_ComponentDescriptionLabel" xml:space="preserve">
     <value>Beschrijving:</value>
@@ -716,7 +715,7 @@ Meldingen: u zult 'gesynchroniseerd'-ballonnetjes te zien krijgen wanneer bestan
     <value>Naam:</value>
   </data>
   <data name="ThirdPartyComponentsView_ComponentNotesLabel" xml:space="preserve">
-    <value>Opmerkingen</value>
+    <value>Opmerkingen:</value>
   </data>
   <data name="ThirdPartyComponentsView_Intro" xml:space="preserve">
     <value>SyncTrayzor is gebouwd door gebruik te maken van vele opensource-onderdelen en zou er niet zonder kunnen bestaan.
@@ -830,39 +829,39 @@ Details van elk onderdeel inclusief licentietekst worden hieronder weergegeven.<
     <value>Map delen?</value>
   </data>
   <data name="TrayIcon_Menu_CloseToTray" xml:space="preserve">
-    <value>Naar _systeemvak sluiten</value>
+    <value>Naar systeemvak sluiten</value>
     <comment>Menu option available when right-clicking the tray icon. Instructs SyncTrayzor to minimize itself to the tray</comment>
   </data>
   <data name="TrayIcon_Menu_Exit" xml:space="preserve">
-    <value>_Afsluiten</value>
+    <value>Afsluiten</value>
     <comment>Menu option available when right-clicking the tray icon. Instructs SyncTrayzor to exit</comment>
   </data>
   <data name="TrayIcon_Menu_OpenFolder" xml:space="preserve">
-    <value>_Map openen</value>
+    <value>Map openen</value>
     <comment>Menu option available when right-clicking the tray icon. Is a header for a list of folders, each of which can be clicked to open it in Explorer</comment>
   </data>
   <data name="TrayIcon_Menu_RescanAllFolders" xml:space="preserve">
-    <value>_Alle mappen opnieuw scannen</value>
+    <value>Alle mappen opnieuw scannen</value>
     <comment>Menu option available when right-clicking the tray icon. Allows the user to re-scan all folders</comment>
   </data>
   <data name="TrayIcon_Menu_RestartSyncthing" xml:space="preserve">
-    <value>Syncthing opnieuw sta_rten</value>
+    <value>Syncthing opnieuw starten</value>
     <comment>Menu option available when right-clicking the tray icon. Instructs SyncTrayzor to restart</comment>
   </data>
   <data name="TrayIcon_Menu_Restore" xml:space="preserve">
-    <value>SyncTrayzor _openen</value>
+    <value>SyncTrayzor openen</value>
     <comment>Menu option available when right-clicking the tray icon. Instructs SyncTrayzor to restore itself from the tray, and be visible to the user</comment>
   </data>
   <data name="TrayIcon_Menu_Settings" xml:space="preserve">
-    <value>Inste_llingen</value>
+    <value>Instellingen</value>
     <comment>Menu option available when right-clicking the tray icon. Instructs SyncTrayzor to show the Settings dialog</comment>
   </data>
   <data name="TrayIcon_Menu_StartSyncthing" xml:space="preserve">
-    <value>Syncthing _starten</value>
+    <value>Syncthing starten</value>
     <comment>Menu option available when right-clicking the tray icon. Instructs SyncTrayzor to start Syncthing. Only available if Syncthing isn't running</comment>
   </data>
   <data name="TrayIcon_Menu_StopSyncthing" xml:space="preserve">
-    <value>Syncthing s_toppen</value>
+    <value>Syncthing stoppen</value>
     <comment>Menu option available when right-clicking the tray icon. Instructs SyncTrayzor to stop Syncthing. Only available if Syncthing is running</comment>
   </data>
   <data name="UnhandledExceptionView_IntroMessage" xml:space="preserve">
@@ -908,5 +907,38 @@ SyncTrayzor gaat nu afsluiten. Onze excuses.</value>
   <data name="ViewerView_SyncthingStopped" xml:space="preserve">
     <value>Syncthing is gestopt</value>
     <comment>Text shown in the centre of the screen when Syncthing is stopped</comment>
+  </data>
+  <data name="ShellView_Menu_Help" xml:space="preserve">
+    <value>Help</value>
+  </data>
+  <data name="ConflictResolutionView_FileName_FileDeleted" xml:space="preserve">
+    <value>[Bestand verwijderd]</value>
+  </data>
+  <data name="ShellView_Menu_Syncthing" xml:space="preserve">
+    <value>Syncthing</value>
+  </data>
+  <data name="SettingsView_Section_Syncthing" xml:space="preserve">
+    <value>Syncthing</value>
+  </data>
+  <data name="SettingsView_Section_SyncTrayzor" xml:space="preserve">
+    <value>SyncTrayzor</value>
+  </data>
+  <data name="SettingsView_Tab_Syncthing" xml:space="preserve">
+    <value>Syncthing</value>
+  </data>
+  <data name="SettingsView_Tab_SyncTrayzor" xml:space="preserve">
+    <value>SyncTrayzor</value>
+  </data>
+  <data name="TrayIcon_Balloon_FinishedSyncing_Multiple" xml:space="preserve">
+    <value>{0}: {1:list:{}|; }</value>
+  </data>
+  <data name="SettingsView_Logging_LogLevel_Debug" xml:space="preserve">
+    <value>Debuggen</value>
+  </data>
+  <data name="SettingsView_Logging_LogLevel_Trace" xml:space="preserve">
+    <value>Traceren</value>
+  </data>
+  <data name="SettingsView_KeepActivityPopupOpen" xml:space="preserve">
+    <value>Activiteit-popup open houden (rechtsklikken op de popup om te sluiten)</value>
   </data>
 </root>
