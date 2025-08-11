@@ -200,7 +200,7 @@ Donera till min välgörenhetsinsamlingskampanj.</value>
     <comment>Text shown next to the 'Scanning' progress bar at the top of the page, when scanning is in progress</comment>
   </data>
   <data name="ConflictResolutionView_SelectMultiple" xml:space="preserve">
-    <value>Använd shift / kontroll för att välja flera objekt</value>
+    <value>Använd skift / kontroll för att välja flera objekt</value>
   </data>
   <data name="ConflictResolutionView_Status_NoConflicts" xml:space="preserve">
     <value>Inga konflikter hittades. Bra jobbat!</value>
@@ -307,10 +307,10 @@ Vänligen justera dina inställningar / vitlistor för att tillåta '{1}' för a
 Fullständig sökväg: {1}</value>
   </data>
   <data name="Generic_Copy" xml:space="preserve">
-    <value>_Kopiera</value>
+    <value>Kopiera</value>
   </data>
   <data name="Generic_Cut" xml:space="preserve">
-    <value>Kli_pp ut</value>
+    <value>Klipp ut</value>
   </data>
   <data name="Generic_Dialog_Cancel" xml:space="preserve">
     <value>Avbryt</value>
@@ -337,7 +337,7 @@ Fullständig sökväg: {1}</value>
     <comment>'Yes' button shown on various dialogs</comment>
   </data>
   <data name="Generic_Paste" xml:space="preserve">
-    <value>_Klistra in</value>
+    <value>Klistra in</value>
   </data>
   <data name="NewVersionAlertView_Button_DontRemind" xml:space="preserve">
     <value>Påminn mig inte igen</value>
@@ -416,7 +416,7 @@ Fullständig sökväg: {1}</value>
     <comment>Name for the Info log level</comment>
   </data>
   <data name="SettingsView_Logging_LogLevel_Trace" xml:space="preserve">
-    <value>Spår</value>
+    <value>Spåra</value>
     <comment>Name for the Trace log level (which provides the most debug info)</comment>
   </data>
   <data name="SettingsView_Logging_ShowSyncTrayzorLog" xml:space="preserve">
@@ -508,7 +508,7 @@ Vill du starta om Syncthing nu?</value>
     <value>Om den är inställd åsidosätts standardsökvägen för Syncthings databas och konfiguration</value>
   </data>
   <data name="SettingsView_SyncthingCustomPath" xml:space="preserve">
-    <value>Syncthing anpassad sökväg:</value>
+    <value>Syncthing anpassad sökväg</value>
   </data>
   <data name="SettingsView_SyncthingDenyUpgrade" xml:space="preserve">
     <value>Stoppa automatisk uppgraderande av Syncthing</value>
@@ -604,52 +604,52 @@ Vill du starta om Syncthing nu?</value>
     <comment>Shown in the top right of the menu bar, if the user hasn't yet donated</comment>
   </data>
   <data name="ShellView_Menu_File" xml:space="preserve">
-    <value>_Arkiv</value>
+    <value>Arkiv</value>
   </data>
   <data name="ShellView_Menu_File_ConflictResolver" xml:space="preserve">
-    <value>_Konfliktlösare</value>
+    <value>Konfliktlösare</value>
   </data>
   <data name="ShellView_Menu_File_Exit" xml:space="preserve">
-    <value>_Avsluta</value>
+    <value>Avsluta</value>
   </data>
   <data name="ShellView_Menu_File_Settings" xml:space="preserve">
-    <value>_Inställningar</value>
+    <value>Inställningar</value>
   </data>
   <data name="ShellView_Menu_Help" xml:space="preserve">
-    <value>_Hjälp</value>
+    <value>Hjälp</value>
   </data>
   <data name="ShellView_Menu_Help_About" xml:space="preserve">
-    <value>_Om</value>
+    <value>Om</value>
   </data>
   <data name="ShellView_Menu_Syncthing_KillAll" xml:space="preserve">
-    <value>Stäng _alla Syncthing-processer</value>
+    <value>Stäng alla Syncthing-processer</value>
   </data>
   <data name="ShellView_Menu_Syncthing_OpenExternal" xml:space="preserve">
-    <value>_Öppna i extern webbläsare</value>
+    <value>Öppna i extern webbläsare</value>
   </data>
   <data name="ShellView_Menu_Syncthing_Restart" xml:space="preserve">
-    <value>S_tarta om</value>
+    <value>Starta om</value>
   </data>
   <data name="ShellView_Menu_Syncthing_Start" xml:space="preserve">
-    <value>_Starta</value>
+    <value>Starta</value>
   </data>
   <data name="ShellView_Menu_Syncthing_Stop" xml:space="preserve">
-    <value>S_toppa</value>
+    <value>Stoppa</value>
   </data>
   <data name="ShellView_Menu_View" xml:space="preserve">
-    <value>_Visa</value>
+    <value>Visa</value>
   </data>
   <data name="ShellView_Menu_View_SyncthingConsole" xml:space="preserve">
-    <value>Syncthing_konsol</value>
+    <value>Syncthing-konsol</value>
   </data>
   <data name="ShellView_Menu_Zoom_In" xml:space="preserve">
-    <value>Zooma _in</value>
+    <value>Zooma in</value>
   </data>
   <data name="ShellView_Menu_Zoom_Out" xml:space="preserve">
-    <value>Zooma _ut</value>
+    <value>Zooma ut</value>
   </data>
   <data name="ShellView_Menu_Zoom_Reset" xml:space="preserve">
-    <value>_Återställ</value>
+    <value>Återställ</value>
   </data>
   <data name="ThirdPartyComponentsView_ComponentDescriptionLabel" xml:space="preserve">
     <value>Beskrivning:</value>
@@ -781,39 +781,39 @@ Detaljer om varje komponent och dess licenstext visas nedan.</value>
     <value>Dela mappen?</value>
   </data>
   <data name="TrayIcon_Menu_CloseToTray" xml:space="preserve">
-    <value>_Stäng till systemfältet</value>
+    <value>Stäng till systemfältet</value>
     <comment>Menu option available when right-clicking the tray icon. Instructs SyncTrayzor to minimize itself to the tray</comment>
   </data>
   <data name="TrayIcon_Menu_Exit" xml:space="preserve">
-    <value>_Avsluta</value>
+    <value>Avsluta</value>
     <comment>Menu option available when right-clicking the tray icon. Instructs SyncTrayzor to exit</comment>
   </data>
   <data name="TrayIcon_Menu_OpenFolder" xml:space="preserve">
-    <value>Öppna _mapp</value>
+    <value>Öppna mapp</value>
     <comment>Menu option available when right-clicking the tray icon. Is a header for a list of folders, each of which can be clicked to open it in Explorer</comment>
   </data>
   <data name="TrayIcon_Menu_RescanAllFolders" xml:space="preserve">
-    <value>_Uppdatera alla mappar</value>
+    <value>Skanna om alla mappar</value>
     <comment>Menu option available when right-clicking the tray icon. Allows the user to re-scan all folders</comment>
   </data>
   <data name="TrayIcon_Menu_RestartSyncthing" xml:space="preserve">
-    <value>_Starta om Syncthing</value>
+    <value>Starta om Syncthing</value>
     <comment>Menu option available when right-clicking the tray icon. Instructs SyncTrayzor to restart</comment>
   </data>
   <data name="TrayIcon_Menu_Restore" xml:space="preserve">
-    <value>_Öppna SyncTrayzor</value>
+    <value>Öppna SyncTrayzor</value>
     <comment>Menu option available when right-clicking the tray icon. Instructs SyncTrayzor to restore itself from the tray, and be visible to the user</comment>
   </data>
   <data name="TrayIcon_Menu_Settings" xml:space="preserve">
-    <value>Inst_ällningar</value>
+    <value>Inställningar</value>
     <comment>Menu option available when right-clicking the tray icon. Instructs SyncTrayzor to show the Settings dialog</comment>
   </data>
   <data name="TrayIcon_Menu_StartSyncthing" xml:space="preserve">
-    <value>_Starta Syncthing</value>
+    <value>Starta Syncthing</value>
     <comment>Menu option available when right-clicking the tray icon. Instructs SyncTrayzor to start Syncthing. Only available if Syncthing isn't running</comment>
   </data>
   <data name="TrayIcon_Menu_StopSyncthing" xml:space="preserve">
-    <value>S_toppa Syncthing</value>
+    <value>Stoppa Syncthing</value>
     <comment>Menu option available when right-clicking the tray icon. Instructs SyncTrayzor to stop Syncthing. Only available if Syncthing is running</comment>
   </data>
   <data name="UnhandledExceptionView_IntroMessage" xml:space="preserve">
@@ -859,5 +859,77 @@ SyncTrayzor måste stängas. Ledsen för det</value>
   <data name="ViewerView_SyncthingStopped" xml:space="preserve">
     <value>Syncthing stoppas</value>
     <comment>Text shown in the centre of the screen when Syncthing is stopped</comment>
+  </data>
+  <data name="AboutView_Version" xml:space="preserve">
+    <value>Version: {0}</value>
+  </data>
+  <data name="ShellView_Menu_Syncthing" xml:space="preserve">
+    <value>Syncthing</value>
+  </data>
+  <data name="ShellView_Menu_Syncthing_Refresh" xml:space="preserve">
+    <value>Uppdatera webbläsaren</value>
+  </data>
+  <data name="SettingsView_ObfuscateDeviceIds" xml:space="preserve">
+    <value>Obfuskera enhets-ID:t i loggvyn</value>
+  </data>
+  <data name="SettingsView_Section_Syncthing" xml:space="preserve">
+    <value>Syncthing</value>
+  </data>
+  <data name="SettingsView_Section_SyncTrayzor" xml:space="preserve">
+    <value>SyncTrayzor</value>
+  </data>
+  <data name="SettingsView_SyncthingAddress_ToolTip" xml:space="preserve">
+    <value>SyncTrayzor åsidosätter "lyssningsadressen för det grafiska användargränssnittet" som anges i Syncthings konfiguration. Du kan dock ställa in det till vilket värde du vill här.</value>
+  </data>
+  <data name="SettingsView_WatchedFolders_Explanation" xml:space="preserve">
+    <value>Bevakad: Mappen kommer att bevakas för ändringar, vilket innebär att du kan ställa in ett längre avfrågningsintervall i Syncthing.
+
+Meddelanden: Du kommer att få ballongmeddelanden med texten "Synkroniserad" när filer i den här mappen uppdateras.</value>
+  </data>
+  <data name="Dialog_FailedToStartSyncthing_Message" xml:space="preserve">
+    <value>Misslyckades med att starta Syncthing.
+
+Läs loggen för att fastställa orsaken.
+
+Om "FATAL: Cannot open database" visas, stäng alla andra öppna instanser av Syncthing. Om SyncTrayzor kraschade tidigare kan det fortfarande finnas zombie-Syncthing-processer igång. Använd menyalternativet "Syncthing -&gt; Avsluta alla Syncthing-processer" för att stoppa dem, använd sedan "Syncthing -&gt; Starta" för att starta Syncthing igen.</value>
+  </data>
+  <data name="SettingsView_Tab_Syncthing" xml:space="preserve">
+    <value>Syncthing</value>
+  </data>
+  <data name="SettingsView_Tab_SyncTrayzor" xml:space="preserve">
+    <value>SyncTrayzor</value>
+  </data>
+  <data name="ShellView_Menu_Zoom" xml:space="preserve">
+    <value>Zooma webbläsaren</value>
+  </data>
+  <data name="FileTransfersTrayView_InConnectionRate" xml:space="preserve">
+    <value>In: {0}/s</value>
+  </data>
+  <data name="FileTransfersTrayView_NothingToShow" xml:space="preserve">
+    <value>Inga nyligen hämtade filer</value>
+  </data>
+  <data name="TrayIcon_Balloon_FinishedSyncing_Multiple" xml:space="preserve">
+    <value>{0}: {1:list:{}|; }</value>
+  </data>
+  <data name="SettingsView_Syncthing_ProcessPriority_Normal" xml:space="preserve">
+    <value>Normal</value>
+  </data>
+  <data name="SettingsView_EnableConflictFileMonitoring" xml:space="preserve">
+    <value>Varna mig om filer är i konflikt</value>
+  </data>
+  <data name="SettingsView_Alerts_SeeFolders" xml:space="preserve">
+    <value>Inaktivera ballongmeddelanden helt på fliken "Mappar"</value>
+  </data>
+  <data name="BarAlertsView_IntelXeGraphics_AlertText" xml:space="preserve">
+    <value>Området nedan kan vara tomt när du använder Intel Xe-grafikkort. Inaktivera hårdvarurendering under Arkiv -⁠&gt; Inställningar om du stöter på detta.</value>
+  </data>
+  <data name="BarAlertsView_IntelXeGraphics_DismissLink" xml:space="preserve">
+    <value>Avfärda</value>
+  </data>
+  <data name="SettingsView_KeepActivityPopupOpen" xml:space="preserve">
+    <value>Håll aktivitetspopupen öppen (högerklicka på popupen för att stänga)</value>
+  </data>
+  <data name="ConflictResolutionView_FileName_FileDeleted" xml:space="preserve">
+    <value>[Fil borttagen]</value>
   </data>
 </root>
