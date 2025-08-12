@@ -82,10 +82,66 @@ var
   OldUninstString    : string;
   OldInstallDir   : string;
   BackupDir       : string;
+  BackupAutostartValue: string;
+  BackupAutostartExists: Boolean;
 
   InfoPage : TWizardPage;
   PgLabel : TNewStaticText;
   PgCheckbox : TNewCheckBox;
+
+// -------------------------------------------------------------------
+// AUTOSTART REGISTRY BACKUP  ----------------------------------------
+// -------------------------------------------------------------------
+function BackupAutostartRegistry(): Boolean;
+var
+  RegValue: string;
+begin
+  Result := False;
+  BackupAutostartExists := False;
+  BackupAutostartValue := '';
+
+  if RegQueryStringValue(HKEY_CURRENT_USER, 'SOFTWARE\Microsoft\Windows\CurrentVersion\Run', 'SyncTrayzor', RegValue) then
+  begin
+    BackupAutostartExists := True;
+    BackupAutostartValue := RegValue;
+    Result := True;
+    Log('Backed up autostart registry: ' + RegValue);
+  end
+  else
+  begin
+    Log('No autostart registry entry found to backup');
+  end;
+end;
+
+procedure RestoreAutostartRegistry();
+var
+  NewValue: string;
+  HasMinimized: Boolean;
+begin
+  if not BackupAutostartExists then
+  begin
+    Log('No autostart registry to restore');
+    Exit;
+  end;
+
+  // Check if the old value contained -minimized
+  HasMinimized := Pos('-minimized', BackupAutostartValue) > 0;
+
+  // Build new registry value with current install path
+  NewValue := '"' + ExpandConstant('{app}\{#AppExeName}') + '"';
+  if HasMinimized then
+    NewValue := NewValue + ' -minimized';
+
+  // Write the new autostart registry entry
+  if RegWriteStringValue(HKEY_CURRENT_USER, 'SOFTWARE\Microsoft\Windows\CurrentVersion\Run', 'SyncTrayzor', NewValue) then
+  begin
+    Log('Restored autostart registry: ' + NewValue);
+  end
+  else
+  begin
+    Log('Failed to restore autostart registry');
+  end;
+end;
 
 procedure BumpInstallCount;
 var
@@ -145,6 +201,8 @@ begin
   end
   else if CurStep = ssPostInstall then
   begin
+    if OldVersionDetected then
+      RestoreAutostartRegistry();
     ExeConfig := ExpandConstant('{param:SyncTrayzorExeConfig}');
     if ExeConfig <> '' then
     begin
@@ -367,7 +425,10 @@ begin
   begin
     // 1) Backup
     if not PgCheckbox.Checked then
+    begin
       BackupAppData();
+      BackupAutostartRegistry();
+    end;
 
     // 2) Run uninstaller
     if (Exec('>', OldUninstString, '', SW_SHOWNORMAL, ewWaitUntilTerminated, ResultCode)) then
@@ -379,8 +440,8 @@ begin
     else
     begin
       MsgBox('Could not launch the previous uninstaller (' +
-             OldUninstString + '): ' + SysErrorMessage(ResultCode) + '.'#13#10'Setup cannot continue.',
-             mbError, MB_OK);
+            OldUninstString + '): ' + SysErrorMessage(ResultCode) + '.'#13#10'Setup cannot continue.',
+            mbError, MB_OK);
       Result := False;  // stay on page
     end;
   end;
