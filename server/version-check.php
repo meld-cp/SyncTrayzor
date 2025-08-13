@@ -69,7 +69,7 @@ function get_with_wildcard($src, $value, $default = null)
 }
 
 $versions = [
-   '2.0.0' => [
+   '2.0.1' => [
       'base_url' => 'https://github.com/GermanCoding/SyncTrayzor/releases/download',
       'installed' => [
          'direct_download_url' => [
@@ -85,12 +85,12 @@ $versions = [
       ],     
       'sha512sum_download_url' => "{base_url}/v{version}/sha512sum.txt.asc",
       'release_page_url' => 'https://github.com/GermanCoding/SyncTrayzor/releases/tag/v{version}',
-      'release_notes' => "N/A",
+      'release_notes' => "Fix crash when IPv6 is disabled. Plus all release changes if you're still on a beta build.",
    ]
 ];
 
 $upgrades = [
-   '1.1.29' => ['to' => 'latest', 'formatter' => '5']
+   '2.0.0' => ['to' => 'latest', 'formatter' => '5']
 ];
 
 $response_formatters = [
