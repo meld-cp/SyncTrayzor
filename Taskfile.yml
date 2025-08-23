@@ -3,7 +3,7 @@
 version: "3"
 
 vars:
-   DOWNLOAD_SYNCTHING_VERSION: "v2.0.0"
+   DOWNLOAD_SYNCTHING_VERSION: "v2.0.3"
 
 tasks:
    download-syncthing:
