@@ -130,7 +130,14 @@ namespace SyncTrayzor.Pages
                 {
                     settings.CefCommandLineArgs.Add("disable-gpu");
                     settings.CefCommandLineArgs.Add("disable-gpu-vsync");
-                    settings.CefCommandLineArgs.Add("disable-gpu-compositing");
+                    try
+                    {
+                        settings.CefCommandLineArgs.Add("disable-gpu-compositing");
+                    }
+                    catch (ArgumentException)
+                    {
+                        // CefSharp 139+ may set this by default, ignore if unable to set the flag.
+                    }
                     settings.CefCommandLineArgs.Add("disable-application-cache");
                 }
 
