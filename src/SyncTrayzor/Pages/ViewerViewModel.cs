@@ -33,9 +33,6 @@ namespace SyncTrayzor.Pages
         private CultureInfo? culture;
         private double zoomLevel;
 
-        private CancellationTokenSource? _resizeCancellation;
-        private readonly object _resizeTokenLock = new();
-
         public string? Location
         {
             get => WebBrowser?.Address;
@@ -239,8 +236,6 @@ namespace SyncTrayzor.Pages
 
                 e.Handled = true;
             };
-
-            webBrowser.SizeChanged += OnSizeChanged;
         }
 
         public void RefreshBrowserNukeCache()
@@ -384,39 +379,6 @@ namespace SyncTrayzor.Pages
             request.Headers = headers;
 
             return CefReturnValue.Continue;
-        }
-
-        [SuppressPropertyChangedWarnings]
-        private void OnSizeChanged(object? sender, SizeChangedEventArgs e)
-        {
-            if (syncthingState != SyncthingState.Running) return;
-            lock (_resizeTokenLock)
-            {
-                // Cancel previous scheduled task if it exists
-                _resizeCancellation?.Cancel();
-                _resizeCancellation?.Dispose();
-
-                // Create a new CTS for the new task
-                _resizeCancellation = new CancellationTokenSource();
-                var token = _resizeCancellation.Token;
-
-                // Schedule the task
-                _ = Task.Run(async () =>
-                {
-                    try
-                    {
-                        await Task.Delay(10, token);
-
-                        // Workaround for https://github.com/cefsharp/CefSharp/issues/4953
-                        WebBrowser?.GetBrowserHost()?.Invalidate(PaintElementType.View);
-                        WebBrowser?.InvalidateVisual();
-                    }
-                    catch (TaskCanceledException)
-                    {
-                        // Swallow cancellation
-                    }
-                }, token);
-            }
         }
 
         void ILifeSpanHandler.OnBeforeClose(IWebBrowser browserControl, IBrowser browser)
