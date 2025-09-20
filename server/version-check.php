@@ -69,7 +69,7 @@ function get_with_wildcard($src, $value, $default = null)
 }
 
 $versions = [
-   '2.0.1' => [
+   '2.0.3' => [
       'base_url' => 'https://github.com/GermanCoding/SyncTrayzor/releases/download',
       'installed' => [
          'direct_download_url' => [
@@ -90,6 +90,8 @@ $versions = [
 ];
 
 $upgrades = [
+   '2.0.2' => ['to' => 'latest', 'formatter' => '5']
+   '2.0.1' => ['to' => 'latest', 'formatter' => '5']
    '2.0.0' => ['to' => 'latest', 'formatter' => '5']
 ];
 
