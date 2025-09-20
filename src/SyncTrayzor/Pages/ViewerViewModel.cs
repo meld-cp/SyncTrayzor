@@ -91,7 +91,9 @@ namespace SyncTrayzor.Pages
         {
             lock (cultureLock)
             {
-                culture = configuration.UseComputerCulture ? CultureInfo.CurrentUICulture : CultureInfo.GetCultureInfoByIetfLanguageTag("en-US");
+                culture = configuration.UseComputerCulture
+                    ? CultureInfo.CurrentUICulture
+                    : CultureInfo.GetCultureInfoByIetfLanguageTag("en-US");
             }
         }
 
@@ -107,13 +109,15 @@ namespace SyncTrayzor.Pages
                     language = culture!.Name;
                 }
 
+                var cefLogFile = pathsProvider.LogFilePath + @"\cef.log";
                 var settings = new CefSettings()
                 {
                     RemoteDebuggingPort = AppSettings.Instance.CefRemoteDebuggingPort,
                     // We really only want to set the LocalStorage path, but we don't have that level of control....
                     CachePath = pathsProvider.CefCachePath,
+                    LogFile = cefLogFile,
                     IgnoreCertificateErrors = true,
-                    LogSeverity = LogSeverity.Disable,
+                    LogSeverity = LogSeverity.Warning,
                     AcceptLanguageList = language,
                     Locale = language
                 };
@@ -135,10 +139,23 @@ namespace SyncTrayzor.Pages
                     {
                         // CefSharp 139+ may set this by default, ignore if unable to set the flag.
                     }
+
                     settings.CefCommandLineArgs.Add("disable-application-cache");
                 }
 
-                Cef.Initialize(settings);
+                try
+                {
+                    if (!Cef.Initialize(settings))
+                    {
+                        throw new InvalidOperationException("Unable to initialize CEF.");
+                    }
+                }
+                catch (InvalidOperationException e)
+                {
+                    throw new AggregateException(
+                        $"SyncTrayzor was unable to initialize its embedded browser.\nWhen reporting this issue, please attach the CEF logfile @ \n{cefLogFile}\n in addition to this message and the normal SyncTrayzor logfile.",
+                        e);
+                }
             }
 
             var webBrowser = new ChromiumWebBrowser();
