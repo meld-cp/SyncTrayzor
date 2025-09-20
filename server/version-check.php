@@ -85,7 +85,7 @@ $versions = [
       ],     
       'sha512sum_download_url' => "{base_url}/v{version}/sha512sum.txt.asc",
       'release_page_url' => 'https://github.com/GermanCoding/SyncTrayzor/releases/tag/v{version}',
-      'release_notes' => "Fix crash when IPv6 is disabled. Plus all release changes if you're still on a beta build.",
+      'release_notes' => "Fix crash when hardware rendering is disabled",
    ]
 ];
 
