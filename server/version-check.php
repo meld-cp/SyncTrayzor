@@ -90,8 +90,8 @@ $versions = [
 ];
 
 $upgrades = [
-   '2.0.2' => ['to' => 'latest', 'formatter' => '5']
-   '2.0.1' => ['to' => 'latest', 'formatter' => '5']
+   '2.0.2' => ['to' => 'latest', 'formatter' => '5'],
+   '2.0.1' => ['to' => 'latest', 'formatter' => '5'],
    '2.0.0' => ['to' => 'latest', 'formatter' => '5']
 ];
 
