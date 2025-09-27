@@ -859,7 +859,7 @@ Les détails de chaque composant ainsi que l'énoncé de la licence correspondan
   </data>
   <data name="UnhandledExceptionView_IntroMessage" xml:space="preserve">
     <value>Oops ! Quelque chose s'est très mal passé.
-SyncTrayzor doit se fermer. Veuillez nous excuser.</value>
+SyncTrayzor doit se fermer. Veuillez nous excuser</value>
   </data>
   <data name="UnhandledExceptionView_LogFileLocation_Description" xml:space="preserve">
     <value>Vous pourriez être appelé à fournir un fichier journal.</value>
