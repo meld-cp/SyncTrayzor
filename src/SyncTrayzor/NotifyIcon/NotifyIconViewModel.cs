@@ -30,7 +30,6 @@ namespace SyncTrayzor.NotifyIcon
 
         public bool Visible { get; set; }
         public bool MainWindowVisible { get; set; }
-        public bool KeepActivityPopupOpen { get; set; }
         public BindableCollection<FolderViewModel> Folders { get; private set; }
         public FileTransfersTrayViewModel FileTransfersViewModel { get; private set; }
 
@@ -51,6 +50,7 @@ namespace SyncTrayzor.NotifyIcon
         public bool SyncthingSyncing { get; private set; }
 
         private IconAnimationMode iconAnimationmode;
+        private bool usePopupWindow;
 
         public NotifyIconViewModel(
             IWindowManager windowManager,
@@ -86,7 +86,7 @@ namespace SyncTrayzor.NotifyIcon
             this.configurationProvider.ConfigurationChanged += ConfigurationChanged;
             var configuration = this.configurationProvider.Load();
             iconAnimationmode = configuration.IconAnimationMode;
-            KeepActivityPopupOpen = configuration.KeepActivityPopupOpen;
+            usePopupWindow = configuration.KeepActivityPopupOpen;
         }
 
         private void StateChanged(object sender, SyncthingStateChangedEventArgs e)
@@ -130,8 +130,8 @@ namespace SyncTrayzor.NotifyIcon
         private void ConfigurationChanged(object sender, ConfigurationChangedEventArgs e)
         {
             iconAnimationmode = e.NewConfiguration.IconAnimationMode;
-            KeepActivityPopupOpen = e.NewConfiguration.KeepActivityPopupOpen;
-            PopupActivation = KeepActivityPopupOpen
+            usePopupWindow = e.NewConfiguration.KeepActivityPopupOpen;
+            PopupActivation = usePopupWindow
                 ? PopupActivationMode.None
                 : PopupActivationMode.LeftClick;
             // Reset, just in case
@@ -140,7 +140,7 @@ namespace SyncTrayzor.NotifyIcon
 
         public void Click()
         {
-            if (!KeepActivityPopupOpen)
+            if (!usePopupWindow)
             {
                 return;
             }
@@ -149,7 +149,6 @@ namespace SyncTrayzor.NotifyIcon
                 var vm = popupViewModelFactory();
                 windowManager.ShowWindow(vm);
             }
-
         }
 
         public void DoubleClick()
