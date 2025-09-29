@@ -18,6 +18,8 @@ namespace SyncTrayzor.Pages.Tray
         private readonly ISyncthingManager syncthingManager;
         private readonly IProcessStartProvider processStartProvider;
 
+        public bool ShowTitle { get; set; } = true;
+
         public NetworkGraphViewModel NetworkGraph { get; }
 
         public BindableCollection<FileTransferViewModel> CompletedTransfers { get; private set; }
