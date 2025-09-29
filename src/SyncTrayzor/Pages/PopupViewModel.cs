@@ -17,20 +17,23 @@
         {
             FileTransfersViewModel = fileTransfersViewModel;
             FileTransfersViewModel.ShowTitle = false;
-            this.DisplayName = "SyncTrayzor";
-            this.Activated += PopupViewModel_Activated;
+            FileTransfersViewModel.ActivateWith(this);
+            FileTransfersViewModel.DeactivateWith(this);
+
+            DisplayName = "SyncTrayzor";
+            Activated += PopupViewModel_Activated;
         }
 
         private void PopupViewModel_Activated(object sender, ActivationEventArgs e)
         {
             var mousePos = WpfScreenHelper.MouseHelper.MousePosition;
-            this.SetViewStartPosition(mousePos);
+            SetViewStartPosition(mousePos);
         }
 
         private void SetViewStartPosition(Point popupPos)
         {
 
-            if (this.View is not Window w)
+            if (View is not Window w)
             {
                 return;
             }
