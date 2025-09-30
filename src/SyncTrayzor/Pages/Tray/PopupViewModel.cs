@@ -24,7 +24,6 @@
             keepOpen = configuration.KeepActivityPopupOpen;
 
             FileTransfersViewModel = fileTransfersViewModel;
-            FileTransfersViewModel.ShowTitle = false;
             FileTransfersViewModel.ActivateWith(this);
             FileTransfersViewModel.DeactivateWith(this);
 
