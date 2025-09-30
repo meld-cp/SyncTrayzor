@@ -1,4 +1,4 @@
-﻿namespace SyncTrayzor.Pages
+﻿namespace SyncTrayzor.Pages.Tray
 {
     using System;
     using System.Collections.Generic;

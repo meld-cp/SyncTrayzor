@@ -6,7 +6,6 @@ using Hardcodet.Wpf.TaskbarNotification;
 
 using Stylet;
 
-using SyncTrayzor.Pages;
 using SyncTrayzor.Pages.Settings;
 using SyncTrayzor.Pages.Tray;
 using SyncTrayzor.Services;

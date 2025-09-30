@@ -1,10 +1,8 @@
-﻿namespace SyncTrayzor.Pages
+﻿namespace SyncTrayzor.Pages.Tray
 {
     using System.Windows;
 
     using Stylet;
-
-    using SyncTrayzor.Pages.Tray;
 
     public partial class PopupViewModel : Screen
     {
