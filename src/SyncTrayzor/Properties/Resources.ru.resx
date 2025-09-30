@@ -903,7 +903,7 @@ SyncTrayzor закрывается. Извините.</value>
     <value>Нет недавно загруженных файлов</value>
   </data>
   <data name="SettingsView_KeepActivityPopupOpen" xml:space="preserve">
-    <value>Держать всплывающее окно активности открытым</value>
+    <value>Держать всплывающее окно активности открытым (щелкните его правой кнопкой мыши, чтобы закрыть)</value>
   </data>
   <data name="TrayIcon_Balloon_FinishedSyncing_Multiple" xml:space="preserve">
     <value>{0}: {1:list:{}|; }</value>

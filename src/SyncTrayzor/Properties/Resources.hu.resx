@@ -934,7 +934,7 @@ A SyncTrayzor ki fog lépni. Bocsánat</value>
     <value>SyncTrayzor</value>
   </data>
   <data name="SettingsView_KeepActivityPopupOpen" xml:space="preserve">
-    <value>Az aktivitásablak nyitva marad</value>
+    <value>Az aktivitásablak nyitva marad (jobb kattintással zárható)</value>
   </data>
   <data name="TrayIcon_Balloon_FinishedSyncing_Multiple" xml:space="preserve">
     <value>{0}: {1:list:{}|; }</value>
