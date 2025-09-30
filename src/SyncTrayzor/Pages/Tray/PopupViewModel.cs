@@ -74,30 +74,30 @@
 
         private void SetViewStartPosition(Point popupPos)
         {
-
             if (View is not Window w)
             {
                 return;
             }
 
+            // get the screen the mouse is on
             var popupScreen = WpfScreenHelper.Screen.FromPoint(popupPos);
+            var dpiScale = popupScreen.Bounds.Height / popupScreen.WpfBounds.Height;
+
+            var screenWorkingArea = popupScreen.WpfWorkingArea;
 
             // horizontal position
-            var left = popupPos.X + PopupOffsetX;
+            var left = (popupPos.X + PopupOffsetX) / dpiScale; // account for DPI scaling
             var right = left + w.Width;
 
-            if (right > popupScreen.Bounds.Right)
+            if (right > screenWorkingArea.Right)
             {
-                left = popupScreen.Bounds.Right - w.Width;
+                left = screenWorkingArea.Right - w.Width;
             }
             w.Left = left;
 
             // vertical position
-            var taskbarHeight = SystemParameters.PrimaryScreenHeight - SystemParameters.WorkArea.Height;
-            var top = popupScreen.Bounds.Bottom - taskbarHeight - w.Height;
-
+            var top = screenWorkingArea.Bottom - w.Height;
             w.Top = top;
-
         }
     }
 }
