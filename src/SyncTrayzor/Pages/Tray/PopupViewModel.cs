@@ -4,28 +4,73 @@
 
     using Stylet;
 
+    using SyncTrayzor.Services.Config;
+
     public partial class PopupViewModel : Screen
     {
 
         private const int PopupOffsetX = -80;
+        private readonly IConfigurationProvider configurationProvider;
+        private bool keepOpen;
 
         public FileTransfersTrayViewModel FileTransfersViewModel { get; private set; }
 
-        public PopupViewModel(FileTransfersTrayViewModel fileTransfersViewModel)
+        public PopupViewModel(IConfigurationProvider configurationProvider, FileTransfersTrayViewModel fileTransfersViewModel)
         {
+
+            this.configurationProvider = configurationProvider;
+            var configuration = configurationProvider.Load();
+            configurationProvider.ConfigurationChanged += ConfigurationChanged;
+            keepOpen = configuration.KeepActivityPopupOpen;
+
             FileTransfersViewModel = fileTransfersViewModel;
             FileTransfersViewModel.ShowTitle = false;
             FileTransfersViewModel.ActivateWith(this);
             FileTransfersViewModel.DeactivateWith(this);
 
             DisplayName = "SyncTrayzor";
-            Activated += PopupViewModel_Activated;
+
+            Activated += ViewModel_Activated;
+            Deactivated += ViewModel_Deactivated;
         }
 
-        private void PopupViewModel_Activated(object sender, ActivationEventArgs e)
+        private void ConfigurationChanged(object sender, ConfigurationChangedEventArgs e)
+        {
+            keepOpen = e.NewConfiguration.KeepActivityPopupOpen;
+            if (!keepOpen && IsActive)
+            {
+                RequestClose();
+            }
+        }
+
+        private void ViewModel_Activated(object sender, ActivationEventArgs e)
         {
             var mousePos = WpfScreenHelper.MouseHelper.MousePosition;
             SetViewStartPosition(mousePos);
+            if (View is not Window w)
+            {
+                return;
+            }
+            w.Deactivated += View_Deactivated;
+        }
+
+        private void ViewModel_Deactivated(object sender, DeactivationEventArgs e)
+        {
+            if (View is not Window w)
+            {
+                return;
+            }
+            w.Deactivated -= View_Deactivated;
+            configurationProvider.ConfigurationChanged -= ConfigurationChanged;
+        }
+
+        private void View_Deactivated(object sender, System.EventArgs e)
+        {
+            if (keepOpen)
+            {
+                return;
+            }
+            RequestClose();
         }
 
         private void SetViewStartPosition(Point popupPos)

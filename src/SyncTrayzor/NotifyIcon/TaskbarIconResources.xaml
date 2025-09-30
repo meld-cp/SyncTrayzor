@@ -20,18 +20,9 @@
                     DoubleClickCommand="{s:Action DoubleClick, ActionNotFound=Disable}"
                     LeftClickCommand="{s:Action Click, ActionNotFound=Disable}"
                     MenuActivation="RightClick"
-                    PopupActivation="{Binding PopupActivation}"
+                    PopupActivation="None"
                     ToolTipText="SyncTrayzor"
                     >
-        <tb:TaskbarIcon.TrayPopup>
-            <Popup StaysOpen="False" Height="350" Placement="Relative" HorizontalOffset="-150" VerticalOffset="100" Width="300" PlacementTarget="{Binding ElementName=TaskbarIcon}" AllowsTransparency="True">
-                <i:Interaction.Behaviors>
-                    <xaml:PopupConductorBehaviour DataContext="{Binding FileTransfersViewModel}"/>
-                </i:Interaction.Behaviors>
-
-                <ContentControl s:View.Model="{Binding FileTransfersViewModel}"/>
-            </Popup>
-        </tb:TaskbarIcon.TrayPopup>
         <tb:TaskbarIcon.Resources>
             <Storyboard x:Key="IconAnimation">
                 <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="(ni:NotifyIconResolutionUtilities.IconSource)" Duration="0:0:2" RepeatBehavior="Forever">

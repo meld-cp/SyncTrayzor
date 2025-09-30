@@ -36,8 +36,6 @@ namespace SyncTrayzor.NotifyIcon
         public event EventHandler WindowCloseRequested;
         public event EventHandler ExitRequested;
 
-        public PopupActivationMode PopupActivation { get; private set; }
-
         public SyncthingState SyncthingState { get; set; }
 
         public bool SyncthingDevicesPaused => alertsManager.PausedDeviceIdsFromMetering.Count > 0;
@@ -49,7 +47,6 @@ namespace SyncTrayzor.NotifyIcon
         public bool SyncthingSyncing { get; private set; }
 
         private IconAnimationMode iconAnimationmode;
-        private bool usePopupWindow;
 
         public NotifyIconViewModel(
             IWindowManager windowManager,
@@ -85,7 +82,6 @@ namespace SyncTrayzor.NotifyIcon
             this.configurationProvider.ConfigurationChanged += ConfigurationChanged;
             var configuration = this.configurationProvider.Load();
             iconAnimationmode = configuration.IconAnimationMode;
-            usePopupWindow = configuration.KeepActivityPopupOpen;
         }
 
         private void StateChanged(object sender, SyncthingStateChangedEventArgs e)
@@ -129,20 +125,12 @@ namespace SyncTrayzor.NotifyIcon
         private void ConfigurationChanged(object sender, ConfigurationChangedEventArgs e)
         {
             iconAnimationmode = e.NewConfiguration.IconAnimationMode;
-            usePopupWindow = e.NewConfiguration.KeepActivityPopupOpen;
-            PopupActivation = usePopupWindow
-                ? PopupActivationMode.None
-                : PopupActivationMode.LeftClick;
             // Reset, just in case
             SyncthingSyncing = false;
         }
 
         public void Click()
         {
-            if (!usePopupWindow)
-            {
-                return;
-            }
             if (!focusWindowProvider.TryFocus<PopupViewModel>())
             {
                 var vm = popupViewModelFactory();
