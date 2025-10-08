@@ -144,3 +144,11 @@ jobs:
           choco apikey --key ${{ secrets.CHOCO_API_KEY }} --source https://push.chocolatey.org/
           choco push $packagePath --source https://push.chocolatey.org/
         shell: powershell
+
+      - name: Publish to winget
+        uses: vedantmgoyal9/winget-releaser@main
+        with:
+          identifier: GermanCoding.SyncTrayzor
+          installers-regex: '-x64\.exe$'
+          max-versions-to-keep: 5 # keep only latest 5 versions
+          token: ${{ secrets.WINGET_TOKEN }}
