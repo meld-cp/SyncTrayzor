@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.4] - 2025-10-15
+
+### Added
+
+- Automated updates for winget (`winget install GermanCoding.SyncTrayzor`)
+
+### Fixed
+
+- SyncTrayzor may crash when launched with administrative privileges (issue #55)
+
+### Changed
+
+- Translation updates
+- Dependency and runtime upgrades, embedded browser upgraded to Chromium/CEF v140
+
+
 ## [2.0.3] - 2025-09-20
 
 ### Fixed
