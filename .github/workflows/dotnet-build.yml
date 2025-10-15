@@ -68,6 +68,11 @@ jobs:
           path: "${{ github.workspace }}/release"
           merge-multiple: true
 
+      - name: Install .NET Core
+        uses: actions/setup-dotnet@d4c94342e560b34958eacfc5d055d21461ed1c5d # v5
+        with:
+          dotnet-version: 8.0.x
+
       - name: Install Task
         uses: arduino/setup-task@v2
         with:
