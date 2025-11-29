@@ -927,7 +927,7 @@ Om "FATAL: Cannot open database" visas, stäng alla andra öppna instanser av Sy
     <value>Avfärda</value>
   </data>
   <data name="SettingsView_KeepActivityPopupOpen" xml:space="preserve">
-    <value>Håll aktivitetspopupen öppen (högerklicka på popupen för att stänga)</value>
+    <value>Håll aktivitetspopupen öppen</value>
   </data>
   <data name="ConflictResolutionView_FileName_FileDeleted" xml:space="preserve">
     <value>[Fil borttagen]</value>
