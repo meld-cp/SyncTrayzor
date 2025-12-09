@@ -43,7 +43,12 @@ namespace SyncTrayzor.Localization
 
         public static string F(string format, params object[] parameters)
         {
-            return formatter.Format(Thread.CurrentThread.CurrentUICulture, format, parameters);
+            return FormatWithCulture(Thread.CurrentThread.CurrentUICulture, format, parameters);
+        }
+
+        public static string FormatWithCulture(CultureInfo culture, string format, params object[] parameters)
+        {
+            return formatter.Format(culture, format, parameters);
         }
 
         public static string OriginalTranslation(string key)

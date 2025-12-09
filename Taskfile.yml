@@ -20,6 +20,11 @@ tasks:
          - powershell -ExecutionPolicy Bypass -File scripts/upgrade-syncthing.ps1
       platforms: [windows]
       run: once
+   test:
+      desc: "Test SyncTrayzor"
+      cmds:
+         - powershell -ExecutionPolicy Bypass -File scripts/test.ps1
+      platforms: [windows]
    build:
       desc: "Build SyncTrayzor"
       deps:
