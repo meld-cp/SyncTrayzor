@@ -898,7 +898,7 @@ Program SyncTrayzor zostanie zamknięty. Przepraszamy!</value>
     <comment>Link show in the centre of the screen when Syncthing is stopped, allowing the user to start syncthing</comment>
   </data>
   <data name="ViewerView_SyncthingStarting" xml:space="preserve">
-    <value>Uruchomianie Syncthing...</value>
+    <value>Uruchamianie Syncthing...</value>
     <comment>Text shown in the centre of the screen when Syncthing is starting, but there's no UI to display yet</comment>
   </data>
   <data name="ViewerView_SyncthingStopped" xml:space="preserve">
@@ -906,7 +906,7 @@ Program SyncTrayzor zostanie zamknięty. Przepraszamy!</value>
     <comment>Text shown in the centre of the screen when Syncthing is stopped</comment>
   </data>
   <data name="SettingsView_KeepActivityPopupOpen" xml:space="preserve">
-    <value>Pozostaw otwarte okno podręczne aktywności (kliknij prawym przyciskiem myszy okno podręczne, aby je zamknąć)</value>
+    <value>Pozostaw otwarte okienko aktywności</value>
   </data>
   <data name="SettingsView_Tab_Syncthing" xml:space="preserve">
     <value>Syncthing</value>
