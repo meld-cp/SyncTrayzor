@@ -848,7 +848,7 @@ Do you want to restart SyncTrayzor now?</value>
   </data>
   <data name="AboutView_Donate_Text" xml:space="preserve">
     <value>Find SyncTrayzor useful?
-Please donate to my charity fundraising campaign.</value>
+Please donate to the syncthing project.</value>
   </data>
   <data name="ConflictResolutionView_DeleteToRecycleBin" xml:space="preserve">
     <value>Move deleted files to the recycle bin, rather than deleting permanently</value>
