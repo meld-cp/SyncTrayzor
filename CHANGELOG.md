@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.0] - 2025-12-17
+
+### Added
+
+- Reworked the tray activity popup to be draggable and resizable (#105 by @meld-cp)
+
+### Fixed
+
+- Fix inverted order of items in the tray activity popup (issue #149)
+
+### Changed
+
+- Warn users if a mixed v1/v2 install is detected. These installs contain files from SyncTrayzor v1, which are incompatible with SyncTrayzor v2 and cause frequent crashes.
+- Translation updates
+- Dependency and runtime upgrades, embedded browser upgraded to Chromium/CEF v141
+
 ## [2.0.4] - 2025-10-15
 
 ### Added
