@@ -78,6 +78,7 @@ namespace SyncTrayzor
             builder.Bind<IPathTransformer>().To<PathTransformer>().InSingletonScope();
             builder.Bind<IConnectedEventDebouncer>().To<ConnectedEventDebouncer>();
             builder.Bind<IDonationManager>().To<DonationManager>().InSingletonScope();
+            builder.Bind<IInstallationHealthCheck>().To<InstallationHealthCheck>().InSingletonScope();
 
             if (AppSettings.Instance.Variant == SyncTrayzorVariant.Installed)
                 builder.Bind<IUpdateVariantHandler>().To<InstalledUpdateVariantHandler>();
@@ -233,6 +234,8 @@ namespace SyncTrayzor
             {
                 RenderOptions.ProcessRenderMode = RenderMode.SoftwareOnly;
             }
+
+            Container.Get<IInstallationHealthCheck>().CheckOutdatedV1Installation();
         }
 
         protected override void Launch()
