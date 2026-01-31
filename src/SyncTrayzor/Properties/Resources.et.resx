@@ -686,4 +686,7 @@ Palun toeta syncthing projekti tööd.</value>
   <data name="SettingsView_KeepActivityPopupOpen" xml:space="preserve">
     <value>Jäta töötamise hüpikaken avatuks</value>
   </data>
+  <data name="ShellView_Menu_Zoom" xml:space="preserve">
+    <value>Suumija</value>
+  </data>
 </root>
