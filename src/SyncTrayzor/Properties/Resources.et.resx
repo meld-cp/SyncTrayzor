@@ -689,4 +689,61 @@ Palun toeta syncthing projekti tööd.</value>
   <data name="ShellView_Menu_Zoom" xml:space="preserve">
     <value>Suumija</value>
   </data>
+  <data name="SettingsView_SyncthingDenyUpgrade" xml:space="preserve">
+    <value>Lõpeta Syncthingi automaatne uuendamine</value>
+  </data>
+  <data name="TrayIcon_Balloon_FinishedSyncing_Multiple" xml:space="preserve">
+    <value>{0}: {1:list:{}|; }</value>
+  </data>
+  <data name="Settings_SyncthingCommandLineFlags" xml:space="preserve">
+    <value>Syncthingi käsureaargumendid</value>
+  </data>
+  <data name="ConflictResolutionView_ChooseNewestConflict_Button" xml:space="preserve">
+    <value>Vali viimane failikonflikt</value>
+  </data>
+  <data name="SettingsView_SyncthingCustomPath" xml:space="preserve">
+    <value>Sinu valitud Syncthingi asukoht</value>
+  </data>
+  <data name="SettingsView_SyncthingCustomHomePath" xml:space="preserve">
+    <value>Sinu valitud Syncthingi kodukaust:</value>
+  </data>
+  <data name="SettingsView_ShowDeviceConnectivityBalloons" xml:space="preserve">
+    <value>Näita „Seade on ühendatud“ ja „Seadme ühendus on katkestatud“ jutumulle</value>
+  </data>
+  <data name="SettingsView_EnableFailedTransferAlerts" xml:space="preserve">
+    <value>Anna teada failide ülekandmisel tekkinud vigadest</value>
+  </data>
+  <data name="BarAlertsView_FailedTransfer_Details" xml:space="preserve">
+    <value>Lisavihjeid võid leida Syncthingi graafilisest liidesest või konsoolist.</value>
+  </data>
+  <data name="SettingsView_ShowSynchronizedBalloonIfNoFilesTransferred" xml:space="preserve">
+    <value>Näita „Sünkroonitud“ jutumulli ka siis, kui ükski fail ei muutunud</value>
+  </data>
+  <data name="BarAlertsView_FailedTransfer_AlertText" xml:space="preserve">
+    <value>{0:p:Järgnevas kaustas|Järgnevates kaustades} leidub ebaõnnestunud failide ülekandmisi: {0:list:{}|, }.</value>
+  </data>
+  <data name="NewVersionAlertView_DontRemindMeExplanation" xml:space="preserve">
+    <value>„Ära tuleta mulle uuesti meelde“ valikuga vaigistad selle versiooniga seotud meeeldetuletused. Püsivalt saad nad lülitada välja seadistuste lehelt. Kui tahad uue versiooni olemasolu käsitsi kontrollida, siis ava „Abiteave“ → „Rakenduse teave“ vaade.</value>
+  </data>
+  <data name="NewVersionInstalledView_Message" xml:space="preserve">
+    <value>SyncTrayzori versiooni {0} paigaldamine õnnestus.</value>
+  </data>
+  <data name="Dialog_SyncthingDidNotStart_Message" xml:space="preserve">
+    <value>Syncthingi käivitamine ei õnnestu: {0}. Lisateavet leiad Syncthingi konsoolilt.</value>
+  </data>
+  <data name="SettingsView_Validation_SyncthingCommandLineFlagIsNotAllowed" xml:space="preserve">
+    <value>Käsureaargumendi määratlemine pole lubatud: {0}</value>
+  </data>
+  <data name="SettingsView_Validation_SyncthingCommandLineFlagsMustBeginWithHyphen" xml:space="preserve">
+    <value>Käsureaargumentide alguses peab olema sidekriips „-“</value>
+  </data>
+  <data name="SettingsView_Validation_SyncthingCommandLineFlagsMustHaveFormat" xml:space="preserve">
+    <value>Peab olema vormingus „-argument“ või „-argument=väärtus“ või „-argument="tühikutega väärtus"“</value>
+  </data>
+  <data name="ConflictResolutionView_ChooseNewestConflict_Text" xml:space="preserve">
+    <value>Valib viimasena tekkinud failikonflikti</value>
+  </data>
+  <data name="SettingsView_KeepActivityPopupOnTop" xml:space="preserve">
+    <value>Hoia tegevuste hüpikaken kõige peal</value>
+  </data>
 </root>
